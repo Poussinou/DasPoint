@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/postListItem"
+    >
+    <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent" android:layout_height="48dp"
+        android:id="@+id/swipePostListItemPart">
+        <!-- Bottom View Start-->
+
+        <LinearLayout
+            android:orientation="horizontal"
+
+            android:id="@+id/bottom_wrapper"
+            android:layout_width="wrap_content"
+            android:weightSum="1"
+            android:layout_height="match_parent"
+            android:layout_gravity="end">
+            <!--What you want to show-->
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/postBtnSubscribe"
+                android:src="@drawable/plus"
+                android:background="#00FFFFFF"/>
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/postBtnRecommend"
+                android:src="@drawable/thumb_up"
+                android:background="#00FFFFFF"/>
+        </LinearLayout>
+        <!-- Bottom View End-->
+
+        <!-- Surface View Start -->
+
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/postListItemSurface"
+            >
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/civPostAuthorAvatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/account_box"
+                />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\@user"
+                android:id="@+id/tvPostAuthorNick"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/civPostAuthorAvatar"
+                android:layout_toEndOf="@+id/civPostAuthorAvatar"
+                android:textColor="@color/colorPrimaryDark"
+                android:textStyle="bold"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2016/02/07 в 12:05"
+                android:id="@+id/tvPostDate"
+                android:layout_below="@+id/tvPostAuthorNick"
+                android:layout_toRightOf="@+id/civPostAuthorAvatar"
+                android:layout_toEndOf="@+id/civPostAuthorAvatar" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="2016/02/07 в 12:05"
+                android:id="@+id/tvPostId"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:gravity="right|center_vertical"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                />
+
+        </RelativeLayout>
+        <!-- Surface View End -->
+    </com.daimajia.swipe.SwipeLayout>
+
+
+
+    <LinearLayout
+        android:layout_below="@+id/swipePostListItemPart"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/expandable_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="16sp"
+            android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+            />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="13 comments"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_gravity="center_vertical"/>
+            <ImageView
+                android:layout_weight="1"
+                android:id="@id/expand_collapse"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+
+                android:layout_gravity="right|bottom"
+                android:background="@android:color/transparent"
+                android:src="@drawable/chevron_down"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+

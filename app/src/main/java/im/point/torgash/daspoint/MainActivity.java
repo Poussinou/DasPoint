@@ -92,9 +92,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_blog) {
             PlaceholderFragment blogFragment = PlaceholderFragment.getInstance(PlaceholderFragment.BLOG, this);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, blogFragment).commit();
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_comments) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_all) {
 
         } else if (id == R.id.nav_share) {
 

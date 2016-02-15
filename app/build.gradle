@@ -24,4 +24,8 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
+    compile "com.daimajia.swipelayout:library:1.2.0@aar"
+    compile 'com.ms-square:expandableTextView:0.1.4'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
+    
 }
