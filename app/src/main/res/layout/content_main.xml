@@ -12,11 +12,11 @@
     tools:context="im.point.torgash.daspoint.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <fragment
+    <FrameLayout
         android:id="@+id/post_list_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="im.point.torgash.daspoint.PlaceholderFragment"></fragment>
+        android:name="im.point.torgash.daspoint.PlaceholderFragment"></FrameLayout>
         <!--tools:layout="@layout/placeholder_list_fragment" -->
 
 </RelativeLayout>

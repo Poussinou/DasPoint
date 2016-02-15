@@ -33,8 +33,8 @@ public class MainActivity extends AppCompatActivity
         });
 
         //Let's implement our placeholder fragment here
-        PlaceholderFragment phFragment = (PlaceholderFragment) getFragmentManager().findFragmentById(R.id.post_list_fragment);
 
+        getFragmentManager().beginTransaction().add(R.id.post_list_fragment, PlaceholderFragment.getInstance(0, this)).commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity
             PlaceholderFragment recentFragment = PlaceholderFragment.getInstance(PlaceholderFragment.RECENT, this);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, recentFragment).commit();
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_blog) {
             PlaceholderFragment blogFragment = PlaceholderFragment.getInstance(PlaceholderFragment.BLOG, this);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, blogFragment).commit();
         } else if (id == R.id.nav_slideshow) {
