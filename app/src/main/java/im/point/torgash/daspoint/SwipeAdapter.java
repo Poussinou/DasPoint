@@ -66,6 +66,12 @@ public class SwipeAdapter extends BaseSwipeAdapter {
         tvPostDate.setText(postDate);
         tvPostId.setText(postId);
         tvPostText.setText(postText);
+        /* What about textview with pictures is here:
+        http://stackoverflow.com/questions/16746965/androidget-a-specific-line-using-coordination
+        http://stackoverflow.com/questions/16746965/androidget-a-specific-line-using-coordination
+        https://github.com/deano2390/FlowTextView
+        http://developer.android.com/intl/ru/reference/android/text/Layout.html
+         */
         drwExpandDown = ContextCompat.getDrawable(mCntx, R.drawable.chevron_down);
         drwExpandUp = ContextCompat.getDrawable(mCntx, R.drawable.chevron_up);
         if(tvPostText.getLineCount() >6){
