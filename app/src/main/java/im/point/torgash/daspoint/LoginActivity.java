@@ -33,12 +33,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.*;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 
-import org.apache.http.message.*;
-import org.json.JSONArray;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

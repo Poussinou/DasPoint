@@ -3,22 +3,29 @@ package im.point.torgash.daspoint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -29,34 +36,56 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    static boolean isInFront;
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isInFront = true;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isInFront = false;
+    }
+
     static final String PREFERENCES = "prefs";
     static final String AUTH_TOKEN = "auth_token";
     static final String CSRF_TOKEN = "csrf_token";
+    static final int MSG_AVATAR = 1;
     SharedPreferences prefs;
     String token = "";
     String csrf_token = "";
     String username;
+    Handler h;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //UIL initialization
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
-                .diskCacheSize(100 * 1024 * 1024)
-                .memoryCacheSize(64 * 1024 * 1024)
+        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
 
+                .cacheInMemory(true)
+                .cacheOnDisk(true)
+
+                .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+
+                .defaultDisplayImageOptions(defaultOptions)
+                .diskCacheSize(100 * 1024 * 1024)
+                .memoryCacheSize(16 * 1024 * 1024)
                 .build();
         ImageLoader.getInstance().init(config);
 
 
         prefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE);
-        if(!prefs.contains("token")) {
+        if (!prefs.contains("token")) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
-        }
-        else {
+        } else {
             token = prefs.getString("token", "");
             csrf_token = prefs.getString("csrf_token", "");
         }
@@ -86,12 +115,28 @@ public class MainActivity extends AppCompatActivity
         username = prefs.getString("username", "");
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        TextView tvUserName = (TextView) navigationView.findViewById(R.id.tvNavUserName);
-        tvUserName.setText("@" + username);
 
-        if(!prefs.contains("user_avatar")){
-            String user_avatar = "";
-            Thread getRecentThread = new Thread(new Runnable() {
+        final ImageView ivUserAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.ivUserAvatar);
+        TextView tvUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserName);
+        tvUserName.setText(username);
+
+        if (!prefs.contains("user_avatar")) {
+            h = new Handler() {
+                public void handleMessage(android.os.Message msg) {
+                    switch (msg.what) {
+                        case MSG_AVATAR:
+                            if (MainActivity.this.isInFront)
+                                ImageLoader.getInstance().displayImage("http://i.point.im/a/280/" + msg.obj.toString(), ivUserAvatar);
+
+                            break;
+
+                    }
+                }
+
+                ;
+            };
+            final String user_avatar = "";
+            Thread getUserInfo = new Thread(new Runnable() {
 
                 final OkHttpClient client = new OkHttpClient();
 
@@ -99,7 +144,7 @@ public class MainActivity extends AppCompatActivity
                 public void run() {
                     try {
                         Request request = new Request.Builder()
-                                .url("http://point.im/api/user/login/"+prefs.getString("username", ""))
+                                .url("http://point.im/api/user/" + prefs.getString("username", ""))
                                 .header("Authorization", token).header("csrf_token", csrf_token)
                                 .build();
 
@@ -107,21 +152,36 @@ public class MainActivity extends AppCompatActivity
                         if (!response.isSuccessful()) {
                             throw new IOException("Unexpected code " + response);
                         }
-
-                        Log.d("DP", response.body().string());
+                        String responseString = response.body().string();
+                        JSONObject jsonUserInfo = new JSONObject(responseString);
+                        Log.d("DP", "User info request status: " + responseString);
                         Headers responseHeaders = response.headers();
                         for (int i = 0; i < responseHeaders.size(); i++) {
                             Log.d("DP", responseHeaders.name(i) + ": " + responseHeaders.value(i));
                         }
 
+                        String userAvatar = jsonUserInfo.getString("avatar");
+
+                        //writing avatar link to prefs
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString("user_avatar", userAvatar);
+                        editor.apply();
+                        Message msg = h.obtainMessage(MSG_AVATAR, 0, 0, userAvatar);
+                        // отправляем
+                        h.sendMessage(msg);
 
 
                     } catch (IOException e) {
                         e.printStackTrace();
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             });
+            getUserInfo.start();
+        } else {
+            ImageLoader.getInstance().displayImage("http://i.point.im/a/280/" + prefs.getString("user_avatar", ""), ivUserAvatar);
         }
     }
 
@@ -183,5 +243,9 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    static boolean isInFront() {
+        return isInFront;
     }
 }

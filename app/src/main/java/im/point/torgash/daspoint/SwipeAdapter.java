@@ -2,37 +2,54 @@ package im.point.torgash.daspoint;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.util.Patterns;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import org.markdown4j.Markdown4jProcessor;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
 import com.ms.square.android.expandabletextview.ExpandableTextView;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+import im.point.torgash.daspoint.im.point.torgash.daspoint.utils.URLImageParser;
 
 /**
  * Created by torgash on 15.02.16.
  */
 public class SwipeAdapter extends BaseSwipeAdapter {
-    private ArrayList<Map<String, String>> mPostMap;
+
+    private ArrayList<PointRecent> mPostArray;
     private final ThreadLocal<Context> mContext = new ThreadLocal<>();
     private Context mCntx;
     Drawable drwExpandUp;
     Drawable drwExpandDown;
-    public SwipeAdapter(Context context, ArrayList<Map<String, String>> postMap) {
-        this.mPostMap = postMap;
+
+    //constructor for ArrayList<PointRecent>
+    public SwipeAdapter(Context context, ArrayList<PointRecent> postArray) {
+        this.mPostArray = postArray;
         this.mCntx = context;
         this.mContext.set(context);
 
     }
-
     @Override
     public int getSwipeLayoutResourceId(int position) {
         return R.id.swipePostListItemPart;
@@ -48,30 +65,48 @@ public class SwipeAdapter extends BaseSwipeAdapter {
     @Override
     public void fillValues(int position, View convertView) {
         final ImageView ivExpandToggle = (ImageView) convertView.findViewById(R.id.expand_collapse);
-        String authorNick = mPostMap.get(position).get("authorNick");
-        String postDate = mPostMap.get(position).get("postDate");
-        String postId = mPostMap.get(position).get("postId");
-        String postText = "";
+        PointRecent currentPost = mPostArray.get(position);
+        String authorNick = currentPost.authorLogin;
+        String postDate = currentPost.postCreatedString;
+        String postId = currentPost.postId;
+        String postText = currentPost.postText;
+        String authorAvatar = currentPost.authorAvatar;
+        int commentsCount = currentPost.commentsCount;
 
-
-            postText = postText.concat("There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form. ");
-
-
-
+        CircleImageView civPostAuthorAvatar = (CircleImageView) convertView.findViewById(R.id.civPostAuthorAvatar);
         TextView tvAuthorNick = (TextView) convertView.findViewById(R.id.tvPostAuthorNick);
         TextView tvPostDate = (TextView) convertView.findViewById(R.id.tvPostDate);
         TextView tvPostId = (TextView) convertView.findViewById(R.id.tvPostId);
         final TextView tvPostText = (TextView) convertView.findViewById(R.id.expandable_text);
+        TextView tvCommentsCount = (TextView) convertView.findViewById(R.id.post_comments_count);
         tvAuthorNick.setText(authorNick);
         tvPostDate.setText(postDate);
         tvPostId.setText(postId);
-        tvPostText.setText(postText);
+
+        try {
+            URLImageParser p = new URLImageParser(tvPostText, mCntx);
+            Spanned htmlSpan = Html.fromHtml(convertLinksToHtmlTags(new Markdown4jProcessor().process(postText)), p, null);
+            tvPostText.setText(htmlSpan);
+            Log.d("DP", "text = \n" + convertLinksToHtmlTags(new Markdown4jProcessor().process(postText)));
+        } catch (IOException e) {
+            tvPostText.setText(postText);
+            Log.d("DP", "couldn't process markdown for post #" + tvPostId);
+        }
+        tvPostText.setMovementMethod(LinkMovementMethod.getInstance());
+        tvCommentsCount.setText(String.valueOf(commentsCount));
+        tvPostText.setMaxLines(8);
+//        tvPostText.setOnClickListener(null);
+
+        tvPostText.scrollTo(0, 0);
+        tvPostText.setMovementMethod(null);
+        ImageLoader.getInstance().displayImage("http://i.point.im/a/40/" + authorAvatar, civPostAuthorAvatar);
         drwExpandDown = ContextCompat.getDrawable(mCntx, R.drawable.chevron_down);
         drwExpandUp = ContextCompat.getDrawable(mCntx, R.drawable.chevron_up);
-        if(tvPostText.getLineCount() >6){
-            tvPostText.setMaxLines(6);
+        ivExpandToggle.setImageDrawable(null);
+        if(tvPostText.getLineCount() >8){
+
             ivExpandToggle.setImageDrawable(drwExpandDown);
-            tvPostText.setOnClickListener(new View.OnClickListener() {
+            ivExpandToggle.setOnClickListener(new View.OnClickListener() {
                 boolean textExpanded = false;
                 @Override
                 public void onClick(View view) {
@@ -81,7 +116,7 @@ public class SwipeAdapter extends BaseSwipeAdapter {
                         ivExpandToggle.setImageDrawable(drwExpandUp);
                     }
                     else{
-                        tvPostText.setMaxLines(6);
+                        tvPostText.setMaxLines(8);
                         textExpanded = false;
                         ivExpandToggle.setImageDrawable(drwExpandDown);
                     }
@@ -131,11 +166,22 @@ public class SwipeAdapter extends BaseSwipeAdapter {
                 //when user's hand released.
             }
         });
+
+        EditText etQComment = (EditText) convertView.findViewById(R.id.qcomment_text);
+        ImageButton ibQComment = (ImageButton) convertView.findViewById(R.id.qcomment_button);
+        ibQComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+
     }
 
     @Override
     public int getCount() {
-        return mPostMap.size();
+        return mPostArray.size();
     }
 
     @Override
@@ -147,4 +193,18 @@ public class SwipeAdapter extends BaseSwipeAdapter {
     public long getItemId(int position) {
         return position;
     }
+
+    public String convertLinksToHtmlTags (String text) {
+        String htmlText = text;
+        Matcher m = Patterns.WEB_URL.matcher(text);
+        while (m.find()) {
+            String url = m.group();
+            if (url.contains(".jpg") || url.contains(".png")|| url.contains(".gif")) {
+                htmlText = text.replace(url, url + "<br  /><img src=\"" + url + "\"><br  />");
+            }
+
+        }
+        return htmlText;
+    }
+
 }

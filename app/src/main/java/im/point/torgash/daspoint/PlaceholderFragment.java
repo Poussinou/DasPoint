@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.app.ListFragment;
 import android.util.Log;
@@ -13,6 +15,12 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,10 +46,13 @@ public class PlaceholderFragment extends Fragment {
     public static final int COMMENTS = 2;
     public static final int ALL = 3;
     public static final String SECTION_NUMBER = "section_number";
+    public static final int MSG_POSTLIST = 256;
     private View rootView;
     private int section_number;
     public static PlaceholderFragment[] instance = new PlaceholderFragment[5];
     static Context mContext;
+    Handler h;
+    private ArrayList<PointRecent> postArrayList;
 
     public PlaceholderFragment() {
 
@@ -73,6 +84,46 @@ public class PlaceholderFragment extends Fragment {
         csrf_token = prefs.getString("csrf_token", "");
         View rootView = null;
         ArrayList<Map<String, String>> postList = new ArrayList<>();
+        rootView = inflater.inflate(R.layout.post_list, null);
+
+        final ListView lvPostList = (ListView) rootView.findViewById(R.id.lvPostList);
+
+
+        //handler for recentlist to get out of the thread
+        h = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+                switch (msg.what) {
+                    case MSG_POSTLIST:
+                        if(((MainActivity)getActivity()).isInFront()){
+                            postArrayList = new ArrayList<>();
+                            try {
+                                JSONObject postJsonInitialList = new JSONObject(msg.obj.toString());
+                                JSONArray postJsonList = postJsonInitialList.getJSONArray("posts");
+                                for (int i = 0; i < postJsonList.length(); i++) {
+                                    PointRecent tempPostObject = new PointRecent(postJsonList.getJSONObject(i));
+                                    Log.d("DP", "Created post object: " + tempPostObject);
+                                    postArrayList.add(tempPostObject);
+                                }
+                                SwipeAdapter adapter = new SwipeAdapter(mContext, postArrayList);
+
+                                lvPostList.setAdapter(adapter);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+
+
+                        break;
+
+                }
+            };
+        };
+
+
+
         for (int i = 0; i < 20; i++) {
 
             Map<String, String> tempMap = new HashMap<>();
@@ -101,13 +152,15 @@ public class PlaceholderFragment extends Fragment {
                                 if (!response.isSuccessful()) {
                                     throw new IOException("Unexpected code " + response);
                                 }
-
-                                Log.d("DP", response.body().string());
+                                String responseString = response.body().string();
+                                Log.d("DP", responseString);
                                 Headers responseHeaders = response.headers();
                                 for (int i = 0; i < responseHeaders.size(); i++) {
                                     Log.d("DP", responseHeaders.name(i) + ": " + responseHeaders.value(i));
                                 }
-
+                                Message msg = h.obtainMessage(MSG_POSTLIST, 0, 0, responseString);
+                                // отправляем
+                                h.sendMessage(msg);
 
 
                             } catch (IOException e) {
@@ -117,10 +170,7 @@ public class PlaceholderFragment extends Fragment {
                         }
                     });
                     getRecentThread.start();
-                    rootView = inflater.inflate(R.layout.post_list, null);
-                    SwipeAdapter adapter = new SwipeAdapter(mContext, postList);
-                    ListView lvPostList = (ListView) rootView.findViewById(R.id.lvPostList);
-                    lvPostList.setAdapter(adapter);
+
                     break;
                 case BLOG:
                     break;
