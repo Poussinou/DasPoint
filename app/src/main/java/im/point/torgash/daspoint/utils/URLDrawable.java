@@ -1,4 +1,4 @@
-package im.point.torgash.daspoint.im.point.torgash.daspoint.utils;
+package im.point.torgash.daspoint.utils;
 
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;

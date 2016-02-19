@@ -8,10 +8,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.app.ListFragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import im.point.torgash.daspoint.adapters.PostListAdapter;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -86,8 +90,8 @@ public class PlaceholderFragment extends Fragment {
         ArrayList<Map<String, String>> postList = new ArrayList<>();
         rootView = inflater.inflate(R.layout.post_list, null);
 
-        final ListView lvPostList = (ListView) rootView.findViewById(R.id.lvPostList);
-
+        final RecyclerView rvPostList = (RecyclerView) rootView.findViewById(R.id.postList);
+        rvPostList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayout.VERTICAL, false));
 
         //handler for recentlist to get out of the thread
         h = new Handler() {
@@ -104,9 +108,9 @@ public class PlaceholderFragment extends Fragment {
                                     Log.d("DP", "Created post object: " + tempPostObject);
                                     postArrayList.add(tempPostObject);
                                 }
-                                SwipeAdapter adapter = new SwipeAdapter(mContext, postArrayList);
+                                PostListAdapter adapter = new PostListAdapter(mContext, postArrayList);
 
-                                lvPostList.setAdapter(adapter);
+                                rvPostList.setAdapter(adapter);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();

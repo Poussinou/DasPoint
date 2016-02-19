@@ -2,14 +2,12 @@ package im.point.torgash.daspoint;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,17 +18,14 @@ import android.widget.TextView;
 import org.markdown4j.Markdown4jProcessor;
 import com.daimajia.swipe.SwipeLayout;
 import com.daimajia.swipe.adapters.BaseSwipeAdapter;
-import com.ms.square.android.expandabletextview.ExpandableTextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Random;
 import java.util.regex.Matcher;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import im.point.torgash.daspoint.im.point.torgash.daspoint.utils.URLImageParser;
+import im.point.torgash.daspoint.utils.URLImageParser;
 
 /**
  * Created by torgash on 15.02.16.

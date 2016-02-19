@@ -1,4 +1,4 @@
-package im.point.torgash.daspoint.im.point.torgash.daspoint.utils;
+package im.point.torgash.daspoint.utils;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -9,7 +9,6 @@ import android.view.View;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
