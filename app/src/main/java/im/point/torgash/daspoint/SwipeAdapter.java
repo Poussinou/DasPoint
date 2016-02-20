@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.markdown4j.Markdown4jProcessor;
 import com.daimajia.swipe.SwipeLayout;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.utils.URLImageParser;
 
 /**
@@ -32,14 +34,14 @@ import im.point.torgash.daspoint.utils.URLImageParser;
  */
 public class SwipeAdapter extends BaseSwipeAdapter {
 
-    private ArrayList<PointRecent> mPostArray;
+    private ArrayList<PointPost> mPostArray;
     private final ThreadLocal<Context> mContext = new ThreadLocal<>();
     private Context mCntx;
     Drawable drwExpandUp;
     Drawable drwExpandDown;
 
-    //constructor for ArrayList<PointRecent>
-    public SwipeAdapter(Context context, ArrayList<PointRecent> postArray) {
+    //constructor for ArrayList<PointPost>
+    public SwipeAdapter(Context context, ArrayList<PointPost> postArray) {
         this.mPostArray = postArray;
         this.mCntx = context;
         this.mContext.set(context);
@@ -61,7 +63,7 @@ public class SwipeAdapter extends BaseSwipeAdapter {
     @Override
     public void fillValues(int position, View convertView) {
         final ImageView ivExpandToggle = (ImageView) convertView.findViewById(R.id.expand_collapse);
-        PointRecent currentPost = mPostArray.get(position);
+        PointPost currentPost = mPostArray.get(position);
         String authorNick = currentPost.authorLogin;
         String postDate = currentPost.postCreatedString;
         String postId = currentPost.postId;
@@ -213,4 +215,14 @@ public class SwipeAdapter extends BaseSwipeAdapter {
         return htmlText;
     }
 
+    public LinearLayout prepareTextView(LinearLayout layout, String text) {
+        Matcher m = Patterns.WEB_URL.matcher(text);
+        while (m.find()) {
+            String url = m.group();
+            if (url.contains(".jpg") || url.contains(".png")|| url.contains(".gif")) {
+                htmlText = text.replace(url, url + "<br  /><img src=\"" + url + "\"><br  />");
+            }
+
+        }
+    }
 }

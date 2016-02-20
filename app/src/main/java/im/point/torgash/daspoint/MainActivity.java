@@ -29,6 +29,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import im.point.torgash.daspoint.fragments.BasePostListFragment;
+import im.point.torgash.daspoint.fragments.RecentPostListFragment;
+import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     static boolean isInFront;
 
+    private OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
     @Override
     public void onResume() {
         super.onResume();
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity
         isInFront = false;
     }
 
-    static final String PREFERENCES = "prefs";
+    public static final String PREFERENCES = "prefs";
     static final String AUTH_TOKEN = "auth_token";
     static final String CSRF_TOKEN = "csrf_token";
     static final int MSG_AVATAR = 1;
@@ -59,7 +63,7 @@ public class MainActivity extends AppCompatActivity
     String csrf_token = "";
     String username;
     Handler h;
-
+    FloatingActionButton fab;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +98,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,7 +110,7 @@ public class MainActivity extends AppCompatActivity
 
         //Let's implement our placeholder fragment here
 
-        getFragmentManager().beginTransaction().add(R.id.post_list_fragment, PlaceholderFragment.getInstance(0, this)).commit();
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -115,7 +120,7 @@ public class MainActivity extends AppCompatActivity
         username = prefs.getString("username", "");
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        navigationView.setCheckedItem(0);
         final ImageView ivUserAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.ivUserAvatar);
         TextView tvUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserName);
         tvUserName.setText(username);
@@ -183,6 +188,15 @@ public class MainActivity extends AppCompatActivity
         } else {
             ImageLoader.getInstance().displayImage("http://i.point.im/a/280/" + prefs.getString("user_avatar", ""), ivUserAvatar);
         }
+        mOnErrorShowInSnackbarListener = new OnErrorShowInSnackbarListener() {
+            @Override
+            public void onErrorShow(String error) {
+                Snackbar.make(fab, error, Snackbar.LENGTH_LONG)
+                        .setAction("Discard", null).show();
+            }
+        };
+        RecentPostListFragment.getInstance().setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+        getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, RecentPostListFragment.getInstance()).commit();
     }
 
     @Override
@@ -224,12 +238,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_recent) {
-            PlaceholderFragment recentFragment = PlaceholderFragment.getInstance(PlaceholderFragment.RECENT, this);
-            getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, recentFragment).commit();
+            RecentPostListFragment recentPostListFragment = RecentPostListFragment.getInstance();
+            getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, recentPostListFragment).commit();
             // Handle the camera action
         } else if (id == R.id.nav_blog) {
-            PlaceholderFragment blogFragment = PlaceholderFragment.getInstance(PlaceholderFragment.BLOG, this);
-            getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, blogFragment).commit();
+
         } else if (id == R.id.nav_comments) {
 
         } else if (id == R.id.nav_all) {
@@ -245,7 +258,8 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    static boolean isInFront() {
+    public static boolean isInFront() {
         return isInFront;
     }
+
 }

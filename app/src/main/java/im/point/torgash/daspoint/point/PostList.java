@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class PostList extends PointResult {
     public boolean has_next;
-    public List<Post> posts;
+    public List<PointPost> posts;
 
     public void append(PostList newPosts) {
         has_next = newPosts.has_next;

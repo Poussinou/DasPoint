@@ -15,38 +15,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.pnikosis.materialishprogress.ProgressWheel;
-
-import org.itishka.pointim.PointApplication;
-
-import org.itishka.pointim.activities.UserViewActivity;
-
-import org.itishka.pointim.network.PointConnectionManager;
-import org.itishka.pointim.network.PointIm;
-import org.itishka.pointim.network.PointService;
-import org.itishka.pointim.utils.BookmarkToggleListener;
-import org.itishka.pointim.utils.ImageSearchHelper;
-import org.itishka.pointim.utils.Utils;
-import org.itishka.pointim.widgets.ImageList;
-
-import java.util.List;
 
 import im.point.torgash.daspoint.R;
-import im.point.torgash.daspoint.point.Post;
+import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PostList;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
-/**
- * Created by Tishka17 on 20.10.2014.
- */
+
 public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_FOOTER = 1;
@@ -138,46 +116,46 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup viewGroup) {
 
         final View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.adapter_post, viewGroup, false);
+                .inflate(R.layout.post_list_item, viewGroup, false);
         final ViewHolder holder = new ViewHolder(v);
-        holder.webLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, (Uri) view.getTag());
-                holder.itemView.getContext().startActivity(Intent.createChooser(browserIntent, holder.itemView.getContext().getString(R.string.title_choose_app)));
-            }
-        });
-        holder.avatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String user = (String) view.getTag();
-                if (!TextUtils.isEmpty(user)) {
-                    Intent intent = new Intent(view.getContext(), UserViewActivity.class);
-                    intent.putExtra(UserViewActivity.EXTRA_USER, user);
-                    ActivityCompat.startActivity((Activity) view.getContext(), intent, null);
-                }
-            }
-        });
-        holder.favourite.setOnClickListener(new BookmarkToggleListener());
-        holder.recomender_avatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String user = (String) view.getTag();
-                if (!TextUtils.isEmpty(user)) {
-                    Intent intent = new Intent(view.getContext(), UserViewActivity.class);
-                    intent.putExtra(UserViewActivity.EXTRA_USER, user);
-                    ActivityCompat.startActivity((Activity) view.getContext(), intent, null);
-                }
-            }
-        });
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mOnPostClickListener != null) {
-                    mOnPostClickListener.onPostClicked(v, view.getTag(R.id.post_id).toString());
-                }
-            }
-        });
+//        holder.webLink.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, (Uri) view.getTag());
+//                holder.itemView.getContext().startActivity(Intent.createChooser(browserIntent, holder.itemView.getContext().getString(R.string.title_choose_app)));
+//            }
+//        });
+//        holder.avatar.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String user = (String) view.getTag();
+//                if (!TextUtils.isEmpty(user)) {
+//                    Intent intent = new Intent(view.getContext(), UserViewActivity.class);
+//                    intent.putExtra(UserViewActivity.EXTRA_USER, user);
+//                    ActivityCompat.startActivity((Activity) view.getContext(), intent, null);
+//                }
+//            }
+//        });
+//        holder.favourite.setOnClickListener(new BookmarkToggleListener());
+//        holder.recomender_avatar.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                String user = (String) view.getTag();
+//                if (!TextUtils.isEmpty(user)) {
+//                    Intent intent = new Intent(view.getContext(), UserViewActivity.class);
+//                    intent.putExtra(UserViewActivity.EXTRA_USER, user);
+//                    ActivityCompat.startActivity((Activity) view.getContext(), intent, null);
+//                }
+//            }
+//        });
+//        v.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (mOnPostClickListener != null) {
+//                    mOnPostClickListener.onPostClicked(v, view.getTag(R.id.post_id).toString());
+//                }
+//            }
+//        });
         return holder;
     }
 
@@ -223,12 +201,13 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void onBindItemViewHolder(PostListAdapter.ViewHolder holder, int i) {
-        Post post = mPostList.posts.get(i);
-        holder.author.setText("@" + post.post.author.login);
-        holder.itemView.setTag(R.id.tvPostId, post.post.id);
+        PointPost post = mPostList.posts.get(i);
+        holder.author.setText("@" + post.authorLogin);
+        holder.itemView.setTag(R.id.tvPostId, post.postId);
         //Change it to my layout
         //holder.imageList.setImageUrls(post.post.text.images, post.post.files);
         holder.text.setText(post.post.text);
+
         Utils.showAvatar(post.post.author.login, post.post.author.avatar, holder.avatar);
         holder.date.setText(Utils.formatDate(post.post.created));
 

@@ -1,4 +1,4 @@
-package im.point.torgash.daspoint;
+package im.point.torgash.daspoint.point;
 
 import android.util.Log;
 
@@ -9,42 +9,43 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class PointRecent {
+public class PointPost {
     //message - basic
-    int uid;
-    boolean subscribed;
-    boolean editable;
+    public int uid;
+    public boolean subscribed;
+    public boolean editable;
 
     //is it recommended?
     boolean recommended;
     boolean isRecommended = false;
     //recommendation section
-    String recText;
-    int recCommentId;
-    String recAuthorLogin;
-    int recAuthorId;
-    String recAuthorAvatar;
-    String recAuthorName;
-    String authorAka = "";
+    public String recText;
+    public int recCommentId;
+    public String recAuthorLogin;
+    public int recAuthorId;
+    public String recAuthorAvatar;
+    public String recAuthorName;
+    public String authorAka = "";
+
     //post section
 
-    String[] tags;
-    int commentsCount;
+    public String[] tags;
+    public int commentsCount;
     //post author details
-    String authorLogin;
-    int authorId;
-    String authorAvatar;
-    String authorName;
+    public String authorLogin;
+    public int authorId;
+    public String authorAvatar;
+    public String authorName;
 
-    String postText;
+    public String postText;
     Date postCreated;
-    String postCreatedString;
-    String postType;
-    String postId;
+    public String postCreatedString;
+    public String postType;
+    public String postId;
     boolean isPrivate;
-    String messageLink;
+    public String messageLink;
 
-    PointRecent(JSONObject postObject) {
+    public PointPost(JSONObject postObject) {
         try {
             JSONObject postDetails = postObject.getJSONObject("post");
             JSONObject postAuthor = postDetails.getJSONObject("author");
@@ -129,7 +130,7 @@ public class PointRecent {
 
 
         } catch (Exception e) {
-            Log.d("JSON", "Failed to parse JSON to PointRecent: " + e);
+            Log.d("JSON", "Failed to parse JSON to PointPost: " + e);
         }
 
     }
