@@ -32,6 +32,7 @@ import java.io.IOException;
 import im.point.torgash.daspoint.fragments.BasePostListFragment;
 import im.point.torgash.daspoint.fragments.RecentPostListFragment;
 import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
+import im.point.torgash.daspoint.point.Authorization;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -92,6 +93,8 @@ public class MainActivity extends AppCompatActivity
         } else {
             token = prefs.getString("token", "");
             csrf_token = prefs.getString("csrf_token", "");
+            Authorization.setToken(token);
+            Authorization.setCSRFToken(csrf_token);
         }
 
         setContentView(R.layout.activity_main);

@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import im.point.torgash.daspoint.listeners.OnPostListLoadMoreListener;
@@ -122,6 +123,7 @@ public class PostsLoader {
                     }
 
                     PostList postList = new PostList();
+                    postList.posts = new ArrayList<>();
                     try {
                         JSONObject postJsonInitialList = new JSONObject(responseString);
                         if (postJsonInitialList.has("has_next")) {

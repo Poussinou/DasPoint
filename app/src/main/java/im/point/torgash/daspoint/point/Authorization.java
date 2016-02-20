@@ -9,7 +9,13 @@ public class Authorization {
     public static void setUserName (String username) {
         mUsername = username;
     }
+    public static void setToken(String token) {
+        mToken = token;
+    }
 
+    public static void setCSRFToken(String csrfToken) {
+        mCsrf_token = csrfToken;
+    }
     public static String getToken(){
         return mToken;
     }

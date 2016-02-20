@@ -59,7 +59,7 @@ public abstract class BasePostListFragment extends Fragment {
             @Override
             public void onRefresh() {
 
-                    loadPosts();
+                loadPosts();
 
             }
         });
@@ -72,7 +72,7 @@ public abstract class BasePostListFragment extends Fragment {
         mOnPostListUpdateListener = new OnPostListUpdateListener() {
             @Override
             public void onPostListUpdated(PostList postList) {
-                adapter.appendData(getActivity(), postList);
+                adapter.setData(getActivity(), postList);
                 if (mSwipeRefresh.isRefreshing()) {
                     mSwipeRefresh.setRefreshing(false);
                 }
@@ -80,10 +80,12 @@ public abstract class BasePostListFragment extends Fragment {
 
             @Override
             public void onError(String error) {
-
+                mOnErrorShowInSnackbarListener.onErrorShow(error);
             }
         };
+        adapter.setOnPostListUpdateListener(mOnPostListUpdateListener);
 
+        rvPostList.setAdapter(adapter);
 
         return rootView;
     }

@@ -1,16 +1,12 @@
 package im.point.torgash.daspoint.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +16,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
+import com.daimajia.swipe.SwipeLayout;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
+
 import im.point.torgash.daspoint.R;
+import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
 import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PostList;
 
@@ -32,8 +34,9 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int TYPE_HEADER = -1;
 
     private PostList mPostList = null;
-    private ImageSearchTask mTask;
+    //    private ImageSearchTask mTask;
     private OnLoadMoreRequestListener mOnLoadMoreRequestListener = null;
+    private OnPostListUpdateListener mOnPostListUpdateListener = null;
     private OnPostClickListener mOnPostClickListener = null;
     private View.OnClickListener mOnTagClickListener = new View.OnClickListener() {
         @Override
@@ -75,22 +78,28 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void setData(Context context, PostList postList) {
         mPostList = postList;
-        if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED) {
-            mTask.cancel(true);
-        }
-        mTask = new ImageSearchTask(context);
-        mTask.execute(mPostList);
+//        if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED) {
+//            mTask.cancel(true);
+//        }
+//        mTask = new ImageSearchTask(context);
+//        mTask.execute(mPostList);
         notifyDataSetChanged();
     }
 
     public void appendData(Context context, PostList postList) {
-        int oldLength = mPostList.posts.size();
-        mPostList.append(postList);
-        notifyItemRangeInserted(oldLength, postList.posts.size());
-        if (mTask == null || mTask.getStatus() == AsyncTask.Status.FINISHED) {
-            mTask = new ImageSearchTask(context);
-            mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mPostList);
+
+        int oldLength = ((null == mPostList) ? 0 : mPostList.posts.size());
+        if (mPostList != null) {
+            mPostList.append(postList);
+        } else {
+            mPostList = new PostList();
+            mPostList.posts = new ArrayList<>();
         }
+        notifyItemRangeInserted(oldLength, postList.posts.size());
+//        if (mTask == null || mTask.getStatus() == AsyncTask.Status.FINISHED) {
+//            mTask = new ImageSearchTask(context);
+//            mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mPostList);
+//        }
     }
 
     @Override
@@ -203,68 +212,146 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindItemViewHolder(PostListAdapter.ViewHolder holder, int i) {
         PointPost post = mPostList.posts.get(i);
         holder.author.setText("@" + post.authorLogin);
-        holder.itemView.setTag(R.id.tvPostId, post.postId);
+
+        holder.itemView.setTag(R.id.post_id, post.postId);
+        Log.d("DP", "Invading viewholder with post \n" + post);
         //Change it to my layout
         //holder.imageList.setImageUrls(post.post.text.images, post.post.files);
-        holder.text.setText(post.post.text);
+        holder.text.setText(post.postText);
+        ImageLoader.getInstance().displayImage("http://i.point.im/a/40/" + post.authorAvatar, holder.avatar);
 
-        Utils.showAvatar(post.post.author.login, post.post.author.avatar, holder.avatar);
-        holder.date.setText(Utils.formatDate(post.post.created));
+        holder.date.setText(post.postCreatedString);
 
-        if (post.rec != null) {
-            holder.mainContent.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.quote_background));
+        if (post.isRecommended) {
+//            holder.mainContent.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.quote_background));
             holder.recommend_info.setVisibility(View.VISIBLE);
-            if (post.rec.text != null) {
+            if (post.recText != null) {
                 holder.recommend_text.setVisibility(View.VISIBLE);
-                holder.recommend_text.setText(post.rec.text.text);
+                holder.recommend_text.setText(post.recText);
             } else {
                 holder.recommend_text.setVisibility(View.GONE);
             }
-            holder.quote_mark.setVisibility(View.VISIBLE);
-            holder.quote_mark_top.setVisibility(View.VISIBLE);
-            holder.recommend_author.setText("@" + post.rec.author.login);
-            holder.recommend_id.setText("");
-            Utils.showAvatar(post.rec.author.login, post.rec.author.avatar, holder.recomender_avatar);
+//            holder.quote_mark.setVisibility(View.VISIBLE);
+//            holder.quote_mark_top.setVisibility(View.VISIBLE);
+            holder.recommend_author.setText(post.recAuthorLogin);
+            if (post.recCommentId != "null") {
+
+                holder.recommend_id.setText("/" + post.recCommentId);
+            } else holder.recommend_id.setText("");
+            ImageLoader.getInstance().displayImage("http://i.point.im/a/40/" + post.recAuthorAvatar, holder.recomender_avatar);
         } else {
             holder.mainContent.setBackgroundColor(Color.TRANSPARENT);
             holder.recommend_info.setVisibility(View.GONE);
             holder.recommend_text.setVisibility(View.GONE);
-            holder.quote_mark.setVisibility(View.INVISIBLE);
-            holder.quote_mark_top.setVisibility(View.GONE);
+//            holder.quote_mark.setVisibility(View.INVISIBLE);
+//            holder.quote_mark_top.setVisibility(View.GONE);
         }
-        if (TextUtils.isEmpty(post.comment_id)) {
-            holder.post_id.setText("#" + post.post.id);
+        if (post.commentId == null) {
+            holder.post_id.setText("#" + post.postId);
         } else {
-            holder.post_id.setText("#" + post.post.id + "/" + post.comment_id);
+            holder.post_id.setText("#" + post.postId + "/" + post.commentId);
         }
-        holder.post_id.setTag(post.post.id);
-        holder.webLink.setTag(Utils.generateSiteUri(post.post.id));
-        holder.favourite.setChecked(post.bookmarked);
-        holder.favourite.setTag(post.post.id);
+        holder.post_id.setTag(post.postId);
+//        holder.webLink.setTag(post.messageLink);
+//        holder.favourite.setChecked(post.bookmarked);
+//        holder.favourite.setTag(post.post.id);
 
-        if (post.post.comments_count > 0) {
-            holder.comments.setText(String.valueOf(post.post.comments_count));
-            //holder.comments.setVisibility(View.VISIBLE);
-        } else {
-            holder.comments.setText("");
-            // holder.comments.setVisibility(View.GONE);
-        }
+
+        holder.comments.setText(String.valueOf(post.commentsCount));
+        // holder.comments.setVisibility(View.GONE);
+
         LayoutInflater li;
         li = (LayoutInflater) holder.itemView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         holder.tags.removeAllViews();
-        if (post.post.tags == null || post.post.tags.size() == 0) {
+        if (post.commentId != null || post.tags == null || post.tags.length == 0) {
             holder.tags.setVisibility(View.GONE);
         } else {
             holder.tags.setVisibility(View.VISIBLE);
 
             int n = 0;
-            for (String tag : post.post.tags) {
+            for (String tag : post.tags) {
                 final TextView v = (TextView) li.inflate(R.layout.tag, holder.tags, false);
                 v.setText(tag);
                 holder.tags.addView(v, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
                 v.setOnClickListener(mOnTagClickListener);
             }
         }
+        holder.swipeLayout.setShowMode(SwipeLayout.ShowMode.PullOut);
+
+//add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
+
+        holder.swipeLayout.addDrag(SwipeLayout.DragEdge.Right, holder.mView.findViewById(R.id.bottom_wrapper));
+        holder.swipeLayout.addSwipeListener(new SwipeLayout.SwipeListener() {
+            @Override
+            public void onStartOpen(SwipeLayout layout) {
+                ((TextView)layout.findViewById(R.id.qcomment_text)).requestFocus();
+
+            }
+
+            @Override
+            public void onOpen(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onStartClose(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onClose(SwipeLayout layout) {
+
+            }
+
+            @Override
+            public void onUpdate(SwipeLayout layout, int leftOffset, int topOffset) {
+
+            }
+
+            @Override
+            public void onHandRelease(SwipeLayout layout, float xvel, float yvel) {
+
+            }
+        });
+//        holder.swipeLayout.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(final View v, boolean hasFocus) {
+//                if (hasFocus) {
+//                    // Request focus in a short time because the
+//                    // keyboard may steal it away.
+//                    v.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if (!v.hasFocus()) {
+//                                v.requestFocus();
+//                            }
+//                        }
+//                    }, 1000);
+//                }
+//            }
+//        });
+
+//        TextView tvQcommentInput = (TextView)holder.mView.findViewById(R.id.qcomment_text);
+//        tvQcommentInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            final int minDelta = 300;           // threshold in ms
+//            long focusTime = 0;                 // time of last touch
+//            View focusTarget = null;
+//            @Override
+//            public void onFocusChange(final View v, boolean hasFocus) {
+//                if (hasFocus) {
+//                    // Request focus in a short time because the
+//                    // keyboard may steal it away.
+//                    v.postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if (!v.hasFocus()) {
+//                                v.requestFocus();
+//                            }
+//                        }
+//                    }, 1000);
+//                }
+//            }
+//        });
     }
 
     @Override
@@ -279,6 +366,10 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void setOnPostClickListener(OnPostClickListener onPostClickListener) {
         mOnPostClickListener = onPostClickListener;
+    }
+
+    public void setOnPostListUpdateListener(OnPostListUpdateListener onPostListUpdateListener) {
+        this.mOnPostListUpdateListener = onPostListUpdateListener;
     }
 
     public interface OnLoadMoreRequestListener {
@@ -301,13 +392,14 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
+        View mView;
         final TextView text;
         final ViewGroup tags;
         final ImageView avatar;
         final ImageView recomender_avatar;
         final TextView recommend_text;
-        final View quote_mark;
-        final View quote_mark_top;
+
+
         final TextView recommend_author;
         final TextView author;
         final TextView post_id;
@@ -315,67 +407,70 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final TextView recommend_id;
         final TextView comments;
         final TextView date;
-        final ImageView webLink;
-        final CheckBox favourite;
-        final ImageList imageList;
+        SwipeLayout swipeLayout;
+
         final View mainContent;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            mView = itemView;
+            swipeLayout = (SwipeLayout) itemView.findViewById(R.id.swipePostListItemPart);
+
+//set show mode.
+
             text = (TextView) itemView.findViewById(R.id.text);
             tags = (ViewGroup) itemView.findViewById(R.id.tags);
             avatar = (ImageView) itemView.findViewById(R.id.avatar);
             recomender_avatar = (ImageView) itemView.findViewById(R.id.recommend_avatar);
             recommend_text = (TextView) itemView.findViewById(R.id.recommend_text);
-            quote_mark = itemView.findViewById(R.id.quote_mark);
-            quote_mark_top = itemView.findViewById(R.id.quote_mark_top);
+
+
             recommend_author = (TextView) itemView.findViewById(R.id.recommend_author);
             author = (TextView) itemView.findViewById(R.id.author);
             post_id = (TextView) itemView.findViewById(R.id.post_id);
             recommend_info = itemView.findViewById(R.id.recommend_info);
             recommend_id = (TextView) itemView.findViewById(R.id.recommend_id);
             comments = (TextView) itemView.findViewById(R.id.comments);
-            Utils.setTint(comments);
+
             date = (TextView) itemView.findViewById(R.id.date);
-            webLink = (ImageView) itemView.findViewById(R.id.weblink);
-            favourite = (CheckBox) itemView.findViewById(R.id.favourite);
-            Utils.setTint(favourite);
+
+
             mainContent = itemView.findViewById(R.id.main_content);
-            imageList = (ImageList) itemView.findViewById(R.id.imageList);
+
         }
     }
 
-    private class ImageSearchTask extends AsyncTask<PostList, Integer, Void> {
-        SharedPreferences prefs;
-        private final boolean loadImages;
+//    private class ImageSearchTask extends AsyncTask<PostList, Integer, Void> {
+//        SharedPreferences prefs;
+//        private final boolean loadImages;
+//
+//        ImageSearchTask(Context context) {
+//            prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+//            loadImages = prefs.getBoolean("loadImages", true);
+//        }
 
-        ImageSearchTask(Context context) {
-            prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
-            loadImages = prefs.getBoolean("loadImages", true);
-        }
-
-        @Override
-        protected Void doInBackground(PostList... postLists) {
-            List<Post> posts = postLists[0].posts;
-            for (int i = 0; i < posts.size(); i++) {
-                Post post = posts.get(i);
-                post.post.text.images = ImageSearchHelper.checkImageLinks(ImageSearchHelper.getAllLinks(post.post.text.text));
-                publishProgress(i);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            if (!loadImages) cancel(true);
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            notifyItemChanged(values[0]);
-            super.onProgressUpdate(values);
-        }
-    }
+//        @Override
+//        protected Void doInBackground(PostList... postLists) {
+//            List<Post> posts = postLists[0].posts;
+//            for (int i = 0; i < posts.size(); i++) {
+//                Post post = posts.get(i);
+//                post.post.text.images = ImageSearchHelper.checkImageLinks(ImageSearchHelper.getAllLinks(post.post.text.text));
+//                publishProgress(i);
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            if (!loadImages) cancel(true);
+//            super.onPreExecute();
+//
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Integer... values) {
+//            notifyItemChanged(values[0]);
+//            super.onProgressUpdate(values);
+//        }
+//    }
 }

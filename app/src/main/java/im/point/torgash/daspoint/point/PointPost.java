@@ -17,10 +17,10 @@ public class PointPost {
 
     //is it recommended?
     boolean recommended;
-    boolean isRecommended = false;
+    public boolean isRecommended = false;
     //recommendation section
     public String recText;
-    public int recCommentId;
+    public String recCommentId;
     public String recAuthorLogin;
     public int recAuthorId;
     public String recAuthorAvatar;
@@ -44,6 +44,7 @@ public class PointPost {
     public String postId;
     boolean isPrivate;
     public String messageLink;
+    public String commentId;
 
     public PointPost(JSONObject postObject) {
         try {
@@ -57,15 +58,16 @@ public class PointPost {
             subscribed = Boolean.valueOf((postObject.get("subscribed")).toString());
             editable = Boolean.valueOf((postObject.get("editable")).toString());
             recommended = Boolean.valueOf((postObject.get("recommended")).toString());
+            if (postDetails.has("comment_id") && null != postDetails.get("comment_id")) {
+                commentId = postDetails.get("comment_id").toString();
+            }
             if (isRecommended) {
                 JSONObject postRecommendationSection = postObject.getJSONObject("rec");
                 recText = postRecommendationSection.get("text").toString();
                 if (recText.equals("null")) {
-                    recText = "";
+                    recText = null;
                 }
-//				if(postRecommendationSection.get("comment_id") == null){
-//					recCommentId = 0;
-//				}else recCommentId = Integer.valueOf((postRecommendationSection.get("comment_id")).toString());
+				recCommentId = postRecommendationSection.get("comment_id").toString();
                 JSONObject recAuthor = postRecommendationSection.getJSONObject("author");
                 recAuthorLogin = recAuthor.get("login").toString();
                 recAuthorLogin = "@" + recAuthorLogin;
@@ -102,14 +104,14 @@ public class PointPost {
                 authorAka = "";
             }
 
-            authorLogin = "@" + authorLogin;
+
             postText = postDetails.get("text").toString();
 
             postType = postDetails.get("type").toString();
 
             postId = postDetails.get("id").toString();
             messageLink = "http://point.im/" + postId;
-            postId = "#" + postId;
+
 
             isPrivate = Boolean.valueOf(postDetails.get("private").toString());
 

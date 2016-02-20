@@ -1,68 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/postListItem"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/postListItem"
-
+    android:padding = "4dp"
+    android:background="@drawable/post_list_item_background"
     >
+
     <com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent" android:layout_height="48dp"
-        android:id="@+id/swipePostListItemPart">
+        android:id="@+id/swipePostListItemPart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <!-- Bottom View Start-->
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:paddingLeft="5dp"
-            android:paddingStart="5dp"
-            android:paddingRight="5dp"
-            android:paddingEnd="5dp"
+
+        <RelativeLayout
             android:id="@+id/bottom_wrapper"
             android:layout_width="match_parent"
-            android:weightSum="1"
             android:layout_height="match_parent"
-            android:layout_gravity="end">
-            <!--What you want to show-->
-            <EditText
-                android:id="@+id/qrecommend_text"
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="text (optional)"/>
-            <ImageButton
-                android:layout_weight="1"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:id="@+id/postBtnRecommend"
-                android:src="@drawable/thumb_up"
-                android:background="#00FFFFFF"/>
-        </LinearLayout>
+            android:layout_gravity="end"
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:paddingLeft="5dp"
-            android:paddingStart="5dp"
-            android:paddingRight="5dp"
             android:paddingEnd="5dp"
-            android:id="@+id/bottom_wrapper_right"
-            android:layout_width="match_parent"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingStart="5dp"
             android:weightSum="1"
-            android:layout_height="match_parent"
-            android:layout_gravity="end">
+            android:minHeight="0dp">
             <!--What you want to show-->
             <EditText
                 android:id="@+id/qcomment_text"
-                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Enter a quick comment"/>
+                android:layout_alignParentTop="true"
+                android:hint="Enter a quick comment"
+                android:layout_toLeftOf="@+id/qcomment_button"
+                android:layout_toStartOf="@+id/qcomment_button"
+                android:gravity="top"
+                />
+
             <ImageButton
                 android:id="@+id/qcomment_button"
-                android:layout_weight="1"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
                 android:background="#00FFFFFF"
-                android:src="@drawable/ic_menu_send"/>
-        </LinearLayout>
+                android:src="@drawable/ic_menu_send" />
+
+            <ImageButton
+                android:id="@+id/qrecommend_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_above="@+id/qcomment_button"
+                android:background="#00FFFFFF"
+                android:src="@drawable/thumb_up" />
+        </RelativeLayout>
 
         <!-- Bottom View End-->
 
@@ -70,118 +66,199 @@
 
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:id="@+id/postListItemSurface"
-            >
-            <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/civPostAuthorAvatar"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/account_box"
-                />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-
-            <TextView
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:id="@+id/recommend_info"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="\@user"
-                android:id="@+id/tvPostAuthorNick"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingStart="@dimen/activity_horizontal_margin"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/civPostAuthorAvatar"
-                android:layout_toEndOf="@+id/civPostAuthorAvatar"
-                android:textColor="@color/colorPrimaryDark"
-                android:textStyle="bold"
-                android:textSize="18sp" />
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/postRecThumbUp"
+                    android:layout_width="24dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:background="#00FFFFFF"
+                    android:src="@drawable/thumb_up" />
+
+                <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/recommend_avatar"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_toRightOf="@+id/postRecThumbUp"
+                    android:src="@drawable/account_box" />
+
+                <TextView
+                    android:id="@+id/recommend_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_toEndOf="@+id/recommend_avatar"
+                    android:layout_toRightOf="@+id/recommend_avatar"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingStart="@dimen/activity_horizontal_margin"
+                    android:text="\@user"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/recommend_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/recommend_avatar"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingStart="@dimen/activity_horizontal_margin"
+                    android:text="Recommendation text"
+
+                    android:textColor="#999"
+                    android:textSize="12sp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/recommend_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:text="#aaaaa"
+                    android:textColor="@android:color/black"
+                    android:textSize="14dp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/post_details"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="2016/02/07 в 12:05"
-                android:textSize="14sp"
-                android:id="@+id/tvPostDate"
-                android:layout_below="@+id/tvPostId"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"/>
+                android:layout_below="@+id/recommend_info">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="#aaaaa"
-                android:id="@+id/tvPostId"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-
-                android:textColor="@android:color/black"
-                android:textStyle="bold"
-                android:textSize="20dp"
-                />
+                <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/avatar"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/account_box" />
 
 
+                <TextView
+                    android:id="@+id/author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_alignTop="@+id/avatar"
+                    android:layout_toEndOf="@+id/avatar"
+                    android:layout_toRightOf="@+id/avatar"
+                    android:paddingLeft="@dimen/activity_horizontal_margin"
+                    android:paddingStart="@dimen/activity_horizontal_margin"
+                    android:text="\@user"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/post_id"
+                    android:text="2016/02/07 в 12:05"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/post_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@+id/avatar"
+                    android:text="#aaaaa"
+
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <im.point.torgash.daspoint.widgets.FlowLayout
+                    android:id="@+id/tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/avatar"
+                    android:layout_marginTop="4dp"
+                    >
+
+
+                    <include layout="@layout/tag"
+                        />
+                </im.point.torgash.daspoint.widgets.FlowLayout>
+            </RelativeLayout>
         </RelativeLayout>
         <!-- Surface View End -->
     </com.daimajia.swipe.SwipeLayout>
 
 
-
     <LinearLayout
-        android:layout_below="@+id/swipePostListItemPart"
-        android:orientation="vertical"
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/swipePostListItemPart"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/expandable_text"
+            android:id="@+id/text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
-            android:textSize="16sp"
-            android:linksClickable="true"
             android:autoLink="web"
+            android:linksClickable="true"
             android:scrollbars="none"
             android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
-            />
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
             <ImageView
-                android:layout_weight="1"
                 android:id="@+id/ivComments"
                 android:layout_width="48dp"
                 android:layout_height="32dp"
-
                 android:layout_gravity="right|bottom"
-                android:background="@android:color/transparent"
-                android:src="@drawable/comment"/>
-            <TextView
-                android:id="@+id/post_comments_count"
+
                 android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/comment" />
+
+            <TextView
+                android:id="@+id/comments"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
                 android:text="13"
                 android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_gravity="center_vertical"/>
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
             <ImageView
-                android:layout_weight="1"
                 android:id="@id/expand_collapse"
                 android:layout_width="64dp"
                 android:layout_height="32dp"
-                android:scaleType="centerCrop"
                 android:layout_gravity="right|bottom"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:src="@drawable/chevron_down"/>
+                android:scaleType="centerCrop"
+                android:src="@drawable/chevron_down" />
         </LinearLayout>
     </LinearLayout>
 
-    </RelativeLayout>
+</RelativeLayout>
 
 
 
