@@ -29,7 +29,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import im.point.torgash.daspoint.fragments.AllPostsListFragment;
 import im.point.torgash.daspoint.fragments.BasePostListFragment;
+import im.point.torgash.daspoint.fragments.BlogPostListFragment;
+import im.point.torgash.daspoint.fragments.CommentsListFragment;
 import im.point.torgash.daspoint.fragments.RecentPostListFragment;
 import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
 import im.point.torgash.daspoint.point.Authorization;
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity
     String username;
     Handler h;
     FloatingActionButton fab;
+    Toolbar toolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
@@ -110,7 +114,13 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
+        mOnErrorShowInSnackbarListener = new OnErrorShowInSnackbarListener() {
+            @Override
+            public void onErrorShow(String error) {
+                Snackbar.make(toolbar, error, Snackbar.LENGTH_LONG)
+                        .setAction("Discard", null).show();
+            }
+        };
         //Let's implement our placeholder fragment here
 
 
@@ -123,7 +133,8 @@ public class MainActivity extends AppCompatActivity
         username = prefs.getString("username", "");
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(0);
+        navigationView.setCheckedItem(R.id.nav_recent);
+        onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_recent));
         final ImageView ivUserAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.ivUserAvatar);
         TextView tvUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserName);
         tvUserName.setText(username);
@@ -191,15 +202,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             ImageLoader.getInstance().displayImage("http://i.point.im/a/280/" + prefs.getString("user_avatar", ""), ivUserAvatar);
         }
-        mOnErrorShowInSnackbarListener = new OnErrorShowInSnackbarListener() {
-            @Override
-            public void onErrorShow(String error) {
-                Snackbar.make(fab, error, Snackbar.LENGTH_LONG)
-                        .setAction("Discard", null).show();
-            }
-        };
-        RecentPostListFragment.getInstance().setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
-        getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, RecentPostListFragment.getInstance()).commit();
+//
     }
 
     @Override
@@ -242,14 +245,25 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_recent) {
             RecentPostListFragment recentPostListFragment = RecentPostListFragment.getInstance();
+            recentPostListFragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, recentPostListFragment).commit();
-            // Handle the camera action
+            setTitle("Recent");
+
         } else if (id == R.id.nav_blog) {
-
+            BlogPostListFragment blogPostListFragment = BlogPostListFragment.getInstance();
+            blogPostListFragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+            getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, blogPostListFragment).commit();
+            setTitle("Blog");
         } else if (id == R.id.nav_comments) {
-
+            CommentsListFragment commentsListFragment = CommentsListFragment.getInstance();
+            commentsListFragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+            getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, commentsListFragment).commit();
+            setTitle("Comments");
         } else if (id == R.id.nav_all) {
-
+            AllPostsListFragment allPostsListFragment = AllPostsListFragment.getInstance();
+            allPostsListFragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+            getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, allPostsListFragment).commit();
+            setTitle("All");
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_logout) {

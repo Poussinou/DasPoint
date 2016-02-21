@@ -103,10 +103,11 @@ public class PostsLoader {
 
                     } else {
                         request = new Request.Builder()
-                                .url(mApiURL)
+                                .url(mApiURL + "?before=" + mBefore)
                                 .header("Authorization", Authorization.getToken())
                                 .header("csrf_token", Authorization.getCSRFToken())
-                                .header("before", String.valueOf(mBefore))
+
+
                                 .build();
                     }
 
@@ -158,7 +159,7 @@ public class PostsLoader {
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Message msg = networkBackgroundRequestHandler.obtainMessage(MSG_ERROR, e.toString());
+                    Message msg = networkBackgroundRequestHandler.obtainMessage(MSG_ERROR, "Network not available.");
                     networkBackgroundRequestHandler.sendMessage(msg);
 
                 }
@@ -167,11 +168,11 @@ public class PostsLoader {
         getPostList.start();
     }
 
-    public void setmOnPostListUpdateListener(OnPostListUpdateListener listener) {
+    public void setOnPostListUpdateListener(OnPostListUpdateListener listener) {
         mOnPostListUpdateListener = listener;
     }
 
-    public void setmOnPostListLoadMoreListener(OnPostListLoadMoreListener listener) {
+    public void setOnPostListLoadMoreListener(OnPostListLoadMoreListener listener) {
         mOnPostListLoadMoreListener = listener;
     }
 

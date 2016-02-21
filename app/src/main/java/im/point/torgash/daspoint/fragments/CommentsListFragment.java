@@ -6,14 +6,14 @@ import im.point.torgash.daspoint.utils.Constants;
 /**
  * Created by torgash on 19.02.16.
  */
-public class RecentPostListFragment extends BasePostListFragment {
-    static RecentPostListFragment instance;
-    public RecentPostListFragment(){
+public class CommentsListFragment extends BasePostListFragment {
+    static CommentsListFragment instance;
+    public CommentsListFragment(){
 
     }
-    public static RecentPostListFragment getInstance(){
+    public static CommentsListFragment getInstance(){
         if(null == instance){
-            return new RecentPostListFragment();
+            return new CommentsListFragment();
         }
         else return instance;
     }
@@ -21,7 +21,7 @@ public class RecentPostListFragment extends BasePostListFragment {
     @Override
     void loadPosts() {
 
-        PostsLoader loader = new PostsLoader(Constants.POINT_API_RECENT_URL);
+        PostsLoader loader = new PostsLoader(Constants.POINT_API_COMMENTS_URL);
         loader.setOnPostListUpdateListener(mOnPostListUpdateListener);
         loader.getPosts();
     }
@@ -29,7 +29,7 @@ public class RecentPostListFragment extends BasePostListFragment {
     @Override
     void loadMore(long before) {
 
-        PostsLoader loader = new PostsLoader(Constants.POINT_API_RECENT_URL, before);
+        PostsLoader loader = new PostsLoader(Constants.POINT_API_COMMENTS_URL, before);
         loader.setOnPostListLoadMoreListener(mOnPostListLoadMoreListener);
         loader.getPosts();
     }

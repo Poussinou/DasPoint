@@ -313,45 +313,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             }
         });
-//        holder.swipeLayout.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(final View v, boolean hasFocus) {
-//                if (hasFocus) {
-//                    // Request focus in a short time because the
-//                    // keyboard may steal it away.
-//                    v.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            if (!v.hasFocus()) {
-//                                v.requestFocus();
-//                            }
-//                        }
-//                    }, 1000);
-//                }
-//            }
-//        });
 
-//        TextView tvQcommentInput = (TextView)holder.mView.findViewById(R.id.qcomment_text);
-//        tvQcommentInput.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            final int minDelta = 300;           // threshold in ms
-//            long focusTime = 0;                 // time of last touch
-//            View focusTarget = null;
-//            @Override
-//            public void onFocusChange(final View v, boolean hasFocus) {
-//                if (hasFocus) {
-//                    // Request focus in a short time because the
-//                    // keyboard may steal it away.
-//                    v.postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            if (!v.hasFocus()) {
-//                                v.requestFocus();
-//                            }
-//                        }
-//                    }, 1000);
-//                }
-//            }
-//        });
     }
 
     @Override

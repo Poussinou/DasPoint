@@ -9,12 +9,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import im.point.torgash.daspoint.MainActivity;
@@ -34,7 +36,7 @@ public abstract class BasePostListFragment extends Fragment {
 
     private View rootView;
     private int section_number;
-
+    boolean mIsLoadingMore;
     protected OnPostListUpdateListener mOnPostListUpdateListener;
     protected OnPostListLoadMoreListener mOnPostListLoadMoreListener;
     protected OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
@@ -80,19 +82,55 @@ public abstract class BasePostListFragment extends Fragment {
 
             @Override
             public void onError(String error) {
+                if (mSwipeRefresh.isRefreshing()) {
+                    mSwipeRefresh.setRefreshing(false);
+                }
+                Log.d("DP", "Error: " + error);
+                if (mOnErrorShowInSnackbarListener != null) {
+
+                    mOnErrorShowInSnackbarListener.onErrorShow(error);
+                }
+            }
+        };
+        mOnPostListLoadMoreListener = new OnPostListLoadMoreListener() {
+            @Override
+            public void onPostListLoadMore(PostList postList) {
+                adapter.appendData(getActivity(), postList);
+            }
+
+            @Override
+            public void onError(String error) {
                 mOnErrorShowInSnackbarListener.onErrorShow(error);
             }
         };
-        adapter.setOnPostListUpdateListener(mOnPostListUpdateListener);
 
+
+        adapter.setOnLoadMoreRequestListener(new PostListAdapter.OnLoadMoreRequestListener() {
+            @Override
+            public boolean onLoadMoreRequested() {
+
+                if (mIsLoadingMore) {
+                    //do nothing
+                } else {
+                    List<PointPost> posts = adapter.getPostList().posts;
+                    if (posts.size() < 1) {
+                        adapter.getPostList().has_next = false;
+                        return false;
+                    } else {
+                        loadMore(posts.get(posts.size() - 1).uid);
+                    }
+                }
+                return true;
+            }
+        });
         rvPostList.setAdapter(adapter);
-
+        loadPosts();
         return rootView;
     }
 
     abstract void loadPosts();
 
-    abstract void loadMorePosts(long before);
+    abstract void loadMore(long before);
 
     protected PostListAdapter createAdapter() {
         return new PostListAdapter(getActivity());

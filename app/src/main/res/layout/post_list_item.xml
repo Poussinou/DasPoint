@@ -247,7 +247,7 @@
                 android:textStyle="bold" />
 
             <ImageView
-                android:id="@id/expand_collapse"
+                android:id="@+id/expand_collapse"
                 android:layout_width="64dp"
                 android:layout_height="32dp"
                 android:layout_gravity="right|bottom"
