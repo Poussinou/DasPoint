@@ -101,6 +101,13 @@ public class MainActivity extends AppCompatActivity
             Authorization.setCSRFToken(csrf_token);
         }
 
+        mOnErrorShowInSnackbarListener = new OnErrorShowInSnackbarListener() {
+            @Override
+            public void onErrorShow(String error) {
+                Snackbar.make(toolbar, error, Snackbar.LENGTH_LONG)
+                        .setAction("Discard", null).show();
+            }
+        };
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -114,13 +121,6 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-        mOnErrorShowInSnackbarListener = new OnErrorShowInSnackbarListener() {
-            @Override
-            public void onErrorShow(String error) {
-                Snackbar.make(toolbar, error, Snackbar.LENGTH_LONG)
-                        .setAction("Discard", null).show();
-            }
-        };
         //Let's implement our placeholder fragment here
 
 
@@ -244,24 +244,20 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_recent) {
-            RecentPostListFragment recentPostListFragment = RecentPostListFragment.getInstance();
-            recentPostListFragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+            RecentPostListFragment recentPostListFragment = RecentPostListFragment.getInstance(mOnErrorShowInSnackbarListener);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, recentPostListFragment).commit();
             setTitle("Recent");
 
         } else if (id == R.id.nav_blog) {
-            BlogPostListFragment blogPostListFragment = BlogPostListFragment.getInstance();
-            blogPostListFragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+            BlogPostListFragment blogPostListFragment = BlogPostListFragment.getInstance(mOnErrorShowInSnackbarListener);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, blogPostListFragment).commit();
             setTitle("Blog");
         } else if (id == R.id.nav_comments) {
-            CommentsListFragment commentsListFragment = CommentsListFragment.getInstance();
-            commentsListFragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+            CommentsListFragment commentsListFragment = CommentsListFragment.getInstance(mOnErrorShowInSnackbarListener);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, commentsListFragment).commit();
             setTitle("Comments");
         } else if (id == R.id.nav_all) {
-            AllPostsListFragment allPostsListFragment = AllPostsListFragment.getInstance();
-            allPostsListFragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+            AllPostsListFragment allPostsListFragment = AllPostsListFragment.getInstance(mOnErrorShowInSnackbarListener);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, allPostsListFragment).commit();
             setTitle("All");
         } else if (id == R.id.nav_share) {

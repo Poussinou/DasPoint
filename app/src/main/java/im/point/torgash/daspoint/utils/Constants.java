@@ -8,5 +8,6 @@ public class Constants {
     public static String POINT_API_BLOG_URL = "http://point.im/api/blog/";
     public static String POINT_API_COMMENTS_URL = "http:/point.im/api/comments";
     public static String POINT_API_ALL_URL = "http://point.im/api/all";
-
+    public static String POINT_API_COMMON = "http://point.im/api/";
+    public static String POINT_API_COMMENT = "http://point.im/api/post/";
 }

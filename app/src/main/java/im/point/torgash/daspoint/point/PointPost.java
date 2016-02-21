@@ -58,9 +58,10 @@ public class PointPost {
             subscribed = Boolean.valueOf((postObject.get("subscribed")).toString());
             editable = Boolean.valueOf((postObject.get("editable")).toString());
             recommended = Boolean.valueOf((postObject.get("recommended")).toString());
-            if (postDetails.has("comment_id") && null != postDetails.get("comment_id")) {
-                commentId = postDetails.get("comment_id").toString();
-            }
+            if (postObject.has("comment_id") && !postObject.get("comment_id").toString().equals("null")) {
+                Log.d("DP", "Comment_id: " + postObject.getString("comment_id") + " " + postObject.get("comment_id").toString());
+                commentId = postObject.getString("comment_id");
+            } else commentId = "null";
             if (isRecommended) {
                 JSONObject postRecommendationSection = postObject.getJSONObject("rec");
                 recText = postRecommendationSection.get("text").toString();

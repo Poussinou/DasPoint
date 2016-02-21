@@ -39,7 +39,10 @@ public abstract class BasePostListFragment extends Fragment {
     boolean mIsLoadingMore;
     protected OnPostListUpdateListener mOnPostListUpdateListener;
     protected OnPostListLoadMoreListener mOnPostListLoadMoreListener;
-    protected OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
+    static OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
+
+    PostListAdapter adapter;
+
     Handler h;
     private ArrayList<PointPost> postArrayList;
     private SwipeRefreshLayout mSwipeRefresh;
@@ -69,7 +72,7 @@ public abstract class BasePostListFragment extends Fragment {
 
         final RecyclerView rvPostList = (RecyclerView) rootView.findViewById(R.id.postList);
         rvPostList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayout.VERTICAL, false));
-        final PostListAdapter adapter = createAdapter();
+        adapter = createAdapter();
 
         mOnPostListUpdateListener = new OnPostListUpdateListener() {
             @Override
@@ -103,7 +106,7 @@ public abstract class BasePostListFragment extends Fragment {
                 mOnErrorShowInSnackbarListener.onErrorShow(error);
             }
         };
-
+        adapter.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
 
         adapter.setOnLoadMoreRequestListener(new PostListAdapter.OnLoadMoreRequestListener() {
             @Override
@@ -138,5 +141,6 @@ public abstract class BasePostListFragment extends Fragment {
 
     public void setOnErrorShowInSnackbarListener(OnErrorShowInSnackbarListener listener) {
         mOnErrorShowInSnackbarListener = listener;
+        adapter.setOnErrorShowInSnackbarListener(listener);
     }
 }

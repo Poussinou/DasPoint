@@ -17,13 +17,8 @@
         <RelativeLayout
             android:id="@+id/bottom_wrapper"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="96dp"
             android:layout_gravity="end"
-
-            android:paddingEnd="5dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingStart="5dp"
             android:weightSum="1"
             android:minHeight="0dp">
             <!--What you want to show-->
@@ -58,6 +53,7 @@
                 android:layout_above="@+id/qcomment_button"
                 android:background="#00FFFFFF"
                 android:src="@drawable/thumb_up" />
+
         </RelativeLayout>
 
         <!-- Bottom View End-->
@@ -191,7 +187,10 @@
                     android:layout_below="@+id/avatar"
                     android:layout_marginTop="4dp"
                     >
-
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text=""/>
 
                     <include layout="@layout/tag"
                         />
