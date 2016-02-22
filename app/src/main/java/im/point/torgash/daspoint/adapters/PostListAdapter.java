@@ -27,6 +27,7 @@ import im.point.torgash.daspoint.listeners.CommonRequestCallback;
 import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
 import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
 import im.point.torgash.daspoint.network.Commentator;
+import im.point.torgash.daspoint.network.Recommender;
 import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PostList;
 
@@ -296,6 +297,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             public void onClick(View v) {
                 if (etQCommentText.getText().toString().equals("")) {
                     mOnErrorShowInSnackbarListener.onErrorShow("Не надо пустоты");
+                    return;
                 }
 
 
@@ -367,9 +369,9 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 };
                 if (post.commentId.equals("null")) {
 
-                    new Commentator(post.postId, etQCommentText.getText().toString(), callback).postComment();
+                    new Recommender(post.postId, etQCommentText.getText().toString(), callback).postComment();
                 } else {
-                    new Commentator(post.postId, post.commentId, etQCommentText.getText().toString(), callback).postComment();
+                    new Recommender(post.postId, post.commentId, etQCommentText.getText().toString(), callback).postComment();
                 }
 
             }
