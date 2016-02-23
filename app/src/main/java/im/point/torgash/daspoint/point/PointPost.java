@@ -202,8 +202,15 @@ public class PointPost {
                     Map<String, String> tempContentMap = new HashMap<>();
                     String url = matcher.group();
                     int index = matcher.start();
+                    String start;
+                    try{
+                        start = begin.substring(0, index);
+                    }catch (Exception e) {
+                        Log.d("DP", "Error while parsing string: \n" + begin);
+                        e.printStackTrace();
 
-                    String start = begin.substring(0, index);
+                        break;
+                    }
                     Log.d("DP", "PostContents start: " + start);
                     Log.d("DP", "URL in between: " + url);
                     StringBuffer s = new StringBuffer();
@@ -230,7 +237,8 @@ public class PointPost {
                             String title;
                             try {
                                 Document doc = Jsoup.connect(url).get();
-                                title = doc.title();
+                                title = doc.title().trim();
+                                Log.d("DP", "Webpage title parsed: \n" + title);
 
                             } catch (IOException e) {
                                 e.printStackTrace();

@@ -228,7 +228,13 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final PointPost post = mPostList.posts.get(i);
         //Change it to my layout
         //holder.imageList.setImageUrls(post.post.text.images, post.post.files);
-        holder.text.setText(post.postText);
+        holder.llPostContent.removeAllViews();
+        View tv = li.inflate(R.layout.text_view, null);
+        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        holder.llPostContent.addView(tv);
+        TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
+        tView.setText(post.postText);
+
         OnLinksDetectedListener linksDetectedListener = new OnLinksDetectedListener() {
             @Override
             public void onLinksDetected(ArrayList<Map<String,String>> postContents) {

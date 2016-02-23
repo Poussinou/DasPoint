@@ -1,25 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="48dp">
+    android:padding="10dp"
 
+    android:gravity="top">
+    <View
+        android:id="@+id/top_divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/holo_blue_dark"
+        android:layout_alignParentTop="true"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:text="Medium Text"
+        android:textSize="12sp"
+        android:paddingTop="5dp"
+        android:text="Германия отчиталась о крупнейшем профиците бюджета с 1990г."
         android:textStyle="bold"
         android:id="@+id/tv_webpage_title"
-        android:layout_weight="1" />
+        android:layout_below="@+id/top_divider"
+        android:gravity="top"
 
-    <Button
+        android:layout_gravity="top" />
 
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
+    <android.support.v7.widget.AppCompatButton
+
+        android:layout_width="140dp"
+        android:layout_height="48dp"
+        android:minHeight="48dp"
         android:text="LINK"
         android:id="@+id/webpage_button"
-        android:layout_weight="1"
-        android:textColor="@android:color/holo_blue_dark" />
-</LinearLayout>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/tv_webpage_title"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textStyle="bold"
+        />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@android:color/holo_blue_dark"
+        android:layout_below="@+id/webpage_button"/>
+</RelativeLayout>
