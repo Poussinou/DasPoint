@@ -44,7 +44,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     static boolean isInFront;
-
+    TextView tvUserName;
     private OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
     @Override
     public void onResume() {
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity
     static final String AUTH_TOKEN = "auth_token";
     static final String CSRF_TOKEN = "csrf_token";
     static final int MSG_AVATAR = 1;
-    SharedPreferences prefs;
+    protected SharedPreferences prefs;
     String token = "";
     String csrf_token = "";
     String username;
@@ -141,16 +141,19 @@ public class MainActivity extends AppCompatActivity
         navigationView.setCheckedItem(R.id.nav_recent);
         onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_recent));
         final ImageView ivUserAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.ivUserAvatar);
-        TextView tvUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserName);
-        tvUserName.setText(username);
-
+        TextView tvUserNick = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserNick);
+        tvUserNick.setText(username);
+        tvUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserName);
         if (!prefs.contains("user_avatar")) {
             h = new Handler() {
                 public void handleMessage(android.os.Message msg) {
                     switch (msg.what) {
                         case MSG_AVATAR:
-                            if (MainActivity.this.isInFront)
+                            if (MainActivity.this.isInFront){
+
                                 ImageLoader.getInstance().displayImage("http://i.point.im/a/280/" + msg.obj.toString(), ivUserAvatar);
+                                tvUserName.setText(prefs.getString("user_name", ""));
+                            }
 
                             break;
 
@@ -185,10 +188,11 @@ public class MainActivity extends AppCompatActivity
                         }
 
                         String userAvatar = jsonUserInfo.getString("avatar");
-
+                        String userName = jsonUserInfo.getString("name");
                         //writing avatar link to prefs
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putString("user_avatar", userAvatar);
+                        editor.putString("user_name", userName);
                         editor.apply();
                         Message msg = h.obtainMessage(MSG_AVATAR, 0, 0, userAvatar);
                         // отправляем
@@ -206,6 +210,7 @@ public class MainActivity extends AppCompatActivity
             getUserInfo.start();
         } else {
             ImageLoader.getInstance().displayImage("http://i.point.im/a/280/" + prefs.getString("user_avatar", ""), ivUserAvatar);
+            tvUserName.setText(prefs.getString("user_name", ""));
         }
 //
     }
