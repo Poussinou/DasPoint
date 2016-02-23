@@ -68,7 +68,7 @@ public class PointPost {
     boolean isPrivate;
     public String messageLink;
     public String commentId;
-
+    public String[] files;
     public PointPost(JSONObject postObject) {
         try {
             JSONObject postDetails = postObject.getJSONObject("post");
@@ -77,6 +77,7 @@ public class PointPost {
             if (postObject.has("rec")) {
                 isRecommended = true;
             }
+
             uid = Integer.valueOf((postObject.get("uid")).toString());
             subscribed = Boolean.valueOf((postObject.get("subscribed")).toString());
             editable = Boolean.valueOf((postObject.get("editable")).toString());
@@ -128,8 +129,18 @@ public class PointPost {
                 authorAka = "";
             }
 
-
             postText = postDetails.get("text").toString();
+            if (postDetails.has("files")) {
+                JSONArray postFiles = postDetails.getJSONArray("files");
+
+                if (postFiles != null) {
+                    files = new String[postFiles.length()];
+                    for (int i = 0; i < postFiles.length(); i++) {
+                        files[i] = postFiles.get(i).toString();
+                        postText = postText + "\n" + files[i];
+                    }
+                }
+            }
 
             postType = postDetails.get("type").toString();
 
@@ -197,14 +208,15 @@ public class PointPost {
                 Pattern pattern = Patterns.WEB_URL;
                 Matcher matcher = pattern.matcher(postText);
                 String begin = postText;
-
+                String finish = postText;
+                int previousIndex = 0;
                 while (matcher.find()) {
                     Map<String, String> tempContentMap = new HashMap<>();
                     String url = matcher.group();
                     int index = matcher.start();
                     String start;
                     try{
-                        start = begin.substring(0, index);
+                        start = begin.substring(previousIndex, index);
                     }catch (Exception e) {
                         Log.d("DP", "Error while parsing string: \n" + begin);
                         e.printStackTrace();
@@ -213,9 +225,8 @@ public class PointPost {
                     }
                     Log.d("DP", "PostContents start: " + start);
                     Log.d("DP", "URL in between: " + url);
-                    StringBuffer s = new StringBuffer();
-                    matcher.appendTail(s);
-                    begin = s.toString().substring(matcher.end());
+
+
                     Log.d("DP", "PostContents end: " + begin);
                     try {
                         tempContentMap.put("text", start);
@@ -224,12 +235,16 @@ public class PointPost {
 
 
                     } catch (Exception e) {
-                        begin = null;
+
                     }
+                    previousIndex = matcher.end();
                     Map<String, String> tempContentMapURL = new HashMap<>();
+
+                        finish = begin.substring(previousIndex);
 
 
                     String mime = ImageSearchHelper.checkImageLink(url);
+                    Log.d("DP", "Found mime: " + mime);
                     if (mime != null) {
                         if (mime.contains("text")) {
                             //make a Webpage view
@@ -246,16 +261,23 @@ public class PointPost {
                             }
 
                             tempContentMapURL.put("text", title);
+                            tempContentMapURL.put("url", url);
 
                         } else if (mime.contains("image")) {
                             //make an Image view
                             tempContentMapURL.put("mime", "image");
                             tempContentMapURL.put("text", url);
+
+                        } else {
+                            tempContentMapURL.put("mime", "webpage");
+                            tempContentMapURL.put("text", url);
+                            tempContentMapURL.put("url", url);
                         }
 
                     } else {
-                        tempContentMapURL.put("mime", "null");
+                        tempContentMapURL.put("mime", "webpage");
                         tempContentMapURL.put("text", url);
+                        tempContentMapURL.put("url", url);
                     }
                     postContents.add(tempContentMapURL);
 
@@ -265,7 +287,7 @@ public class PointPost {
                 }
                 if (begin != null && !begin.equals("")) {
                     Map<String, String> tempContentMap = new HashMap<>();
-                    tempContentMap.put("text", begin);
+                    tempContentMap.put("text", finish);
                     tempContentMap.put("mime", "text");
                     postContents.add(tempContentMap);
                 }

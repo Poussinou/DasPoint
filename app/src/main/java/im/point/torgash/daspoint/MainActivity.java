@@ -104,8 +104,13 @@ public class MainActivity extends AppCompatActivity
         mOnErrorShowInSnackbarListener = new OnErrorShowInSnackbarListener() {
             @Override
             public void onErrorShow(String error) {
-                Snackbar.make(toolbar, error, Snackbar.LENGTH_LONG)
+                if(isInFront)Snackbar.make(toolbar, error, Snackbar.LENGTH_LONG)
                         .setAction("Discard", null).show();
+            }
+
+            @Override
+            public void onIntentStart(Intent intent) {
+                startActivity(intent);
             }
         };
         setContentView(R.layout.activity_main);

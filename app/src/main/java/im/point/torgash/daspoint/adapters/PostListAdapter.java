@@ -4,13 +4,16 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -25,6 +28,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import java.util.ArrayList;
 import java.util.Map;
 
+import im.point.torgash.daspoint.ImageViewFullscreenActivity;
 import im.point.torgash.daspoint.MainActivity;
 import im.point.torgash.daspoint.R;
 import im.point.torgash.daspoint.listeners.CommonRequestCallback;
@@ -247,14 +251,30 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         holder.llPostContent.addView(iv);
                         ImageView ivPostImageView = (ImageView)iv.findViewById(R.id.post_image_view);
                         ImageLoader.getInstance().displayImage(m.get("text"), ivPostImageView);
+                        final String url = m.get("text");
+                        ivPostImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (!url.contains(".gif")) {
+                                    Intent intent = new Intent(mContext, ImageViewFullscreenActivity.class);
+                                    intent.putExtra("url", url);
+                                    mOnErrorShowInSnackbarListener.onIntentStart(intent);
 
+                                }
+                                else {
+                                    mOnErrorShowInSnackbarListener.onErrorShow("Поддержка GIF еще не запилена.");
+                                }
+                            }
+                        });
+                        Log.d("DP", "Created imageview");
                     }
-                    if(mime.equals("text")) {
+                    if(mime.equals("text") && !m.get("text").trim().equals("")) {
                         View tv = li.inflate(R.layout.text_view, null);
                         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         holder.llPostContent.addView(tv);
                         TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
-                        tView.setText(m.get("text"));
+                        tView.setText(m.get("text").trim());
+                        Log.d("DP", "Created textview with text: \n " + m.get("text"));
                     }
                     if(mime.equals("webpage")){
                         View tv = li.inflate(R.layout.webpage_link, null);
@@ -262,7 +282,16 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         holder.llPostContent.addView(tv);
                         TextView tView = (TextView) tv.findViewById(R.id.tv_webpage_title);
                         tView.setText(m.get("text"));
-
+                        Log.d("DP", "Created webpage view with text: \n " + m.get("text"));
+                        Button btnLink = (Button) tv.findViewById(R.id.webpage_button);
+                        final String url = m.get("url");
+                        btnLink.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                mOnErrorShowInSnackbarListener.onIntentStart(intent);
+                            }
+                        });
                     }
 
                 }
