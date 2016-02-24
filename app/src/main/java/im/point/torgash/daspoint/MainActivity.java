@@ -13,7 +13,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +38,7 @@ import im.point.torgash.daspoint.fragments.CommentsListFragment;
 import im.point.torgash.daspoint.fragments.RecentPostListFragment;
 import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
 import im.point.torgash.daspoint.point.Authorization;
+import im.point.torgash.daspoint.utils.Constants;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -44,7 +47,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     static boolean isInFront;
-
+    TextView tvUserName;
     private OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
     @Override
     public void onResume() {
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity
     static final String AUTH_TOKEN = "auth_token";
     static final String CSRF_TOKEN = "csrf_token";
     static final int MSG_AVATAR = 1;
-    SharedPreferences prefs;
+    protected SharedPreferences prefs;
     String token = "";
     String csrf_token = "";
     String username;
@@ -72,7 +75,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics ();
+        display.getMetrics(outMetrics);
 
+        float density  = getResources().getDisplayMetrics().density;
+        float dpHeight = outMetrics.heightPixels / density;
+        float dpWidth  = outMetrics.widthPixels / density;
+        Constants.DISPLAY_PX_HEIGHT = outMetrics.heightPixels;
+        Constants.DISPLAY_PX_WIDTH = outMetrics.widthPixels;
         //UIL initialization
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
 
@@ -104,8 +115,13 @@ public class MainActivity extends AppCompatActivity
         mOnErrorShowInSnackbarListener = new OnErrorShowInSnackbarListener() {
             @Override
             public void onErrorShow(String error) {
-                Snackbar.make(toolbar, error, Snackbar.LENGTH_LONG)
+                if(isInFront)Snackbar.make(toolbar, error, Snackbar.LENGTH_LONG)
                         .setAction("Discard", null).show();
+            }
+
+            @Override
+            public void onIntentStart(Intent intent) {
+                startActivity(intent);
             }
         };
         setContentView(R.layout.activity_main);
@@ -136,16 +152,19 @@ public class MainActivity extends AppCompatActivity
         navigationView.setCheckedItem(R.id.nav_recent);
         onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_recent));
         final ImageView ivUserAvatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.ivUserAvatar);
-        TextView tvUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserName);
-        tvUserName.setText(username);
-
+        TextView tvUserNick = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserNick);
+        tvUserNick.setText(username);
+        tvUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserName);
         if (!prefs.contains("user_avatar")) {
             h = new Handler() {
                 public void handleMessage(android.os.Message msg) {
                     switch (msg.what) {
                         case MSG_AVATAR:
-                            if (MainActivity.this.isInFront)
+                            if (MainActivity.this.isInFront){
+
                                 ImageLoader.getInstance().displayImage("http://i.point.im/a/280/" + msg.obj.toString(), ivUserAvatar);
+                                tvUserName.setText(prefs.getString("user_name", ""));
+                            }
 
                             break;
 
@@ -180,10 +199,11 @@ public class MainActivity extends AppCompatActivity
                         }
 
                         String userAvatar = jsonUserInfo.getString("avatar");
-
+                        String userName = jsonUserInfo.getString("name");
                         //writing avatar link to prefs
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putString("user_avatar", userAvatar);
+                        editor.putString("user_name", userName);
                         editor.apply();
                         Message msg = h.obtainMessage(MSG_AVATAR, 0, 0, userAvatar);
                         // отправляем
@@ -201,6 +221,7 @@ public class MainActivity extends AppCompatActivity
             getUserInfo.start();
         } else {
             ImageLoader.getInstance().displayImage("http://i.point.im/a/280/" + prefs.getString("user_avatar", ""), ivUserAvatar);
+            tvUserName.setText(prefs.getString("user_name", ""));
         }
 //
     }
