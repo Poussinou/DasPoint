@@ -367,6 +367,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final ImageButton qCommentButton = (ImageButton) holder.swipeLayout.findViewById(R.id.qcomment_button);
         final ImageButton qRecommendButton = (ImageButton) holder.swipeLayout.findViewById(R.id.qrecommend_button);
         final EditText etQCommentText = (EditText) holder.swipeLayout.findViewById(R.id.qcomment_text);
+
         qCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
