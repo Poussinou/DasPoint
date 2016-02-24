@@ -13,7 +13,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +38,7 @@ import im.point.torgash.daspoint.fragments.CommentsListFragment;
 import im.point.torgash.daspoint.fragments.RecentPostListFragment;
 import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
 import im.point.torgash.daspoint.point.Authorization;
+import im.point.torgash.daspoint.utils.Constants;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -72,7 +75,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics ();
+        display.getMetrics(outMetrics);
 
+        float density  = getResources().getDisplayMetrics().density;
+        float dpHeight = outMetrics.heightPixels / density;
+        float dpWidth  = outMetrics.widthPixels / density;
+        Constants.DISPLAY_PX_HEIGHT = outMetrics.heightPixels;
+        Constants.DISPLAY_PX_WIDTH = outMetrics.widthPixels;
         //UIL initialization
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
 

@@ -16,5 +16,8 @@ public class Constants {
     public static String POST_IMAGE_URL = "post_image_url";
     public static String POST_PLAIN_TEXT = "post_plain_text";
 
-
+    public static float DISPLAY_DP_WIDTH;
+    public static float DISPLAY_DP_HEIGHT;
+    public static float DISPLAY_PX_WIDTH;
+    public static float DISPLAY_PX_HEIGHT;
 }
