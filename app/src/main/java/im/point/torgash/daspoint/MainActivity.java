@@ -89,13 +89,16 @@ public class MainActivity extends AppCompatActivity
 
                 .cacheInMemory(true)
                 .cacheOnDisk(true)
-
+                .showImageOnFail(R.mipmap.image_load_failed)
+                .showImageOnLoading(R.drawable.timer_sand)
                 .build();
+
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
 
                 .defaultDisplayImageOptions(defaultOptions)
                 .diskCacheSize(100 * 1024 * 1024)
                 .memoryCacheSize(16 * 1024 * 1024)
+
                 .build();
         ImageLoader.getInstance().init(config);
 

@@ -72,19 +72,27 @@ public class ImageSearchHelper {
     }
 
     public static String checkImageLink(String link) {
-        try {
-            Log.d("ImageSearchHelper", "Checking: " + link);
-            URLConnection connection = new URL(link).openConnection();
-            connection.setDoInput(false);
-            connection.setDoInput(false);
-            String contentType = connection.getHeaderField("Content-Type");
-            return contentType;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            return null;
+        String mime = sLinksChecked.get(link);
+
+        if (mime == null) {
+            try {
+                Log.d("ImageSearchHelper", "Checking: " + link);
+                URLConnection connection = new URL(link).openConnection();
+                connection.setDoInput(false);
+                connection.setDoInput(false);
+                String contentType = connection.getHeaderField("Content-Type");
+                sLinksChecked.put(link, contentType);
+                return contentType;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+        else{
+            return sLinksChecked.get(link);
         }
     }
 }

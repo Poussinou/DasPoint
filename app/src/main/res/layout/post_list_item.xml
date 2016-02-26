@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_margin="4dp"
+    card_view:cardCornerRadius="4dp">
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
     android:id="@+id/postListItem"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding = "4dp"
     android:layout_margin="4dp"
     android:background="@drawable/post_list_item_background"
+    android:animateLayoutChanges="true"
     >
+
 
 
         <!-- Bottom View Start-->
@@ -93,7 +106,8 @@
                         android:paddingStart="@dimen/activity_horizontal_margin"
                         android:layout_toRightOf="@+id/rec_divider"
                         android:text="Recommendation text"
-
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"
                         android:textColor="#999"
                         android:textSize="12sp"
                         android:textStyle="italic" />
@@ -162,18 +176,23 @@
                         android:textColor="@android:color/black"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-
+                    <View
+                        android:id="@+id/post_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="3px"
+                        android:background="@drawable/gradient_line"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginTop="3dp"
+                        android:layout_below="@+id/author"/>
                     <im.point.torgash.daspoint.widgets.FlowLayout
                         android:id="@+id/tags"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/avatar"
+                        android:layout_below="@+id/post_divider"
                         android:layout_marginTop="4dp"
+                        android:layout_marginBottom="5dp"
                         >
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:text=""/>
+
 
                         <include layout="@layout/tag"
                             />
@@ -220,15 +239,18 @@
             android:layout_gravity="end"
             android:weightSum="1"
             android:minHeight="0dp"
-            android:background="#EEEEEEEE"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:paddingBottom="5dp"
+            android:animateLayoutChanges="true">
             <!--What you want to show-->
+
             <EditText
                 android:id="@+id/qcomment_text"
+                android:background="@android:drawable/editbox_background"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
+                android:layout_alignTop="@+id/qrecommend_button"
                 android:layout_alignBottom="@+id/qcomment_button"
                 android:hint="Enter a quick comment"
                 android:layout_toLeftOf="@+id/qcomment_button"
@@ -245,7 +267,7 @@
 
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
+
                 android:background="@drawable/circle"
                 android:src="@drawable/thumb_up_white"
 
@@ -254,6 +276,7 @@
                 android:id="@+id/qrec_button_divider"
                 android:layout_width="40dp"
                 android:layout_height="5dp"
+                android:layout_alignParentRight="true"
                 android:layout_below="@+id/qrecommend_button"/>
             <ImageButton
                 android:id="@+id/qcomment_button"
@@ -266,33 +289,34 @@
                 android:src="@drawable/comment_white"
                 />
 
+
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            >
+            <View
+                android:id="@+id/bottom_section_divider"
+                android:layout_width="match_parent"
+                android:layout_height="3px"
+                android:background="@drawable/gradient_line"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_alignParentTop="true"/>
 
-            <ImageView
-                android:id="@+id/ivComments"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="right|bottom"
-
-                android:layout_alignParentLeft="true"
-                android:background="@android:color/transparent"
-                android:src="@drawable/comment" />
-
-            <TextView
-                android:id="@+id/comments"
+            <android.support.v7.widget.AppCompatButton
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_toRightOf="@+id/ivComments"
-                android:layout_alignBaseline="@+id/ivComments"
-                android:text="13"
+                android:layout_height="48dp"
+                android:minHeight="48dp"
+                android:text="72"
+                android:id="@+id/btnComments"
+                android:layout_below="@+id/bottom_section_divider"
+                android:layout_alignParentLeft="true"
                 android:textColor="@android:color/black"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textSize="18sp"
+                android:textStyle="bold"
+
+                android:drawableLeft="@drawable/comment"/>
 
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="wrap_content"
@@ -300,7 +324,7 @@
                 android:minHeight="48dp"
                 android:text="/"
                 android:id="@+id/qcomment_toggle"
-                android:layout_alignParentTop="true"
+                android:layout_below="@+id/bottom_section_divider"
                 android:layout_alignParentRight="true"
                 android:textColor="@android:color/black"
                 android:textSize="24sp"
@@ -310,8 +334,8 @@
         </RelativeLayout>
 
     </LinearLayout>
-
 </RelativeLayout>
+</android.support.v7.widget.CardView>
 
 
 

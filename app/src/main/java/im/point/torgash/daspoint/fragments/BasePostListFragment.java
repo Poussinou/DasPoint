@@ -27,6 +27,7 @@ import im.point.torgash.daspoint.listeners.OnPostListLoadMoreListener;
 import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
 import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PostList;
+import im.point.torgash.daspoint.widgets.EmptyRecyclerView;
 
 /**
  * Created by Boss on 15.02.2016.
@@ -70,7 +71,7 @@ public abstract class BasePostListFragment extends Fragment {
         });
 
 
-        final RecyclerView rvPostList = (RecyclerView) rootView.findViewById(R.id.postList);
+        final EmptyRecyclerView rvPostList = (EmptyRecyclerView) rootView.findViewById(R.id.postList);
         rvPostList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayout.VERTICAL, false));
         adapter = createAdapter();
 
@@ -127,8 +128,10 @@ public abstract class BasePostListFragment extends Fragment {
             }
         });
         rvPostList.setHasFixedSize(true);
-
+        View emptyView = rootView.findViewById(R.id.emptyview);
+        rvPostList.setItemViewCacheSize(8);
         rvPostList.setAdapter(adapter);
+        rvPostList.setEmptyView(emptyView);
         loadPosts();
         return rootView;
     }

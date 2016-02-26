@@ -255,6 +255,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         holder.llPostContent.addView(iv);
                         ImageView ivPostImageView = (ImageView)iv.findViewById(R.id.post_image_view);
                         ImageLoader.getInstance().displayImage(m.get("text"), ivPostImageView);
+
                         final String url = m.get("text");
                         ivPostImageView.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -526,7 +527,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final TextView post_id;
         final View recommend_info;
         final TextView recommend_id;
-        final TextView comments;
+        final Button comments;
         final TextView date;
         View swipeLayout;
         LinearLayout llPostContent;
@@ -551,7 +552,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             post_id = (TextView) itemView.findViewById(R.id.post_id);
             recommend_info = itemView.findViewById(R.id.recommend_info);
             recommend_id = (TextView) itemView.findViewById(R.id.recommend_id);
-            comments = (TextView) itemView.findViewById(R.id.comments);
+            comments = (Button) itemView.findViewById(R.id.btnComments);
 
             date = (TextView) itemView.findViewById(R.id.date);
 

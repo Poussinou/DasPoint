@@ -161,7 +161,7 @@ public class PointPost {
             } catch (ParseException e) {
                 Log.d("JSON", "Date parsing exception.", e);
             }
-            SimpleDateFormat sdfout = new SimpleDateFormat("yyyy-MM-dd' 'HH.mm.ss");
+            SimpleDateFormat sdfout = new SimpleDateFormat("HH:mm' 'MMM dd, yyyy");
             postCreated = qdate;
             postCreatedString = sdfout.format(qdate);
 
@@ -213,6 +213,7 @@ public class PointPost {
                 while (matcher.find()) {
                     Map<String, String> tempContentMap = new HashMap<>();
                     String url = matcher.group();
+                    boolean urlStartsWithHttp = url.startsWith("http");
                     int index = matcher.start();
                     String start;
                     try{
@@ -227,20 +228,23 @@ public class PointPost {
                     Log.d("DP", "URL in between: " + url);
 
 
-                    Log.d("DP", "PostContents end: " + begin);
-                    try {
-                        tempContentMap.put("text", start);
-                        tempContentMap.put("mime", "text");
-                        postContents.add(tempContentMap);
+                    if(!urlStartsWithHttp) start = start + url;
+                    if(urlStartsWithHttp) {
+                        try {
+                            tempContentMap.put("text", start);
+                            tempContentMap.put("mime", "text");
+                            postContents.add(tempContentMap);
 
 
-                    } catch (Exception e) {
+                        } catch (Exception e) {
 
+                        }
                     }
-                    previousIndex = matcher.end();
                     Map<String, String> tempContentMapURL = new HashMap<>();
 
-                        finish = begin.substring(previousIndex);
+                    if(urlStartsWithHttp) previousIndex = matcher.end();
+                    finish = begin.substring(previousIndex);
+
 
 
                     String mime = ImageSearchHelper.checkImageLink(url);
@@ -279,7 +283,7 @@ public class PointPost {
                         tempContentMapURL.put("text", url);
                         tempContentMapURL.put("url", url);
                     }
-                    postContents.add(tempContentMapURL);
+                    if(url.startsWith("http")) postContents.add(tempContentMapURL);
 
                     if (begin == null || begin.equals("")) {
                         break;

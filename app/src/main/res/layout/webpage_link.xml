@@ -9,10 +9,13 @@
     android:gravity="top">
     <View
         android:id="@+id/top_divider"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/colorAccent"
-        android:layout_alignParentTop="true"/>
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_line_vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBottom="@+id/webpage_button"
+        android:layout_marginRight="5dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +24,7 @@
         android:text="Германия отчиталась о крупнейшем профиците бюджета с 1990г."
         android:textStyle="bold"
         android:id="@+id/tv_webpage_title"
-        android:layout_below="@+id/top_divider"
+        android:layout_toRightOf="@+id/top_divider"
         android:gravity="top"
 
         android:layout_gravity="top" />
@@ -41,9 +44,5 @@
         />
 
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/colorAccent"
-        android:layout_below="@+id/webpage_button"/>
+
 </RelativeLayout>
