@@ -33,6 +33,7 @@
                 android:layout_toLeftOf="@+id/qcomment_button"
                 android:layout_toStartOf="@+id/qcomment_button"
                 android:gravity="top"
+                android:focusable="true"
                 />
 
             <ImageButton

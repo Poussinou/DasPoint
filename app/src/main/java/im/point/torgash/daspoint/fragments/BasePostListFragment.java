@@ -126,6 +126,8 @@ public abstract class BasePostListFragment extends Fragment {
                 return true;
             }
         });
+        rvPostList.setHasFixedSize(true);
+
         rvPostList.setAdapter(adapter);
         loadPosts();
         return rootView;
