@@ -10,5 +10,6 @@
     android:paddingLeft="4dp"
     android:paddingRight="4dp"
     android:background="@drawable/tag_background"
+    android:textColor="#333"
     tools:text="tag name"
     android:layout_gravity="center_vertical"/>

@@ -28,6 +28,11 @@ import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
 import im.point.torgash.daspoint.utils.ImageSearchHelper;
 
 public class PointPost {
+
+    //If this is a thread, we'll not read some fields of JSON, as they don't exist
+    boolean isThread;
+
+
     ArrayList<Map<String, String>> postContents;
     //listeners
     OnLinksDetectedListener mOnLinksDetectedListener;
@@ -73,8 +78,10 @@ public class PointPost {
         try {
             JSONObject postDetails = postObject.getJSONObject("post");
             JSONObject postAuthor = postDetails.getJSONObject("author");
-
-            if (postObject.has("rec")) {
+            if(postObject.has("comments")){
+                isThread=true;
+            }
+            if (postObject.has("rec") && !isThread) {
                 isRecommended = true;
             }
 
