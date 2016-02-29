@@ -40,7 +40,7 @@
                 android:layout_height="match_parent">
 
                 <RelativeLayout
-                    android:id="@+id/recommend_info"
+                    android:id="@+id/comment_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -77,50 +77,57 @@
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="14sp"
                         android:textStyle="bold" />
-                    <TextView
-                        android:id="@+id/reply"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/top_section_divider"
-                        android:layout_centerVertical="true"
-                        android:paddingLeft="@dimen/activity_horizontal_margin"
-                        android:paddingStart="@dimen/activity_horizontal_margin"
-                        android:layout_toRightOf="@+id/rec_divider"
-                        android:text="replies to "
-                        android:layout_marginTop="5dp"
-
-                        android:layout_marginLeft="10dp"
-                        android:textColor="#000"
-                        android:textSize="12sp"/>
-                    <TextView
-                        android:id="@+id/reply_id"
+                    <RelativeLayout
+                        android:id="@+id/quotation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/top_section_divider"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/reply"
-                        android:text="/7"
-                        android:layout_marginTop="5dp"
-                        android:textStyle="bold"
-                        android:textColor="#000"
-                        android:textSize="12sp"/>
-                    <TextView
-                        android:id="@+id/quotation_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/reply"
-                        android:layout_centerVertical="true"
-                        android:paddingLeft="@dimen/activity_horizontal_margin"
-                        android:paddingStart="@dimen/activity_horizontal_margin"
+                        android:layout_below="@+id/top_section_divider">
 
-                        android:text="Quotation text"
-                        android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"
-                        android:layout_marginLeft="10dp"
-                        android:textColor="#000"
-                        android:textSize="12sp"
-                        android:background="@drawable/gradient_quote"
-                        android:textStyle="italic" />
+                        <TextView
+                            android:id="@+id/reply"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerVertical="true"
+                            android:paddingLeft="@dimen/activity_horizontal_margin"
+                            android:paddingStart="@dimen/activity_horizontal_margin"
+                            android:layout_toRightOf="@+id/rec_divider"
+                            android:text="replies to "
+                            android:layout_marginTop="5dp"
+
+                            android:layout_marginLeft="10dp"
+                            android:textColor="#000"
+                            android:textSize="12sp"/>
+                        <TextView
+                            android:id="@+id/reply_id"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/reply"
+                            android:text="/7"
+                            android:layout_marginTop="5dp"
+                            android:textStyle="bold"
+                            android:textColor="#000"
+                            android:textSize="12sp"/>
+                        <TextView
+                            android:id="@+id/quotation_text"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/reply"
+                            android:layout_centerVertical="true"
+                            android:paddingLeft="@dimen/activity_horizontal_margin"
+                            android:paddingStart="@dimen/activity_horizontal_margin"
+
+                            android:text="Quotation text"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="10dp"
+                            android:textColor="#000"
+                            android:textSize="12sp"
+                            android:background="@drawable/gradient_quote"
+                            android:textStyle="italic" />
+                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/comment_id"
@@ -150,7 +157,7 @@
                     android:id="@+id/post_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/recommend_info">
+                    android:layout_below="@+id/comment_info">
 
 
                 </RelativeLayout>
@@ -169,7 +176,7 @@
         android:orientation="vertical">
         <LinearLayout
             android:orientation="vertical"
-            android:id="@+id/post_text"
+            android:id="@+id/comment_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <TextView
@@ -188,7 +195,7 @@
 
         </LinearLayout>
         <RelativeLayout
-            android:id="@+id/bottom_wrapper"
+            android:id="@+id/qcomment_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
