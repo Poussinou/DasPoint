@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,49 +15,46 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import im.point.torgash.daspoint.MainActivity;
 import im.point.torgash.daspoint.R;
-import im.point.torgash.daspoint.adapters.PostListAdapter;
+import im.point.torgash.daspoint.adapters.ThreadAdapter;
 import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
-import im.point.torgash.daspoint.listeners.OnPostListLoadMoreListener;
 import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
+import im.point.torgash.daspoint.listeners.OnThreadUpdateListener;
+import im.point.torgash.daspoint.network.PostsLoader;
+import im.point.torgash.daspoint.network.ThreadLoader;
 import im.point.torgash.daspoint.point.PointPost;
+import im.point.torgash.daspoint.point.PointThread;
 import im.point.torgash.daspoint.point.PostList;
+import im.point.torgash.daspoint.utils.Constants;
 import im.point.torgash.daspoint.widgets.EmptyRecyclerView;
 
 /**
  * Created by Boss on 15.02.2016.
  */
-public abstract class BasePostListFragment extends Fragment {
+public class ThreadFragment extends Fragment {
     SharedPreferences prefs;
+    String mPostId;
 
-    private View rootView;
-    private int section_number;
-    boolean mIsLoadingMore;
-    protected OnPostListUpdateListener mOnPostListUpdateListener;
-    protected OnPostListLoadMoreListener mOnPostListLoadMoreListener;
+    protected OnThreadUpdateListener mOnThreadUpdateListener;
+
     static OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
 
-    PostListAdapter adapter;
+    ThreadAdapter adapter;
 
     Handler h;
     private ArrayList<PointPost> postArrayList;
     private SwipeRefreshLayout mSwipeRefresh;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         prefs = getActivity().getSharedPreferences(MainActivity.PREFERENCES, Context.MODE_PRIVATE);
-
+        mPostId = getArguments().getString("postId", null);
 
 
 
@@ -71,20 +67,20 @@ public abstract class BasePostListFragment extends Fragment {
             @Override
             public void onRefresh() {
 
-                loadPosts();
+                loadComments();
 
             }
         });
 
 
-        final EmptyRecyclerView rvPostList = (EmptyRecyclerView) rootView.findViewById(R.id.postList);
-        rvPostList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayout.VERTICAL, false));
+        final EmptyRecyclerView rvThreadList = (EmptyRecyclerView) rootView.findViewById(R.id.postList);
+        rvThreadList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayout.VERTICAL, false));
         adapter = createAdapter();
 
-        mOnPostListUpdateListener = new OnPostListUpdateListener() {
+        mOnThreadUpdateListener = new OnThreadUpdateListener() {
             @Override
-            public void onPostListUpdated(PostList postList) {
-                adapter.setData(getActivity(), postList);
+            public void onThreadUpdated(PointThread thread) {
+                adapter.setData(getActivity(), thread);
                 if (mSwipeRefresh.isRefreshing()) {
                     mSwipeRefresh.setRefreshing(false);
                 }
@@ -102,56 +98,33 @@ public abstract class BasePostListFragment extends Fragment {
                 }
             }
         };
-        mOnPostListLoadMoreListener = new OnPostListLoadMoreListener() {
-            @Override
-            public void onPostListLoadMore(PostList postList) {
-                adapter.appendData(getActivity(), postList);
-            }
 
-            @Override
-            public void onError(String error) {
-                mOnErrorShowInSnackbarListener.onErrorShow(error);
-            }
-        };
         adapter.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
 
-        adapter.setOnLoadMoreRequestListener(new PostListAdapter.OnLoadMoreRequestListener() {
-            @Override
-            public boolean onLoadMoreRequested() {
 
-                if (mIsLoadingMore) {
-                    //do nothing
-                } else {
-                    List<PointPost> posts = adapter.getPostList().posts;
-                    if (posts.size() < 1) {
-                        adapter.getPostList().has_next = false;
-                        return false;
-                    } else {
-                        loadMore(posts.get(posts.size() - 1).uid);
-                    }
-                }
-                return true;
-            }
-        });
-        rvPostList.setHasFixedSize(true);
+        rvThreadList.setHasFixedSize(true);
         View emptyView = rootView.findViewById(R.id.emptyview);
-        rvPostList.setItemViewCacheSize(8);
-        rvPostList.setAdapter(adapter);
-        rvPostList.setEmptyView(emptyView);
-        loadPosts();
+        rvThreadList.setItemViewCacheSize(8);
+        rvThreadList.setAdapter(adapter);
+        rvThreadList.setEmptyView(emptyView);
+        loadComments();
         return rootView;
     }
 
-    abstract void loadPosts();
+    void loadComments(){
+        ThreadLoader loader = new ThreadLoader(Constants.POINT_API_COMMENT + mPostId);
+        loader.setOnThreadUpdateListener(mOnThreadUpdateListener);
+        loader.getPosts();
+    }
 
-    abstract void loadMore(long before);
 
-    protected PostListAdapter createAdapter() {
-        return new PostListAdapter(getActivity());
+
+    protected ThreadAdapter createAdapter() {
+        return new ThreadAdapter(getActivity());
     }
 
     public void setOnErrorShowInSnackbarListener(OnErrorShowInSnackbarListener listener) {
         mOnErrorShowInSnackbarListener = listener;
-        adapter.setOnErrorShowInSnackbarListener(listener);
+
     }
 }

@@ -182,7 +182,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //            @Override
 //            public void onClick(View view) {
 //                if (mOnPostClickListener != null) {
-//                    mOnPostClickListener.onPostClicked(v, view.getTag(R.id.post_id).toString());
+//                    mOnPostClickListener.onPostClicked(v, view.getTag(R.id.comment_id).toString());
 //                }
 //            }
 //        });
@@ -466,7 +466,12 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             }
         });
-
+        holder.comments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mOnErrorShowInSnackbarListener.onTheadOpen(post.postId);
+            }
+        });
 
 
 

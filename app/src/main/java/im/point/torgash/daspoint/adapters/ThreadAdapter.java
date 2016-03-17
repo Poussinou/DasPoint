@@ -2,7 +2,6 @@ package im.point.torgash.daspoint.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +33,7 @@ import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
 import im.point.torgash.daspoint.network.Commentator;
 import im.point.torgash.daspoint.network.Recommender;
 import im.point.torgash.daspoint.point.Comment;
-import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PointThread;
-import im.point.torgash.daspoint.point.PostList;
 import im.point.torgash.daspoint.point.ThreadHeaderPost;
 
 
@@ -62,7 +60,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 mOnPostClickListener.onTagClicked(view, ((TextView) view).getText().toString());
         }
     };
-    private boolean mHasHeader = false;
+    private boolean mHasHeader = true;
 
     @Override
     public long getItemId(int position) {
@@ -130,7 +128,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup viewGroup) {
 
         final View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.post_list_item, viewGroup, false);
+                .inflate(R.layout.comment_list_item, viewGroup, false);
         final CommentViewHolder holder = new CommentViewHolder(v);
 //        holder.webLink.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -166,7 +164,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 //            @Override
 //            public void onClick(View view) {
 //                if (mOnPostClickListener != null) {
-//                    mOnPostClickListener.onPostClicked(v, view.getTag(R.id.post_id).toString());
+//                    mOnPostClickListener.onPostClicked(v, view.getTag(R.id.comment_id).toString());
 //                }
 //            }
 //        });
@@ -204,15 +202,15 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         OnLinksDetectedListener linksDetectedListener = new OnLinksDetectedListener() {
             @Override
-            public void onLinksDetected(ArrayList<Map<String,String>> postContents) {
+            public void onLinksDetected(ArrayList<Map<String, String>> postContents) {
                 headerHolder.llPostContent.removeAllViews();
-                for(Map<String, String> m : postContents) {
+                for (Map<String, String> m : postContents) {
                     String mime = m.get("mime");
-                    if(mime.equals("image")){
+                    if (mime.equals("image")) {
                         View iv = li.inflate(R.layout.post_image_view, null);
                         iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         headerHolder.llPostContent.addView(iv);
-                        ImageView ivPostImageView = (ImageView)iv.findViewById(R.id.post_image_view);
+                        ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
                         ImageLoader.getInstance().displayImage(m.get("text"), ivPostImageView);
 
                         final String url = m.get("text");
@@ -224,15 +222,14 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                     intent.putExtra("url", url);
                                     mOnErrorShowInSnackbarListener.onIntentStart(intent);
 
-                                }
-                                else {
+                                } else {
                                     mOnErrorShowInSnackbarListener.onErrorShow("Поддержка GIF еще не запилена.");
                                 }
                             }
                         });
                         Log.d("DP", "Created imageview");
                     }
-                    if(mime.equals("text") && !m.get("text").trim().equals("")) {
+                    if (mime.equals("text") && !m.get("text").trim().equals("")) {
                         View tv = li.inflate(R.layout.text_view, null);
                         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         headerHolder.llPostContent.addView(tv);
@@ -240,7 +237,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         tView.setText(m.get("text").trim());
                         Log.d("DP", "Created textview with text: \n " + m.get("text"));
                     }
-                    if(mime.equals("webpage")){
+                    if (mime.equals("webpage")) {
                         View tv = li.inflate(R.layout.webpage_link, null);
                         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         headerHolder.llPostContent.addView(tv);
@@ -263,7 +260,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         };
         mPost.searchAndDetectLinks(linksDetectedListener);
 
-        headerHolder.author.setText("@" + mPost.authorLogin);
+        headerHolder.author.setText(mPost.authorLogin);
 
         headerHolder.itemView.setTag(R.id.post_id, mPost.postId);
         Log.d("DP", "Invading viewholder with post \n" + mPost);
@@ -272,6 +269,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         headerHolder.date.setText(mPost.postCreatedString);
 
         headerHolder.post_id.setTag(mPost.postId);
+        headerHolder.post_id.setText("#" + mPost.postId);
 //        holder.webLink.setTag(post.messageLink);
 //        holder.favourite.setChecked(post.bookmarked);
 //        holder.favourite.setTag(post.post.id);
@@ -281,20 +279,14 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         // holder.comments.setVisibility(View.GONE);
 
         headerHolder.tags.removeAllViews();
-        if (!mPost.commentId.equals("null") || mPost.tags == null || mPost.tags.length == 0) {
-           headerHolder.tags.setVisibility(View.GONE);
-        } else {
-            headerHolder.tags.setVisibility(View.VISIBLE);
 
-            int n = 0;
-            for (String tag : mPost.tags) {
-                final TextView v = (TextView) li.inflate(R.layout.tag, headerHolder.tags, false);
-                v.setText(tag);
-                headerHolder.tags.addView(v, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-                v.setOnClickListener(mOnTagClickListener);
-            }
+        for (String tag : mPost.tags) {
+            final TextView v = (TextView) li.inflate(R.layout.tag, headerHolder.tags, false);
+            v.setText(tag);
+            headerHolder.tags.addView(v, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            v.setOnClickListener(mOnTagClickListener);
         }
-        ;
+
 
 //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
 
@@ -302,15 +294,14 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final ImageButton qCommentButton = (ImageButton) headerHolder.qCommentSection.findViewById(R.id.qcomment_button);
         final ImageButton qRecommendButton = (ImageButton) headerHolder.qCommentSection.findViewById(R.id.qrecommend_button);
         final EditText etQCommentText = (EditText) headerHolder.qCommentSection.findViewById(R.id.qcomment_text);
-        final Button btnQcommentToggle = (Button) headerHolder.qCommentSection.findViewById(R.id.qcomment_toggle);
-        headerHolder.qCommentSection.setVisibility(View.GONE);
-        btnQcommentToggle.setOnClickListener(new View.OnClickListener() {
+
+        headerHolder.qCommentToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                headerHolder.qCommentSection.setVisibility(qRecSectionVisible? View.GONE: View.VISIBLE);
-                qRecSectionVisible = qRecSectionVisible? false: true;
-                if(qRecSectionVisible){
+                headerHolder.qCommentSection.setVisibility(qRecSectionVisible ? View.GONE : View.VISIBLE);
+                qRecSectionVisible = qRecSectionVisible ? false : true;
+                if (qRecSectionVisible) {
                     qCommentButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -323,7 +314,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             mOnErrorShowInSnackbarListener.onErrorShow("Posting...");
                             qCommentButton.setEnabled(false);
                             qRecommendButton.setEnabled(false);
-                            Log.d("DP", "Commenting (comment_id=" + mPost.commentId);
+
                             InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
                             etQCommentText.setEnabled(false);
@@ -389,12 +380,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 }
             }
         });
-
-
-
-
-
-
+        headerHolder.qCommentSection.setVisibility(View.GONE);
 
 
     }
@@ -413,7 +399,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public void onBindItemViewHolder(final CommentViewHolder holder, int i) {
         final LayoutInflater li = (LayoutInflater) holder.itemView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        Comment comment = mComments.get(i);
+        final Comment comment = mComments.get(i);
         //Change it to my layout
         //holder.imageList.setImageUrls(thread.thread.text.images, thread.thread.files);
         holder.llCommentContent.removeAllViews();
@@ -481,17 +467,23 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 }
             }
         };
-        Comment.searchAndDetectLinks(linksDetectedListener);
+        comment.searchAndDetectLinks(linksDetectedListener);
 
-        holder.author.setText("@" + mThread.authorLogin);
+        holder.author.setText(comment.authorName);
 
-        holder.itemView.setTag(R.id.post_id, mThread.postId);
+        holder.itemView.setTag(R.id.post_id, comment.id);
         Log.d("DP", "Invading viewholder with thread \n" + mThread);
-        ImageLoader.getInstance().displayImage("http://i.point.im/a/40/" + mThread.authorAvatar, holder.avatar);
+        ImageLoader.getInstance().displayImage("http://i.point.im/a/40/" + comment.authorAvatar, holder.avatar);
 
-        holder.date.setText(mThread.postCreatedString);
-        holder.post_id.setTag(mThread.postId);
+        holder.date.setText(comment.createdString);
+        holder.comment_id.setTag(comment.id);
 
+        if (!comment.to_comment_id.equals("null")) {
+            holder.comment_id.setText("/" + comment.id + "\u2192" + "/" + comment.to_comment_id);
+
+        }else{
+            holder.comment_id.setText("/" + comment.id);
+        }
         qRecSectionVisible = false;
         final ImageButton qCommentButton = (ImageButton) holder.qRecSection.findViewById(R.id.qcomment_button);
         final ImageButton qRecommendButton = (ImageButton) holder.qRecSection.findViewById(R.id.qrecommend_button);
@@ -517,7 +509,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             mOnErrorShowInSnackbarListener.onErrorShow("Posting...");
                             qCommentButton.setEnabled(false);
                             qRecommendButton.setEnabled(false);
-                            Log.d("DP", "Commenting (comment_id=" + mThread.commentId);
+                            Log.d("DP", "Commenting (comment_id=" + comment.id);
                             InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
                             etQCommentText.setEnabled(false);
@@ -539,12 +531,9 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                     mOnErrorShowInSnackbarListener.onErrorShow(error);
                                 }
                             };
-                            if (mThread.commentId.equals("null")) {
 
-                                new Commentator(mThread.postId, etQCommentText.getText().toString(), callback).postComment();
-                            } else {
-                                new Commentator(mThread.postId, mThread.commentId, etQCommentText.getText().toString(), callback).postComment();
-                            }
+                                new Commentator(mPost.postId, comment.id, etQCommentText.getText().toString(), callback).postComment();
+
 
                         }
                     });
@@ -557,7 +546,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             mOnErrorShowInSnackbarListener.onErrorShow("Recommending...");
                             qCommentButton.setEnabled(false);
                             qRecommendButton.setEnabled(false);
-                            Log.d("DP", "Recommending (comment_id=" + mThread.commentId);
+                            Log.d("DP", "Recommending (comment_id=" + comment.id);
                             InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
                             etQCommentText.setEnabled(false);
@@ -579,12 +568,8 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                     mOnErrorShowInSnackbarListener.onErrorShow(error);
                                 }
                             };
-                            if (mThread.commentId.equals("null")) {
+                            new Recommender(mPost.postId, comment.id, etQCommentText.getText().toString(), callback).postComment();
 
-                                new Recommender(mThread.postId, etQCommentText.getText().toString(), callback).postComment();
-                            } else {
-                                new Recommender(mThread.postId, mThread.commentId, etQCommentText.getText().toString(), callback).postComment();
-                            }
 
                         }
                     });
@@ -597,13 +582,11 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        if (mPostList == null) return 0;
-        else return mPostList.posts.size() + 1;
+        if (mComments == null) return 0;
+        else return mComments.size() + 1;
     }
 
-    public void setOnLoadMoreRequestListener(OnLoadMoreRequestListener onLoadMoreRequestListener) {
-        mOnLoadMoreRequestListener = onLoadMoreRequestListener;
-    }
+
 
     public void setOnPostClickListener(OnPostClickListener onPostClickListener) {
         mOnPostClickListener = onPostClickListener;
@@ -655,7 +638,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public HeaderViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            qCommentSection = itemView.findViewById(R.id.qcomment_section);
+            qCommentSection = itemView.findViewById(R.id.qrec_section);
 
 //set show mode.
             llPostContent = (LinearLayout) itemView.findViewById(R.id.post_text);
@@ -686,7 +669,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final Button qCommentToggle;
         final ImageView avatar;
         final TextView author;
-        final TextView post_id;
+        final TextView comment_id;
 
         final TextView date;
         View qRecSection;
@@ -696,15 +679,16 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public CommentViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            qRecSection = itemView.findViewById(R.id.qrec_section);
+            qRecSection = itemView.findViewById(R.id.qcomment_section);
             qCommentToggle = (Button) itemView.findViewById(R.id.qcomment_toggle);
 //set show mode.
-            llCommentContent = (LinearLayout) itemView.findViewById(R.id.post_text);
+
+            llCommentContent = (LinearLayout) itemView.findViewById(R.id.comment_text);
             text = (TextView) itemView.findViewById(R.id.text);
 
-            avatar = (ImageView) itemView.findViewById(R.id.avatar);
-            author = (TextView) itemView.findViewById(R.id.author);
-            post_id = (TextView) itemView.findViewById(R.id.post_id);
+            avatar = (ImageView) itemView.findViewById(R.id.comment_avatar);
+            author = (TextView) itemView.findViewById(R.id.comment_author);
+            comment_id = (TextView) itemView.findViewById(R.id.comment_id);
             date = (TextView) itemView.findViewById(R.id.date);
 
             mainContent = itemView.findViewById(R.id.main_content);

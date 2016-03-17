@@ -36,6 +36,7 @@ import im.point.torgash.daspoint.fragments.BasePostListFragment;
 import im.point.torgash.daspoint.fragments.BlogPostListFragment;
 import im.point.torgash.daspoint.fragments.CommentsListFragment;
 import im.point.torgash.daspoint.fragments.RecentPostListFragment;
+import im.point.torgash.daspoint.fragments.ThreadFragment;
 import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
 import im.point.torgash.daspoint.point.Authorization;
 import im.point.torgash.daspoint.utils.Constants;
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity
                 .cacheOnDisk(true)
                 .showImageOnFail(R.mipmap.image_load_failed)
                 .showImageOnLoading(R.drawable.timer_sand)
+
                 .build();
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
@@ -98,7 +100,7 @@ public class MainActivity extends AppCompatActivity
                 .defaultDisplayImageOptions(defaultOptions)
                 .diskCacheSize(100 * 1024 * 1024)
                 .memoryCacheSize(16 * 1024 * 1024)
-
+                .threadPriority(Thread.MIN_PRIORITY)
                 .build();
         ImageLoader.getInstance().init(config);
 
@@ -125,6 +127,22 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onIntentStart(Intent intent) {
                 startActivity(intent);
+            }
+
+            @Override
+            public void onTheadOpen(String postId) {
+                ThreadFragment fragment = new ThreadFragment();
+                Bundle args = new Bundle();
+                args.putString("postId", postId);
+                fragment.setArguments(args);
+                fragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+                getFragmentManager().beginTransaction()
+//                        .setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left,
+//                                R.animator.slide_in_left, R.animator.slide_out_right)
+
+                        .add(R.id.post_list_fragment, fragment)
+                        .addToBackStack("thread")
+                        .commit();
             }
         };
         setContentView(R.layout.activity_main);
@@ -234,9 +252,13 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        } else if(!getFragmentManager().popBackStackImmediate()){
             super.onBackPressed();
         }
+
+
+
+
     }
 
     @Override

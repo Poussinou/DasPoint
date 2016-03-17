@@ -22,17 +22,20 @@ import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
  */
 public class LinksDetector {
     public static Map<String, ArrayList<Map<String, String>>> commentCache;
+    static ArrayList<Map<String, String>> commentContents;
 
-    public ArrayList<Map<String, String>> commentContents;
-    String mCommentText;
+    static String mCommentText;
 
-    public void searchAndDetectLinks(String commentText, final OnLinksDetectedListener onLinksDetectedListener) {
+    public static void searchAndDetectLinks(String commentText, final OnLinksDetectedListener onLinksDetectedListener) {
+        commentContents = new ArrayList<>();
         if (commentCache == null) {
             commentCache = new HashMap<>();
         }
         mCommentText = commentText;
         if (commentCache.containsKey(mCommentText)) {
+            commentContents = commentCache.get(commentText);
             if (null != commentContents) {
+
                 Log.d("DP", "Sendng back an existing comment content");
                 onLinksDetectedListener.onLinksDetected(commentContents);
                 return;

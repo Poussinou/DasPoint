@@ -95,20 +95,13 @@
                             android:textSize="14sp"
                             android:textStyle="bold" />
 
-                        <View
-                            android:id="@+id/post_divider"
-                            android:layout_width="match_parent"
-                            android:layout_height="3px"
-                            android:layout_below="@+id/author"
-                            android:layout_marginBottom="3dp"
-                            android:layout_marginTop="3dp"
-                            android:background="@drawable/gradient_line" />
+
 
                         <im.point.torgash.daspoint.widgets.FlowLayout
                             android:id="@+id/tags"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/post_divider"
+                            android:layout_below="@+id/avatar"
                             android:layout_marginBottom="5dp"
                             android:layout_marginTop="4dp">
 
@@ -163,7 +156,7 @@
                     android:minHeight="0dp"
                     android:paddingBottom="5dp"
                     android:weightSum="1"
-                    android:visibility="gone">
+                    android:visibility="visible">
                     <!--What you want to show-->
 
                     <EditText
@@ -217,14 +210,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <View
-                        android:id="@+id/bottom_section_divider"
-                        android:layout_width="match_parent"
-                        android:layout_height="3px"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginBottom="3dp"
-                        android:layout_marginTop="3dp"
-                        android:background="@drawable/gradient_line" />
+
 
                     <android.support.v7.widget.AppCompatButton
                         android:id="@+id/btnComments"
@@ -237,7 +223,7 @@
                         android:text="72"
                         android:textColor="@android:color/black"
                         android:textSize="18sp"
-
+                        android:visibility="gone"
                         android:textStyle="bold" />
 
                     <android.support.v7.widget.AppCompatButton

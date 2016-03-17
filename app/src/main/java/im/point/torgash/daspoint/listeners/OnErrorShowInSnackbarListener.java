@@ -9,4 +9,6 @@ public interface OnErrorShowInSnackbarListener {
     void onErrorShow(String error);
 
     void onIntentStart(Intent intent);
+
+    void onTheadOpen(String postId);
 }
