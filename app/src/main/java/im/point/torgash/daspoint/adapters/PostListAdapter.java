@@ -26,7 +26,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 
-import com.daimajia.swipe.SwipeLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;

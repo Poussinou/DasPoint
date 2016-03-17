@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,25 +11,63 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
 import im.point.torgash.daspoint.utils.ImageSearchHelper;
 
-public class PointPost {
+public class ThreadHeaderPost {
 
-    //If this is a thread, we'll not read some fields of JSON, as they don't exist
-    boolean isThread;
+    /*
+    JSON THREAD EXAMPLE:
+
+    {
+     "post": {
+          "pinned": false,
+          "files": [
+               "http://i.point.im/m/A/Alinaki/05/f1/9187/P_20160316_135030.jpg"
+          ],
+          "tags": [
+               "life"
+          ],
+          "comments_count": 1,
+          "author": {
+               "login": "Alinaki",
+               "id": 156,
+               "avatar": "alinaki.jpg?r=4136",
+               "name": "Alinaki"
+          },
+          "text": "Человек-пуэр (пуэрмэн). Способности: сливается с землёй. Оружие: диски прессованного пуэра. Психологические отклонения: заваривает пуэрчик на крови врагов и пьёт из блюдечка.",
+          "created": "2016-03-16T14:32:33.112544",
+          "type": "post",
+          "id": "ipgak",
+          "private": false
+     },
+     "comments": [
+          {
+               "created": "2016-03-16T15:30:32.745371",
+               "text": "норм блин",
+               "author": {
+                    "login": "pallascat",
+                    "id": 537,
+                    "avatar": "pallascat.jpg?r=4205",
+                    "name": "manul"
+               },
+               "post_id": "ipgak",
+               "to_comment_id": null,
+               "is_rec": false,
+               "id": 1
+          }
+     ]
+}
+     */
 
 
     ArrayList<Map<String, String>> postContents;
@@ -39,21 +76,9 @@ public class PointPost {
 
     //message - basic
 
-    public int uid;
-    public boolean subscribed;
-    public boolean editable;
+
 
     //is it recommended?
-    boolean recommended;
-    public boolean isRecommended = false;
-    //recommendation section
-    public String recText;
-    public String recCommentId;
-    public String recAuthorLogin;
-    public int recAuthorId;
-    public String recAuthorAvatar;
-    public String recAuthorName;
-    public String authorAka = "";
 
     //post section
 
@@ -61,55 +86,27 @@ public class PointPost {
     public int commentsCount;
     //post author details
     public String authorLogin;
-    public int authorId;
+
     public String authorAvatar;
     public String authorName;
 
     public String postText;
     Date postCreated;
     public String postCreatedString;
-    public String postType;
-    public String postId;
-    boolean isPrivate;
-    public String messageLink;
-    public String commentId;
-    public String[] files;
-    public PointPost(JSONObject postObject) {
-        try {
-            JSONObject postDetails = postObject.getJSONObject("post");
-            JSONObject postAuthor = postDetails.getJSONObject("author");
 
-            if (postObject.has("rec")) {
-                isRecommended = true;
-            }
-            uid = Integer.valueOf((postObject.get("uid")).toString());
-            subscribed = Boolean.valueOf((postObject.get("subscribed")).toString());
-            editable = Boolean.valueOf((postObject.get("editable")).toString());
-            recommended = Boolean.valueOf((postObject.get("recommended")).toString());
-            if (postObject.has("comment_id") && !postObject.get("comment_id").toString().equals("null")) {
-                Log.d("DP", "Comment_id: " + postObject.getString("comment_id") + " " + postObject.get("comment_id").toString());
-                commentId = postObject.getString("comment_id");
-            } else commentId = "null";
-            if (isRecommended) {
-                JSONObject postRecommendationSection = postObject.getJSONObject("rec");
-                recText = postRecommendationSection.get("text").toString();
-                if (recText.equals("null")) {
-                    recText = null;
-                }
-                recCommentId = postRecommendationSection.get("comment_id").toString();
-                JSONObject recAuthor = postRecommendationSection.getJSONObject("author");
-                recAuthorLogin = recAuthor.get("login").toString();
-                recAuthorLogin = "@" + recAuthorLogin;
-                recAuthorAvatar = recAuthor.get("avatar").toString();
-                recAuthorName = recAuthor.get("name").toString();
-            } else {
-                recAuthorLogin = "";
-                recText = "";
-                recAuthorAvatar = "";
-                recAuthorName = "";
-            }
+    public String postId;
+
+    public String messageLink;
+
+    public String[] files;
+    public ThreadHeaderPost(JSONObject postObject) {
+        try {
+
+            JSONObject postAuthor = postObject.getJSONObject("author");
+
+
             //tags section
-            JSONArray postTagsArray = postDetails.getJSONArray("tags");
+            JSONArray postTagsArray = postObject.getJSONArray("tags");
 
             if (postTagsArray != null) {
                 tags = new String[postTagsArray.length()];
@@ -119,23 +116,17 @@ public class PointPost {
                 }
             }
 
-            commentsCount = Integer.valueOf((postDetails.get("comments_count")).toString());
+            commentsCount = Integer.valueOf((postObject.get("comments_count")).toString());
             //author section
             authorLogin = postAuthor.get("login").toString();
             authorAvatar = postAuthor.get("avatar").toString();
             authorName = postAuthor.get("name").toString();
 
-            if (!(authorName.equals(authorLogin)) && authorName.length() > 0) {
-                authorAka = " aka ";
 
-            } else {
-                authorName = "";
-                authorAka = "";
-            }
 
-            postText = postDetails.get("text").toString();
-            if (postDetails.has("files")) {
-                JSONArray postFiles = postDetails.getJSONArray("files");
+            postText = postObject.get("text").toString();
+            if (postObject.has("files")) {
+                JSONArray postFiles = postObject.getJSONArray("files");
 
                 if (postFiles != null) {
                     files = new String[postFiles.length()];
@@ -146,16 +137,12 @@ public class PointPost {
                 }
             }
 
-            postType = postDetails.get("type").toString();
-
-            postId = postDetails.get("id").toString();
+            postId = postObject.get("id").toString();
             messageLink = "http://point.im/" + postId;
 
 
-            isPrivate = Boolean.valueOf(postDetails.get("private").toString());
-
             //теперь займемся временем
-            String time = postDetails.get("created").toString();
+            String time = postObject.get("created").toString();
             time = time.substring(0, time.length() - 3);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
@@ -193,7 +180,7 @@ public class PointPost {
         }
 
         final Handler h = new Handler() {
-            public void handleMessage(android.os.Message msg) {
+            public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case 1:
                         Log.d("DP", "sending message from searcher");

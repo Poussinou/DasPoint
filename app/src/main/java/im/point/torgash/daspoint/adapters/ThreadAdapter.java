@@ -2,6 +2,7 @@ package im.point.torgash.daspoint.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import im.point.torgash.daspoint.ImageViewFullscreenActivity;
@@ -34,20 +36,23 @@ import im.point.torgash.daspoint.point.Comment;
 import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PointThread;
 import im.point.torgash.daspoint.point.PostList;
+import im.point.torgash.daspoint.point.ThreadHeaderPost;
 
 
 public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private ThreadHeaderPost mPost;
+    private List<Comment> mComments;
     private Context mContext;
     private static final int TYPE_FOOTER = 1;
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_HEADER = -1;
     boolean qRecSectionVisible = false;
-    private PostList mPostList = null;
+    int commentsToDisplay = 10;
     private PointThread mThread = null;
     //    private ImageSearchTask mTask;
-    private OnLoadMoreRequestListener mOnLoadMoreRequestListener = null;
-    private OnPostListUpdateListener mOnPostListUpdateListener = null;
+
     private OnPostClickListener mOnPostClickListener = null;
+
     OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
 
     private View.OnClickListener mOnTagClickListener = new View.OnClickListener() {
@@ -57,7 +62,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 mOnPostClickListener.onTagClicked(view, ((TextView) view).getText().toString());
         }
     };
-
     private boolean mHasHeader = false;
 
     @Override
@@ -69,9 +73,9 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 return 0;
             default:
                 if (mHasHeader)
-                    return mPostList.posts.get(position - 1).uid;
+                    return Integer.valueOf(mComments.get(position - 1).id);
                 else
-                    return mPostList.posts.get(position).uid;
+                    return Integer.valueOf(mComments.get(position).id);
         }
     }
 
@@ -85,12 +89,14 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         mHasHeader = hasHeader;
     }
 
-    public PostList getPostList() {
-        return mPostList;
+    public List<Comment> getCommentsList() {
+        return mComments;
     }
 
     public void setData(Context context, PointThread thread) {
         mThread = thread;
+        mPost = thread.post;
+        mComments = thread.comments;
 //        if (mTask != null && mTask.getStatus() != AsyncTask.Status.FINISHED) {
 //            mTask.cancel(true);
 //        }
@@ -99,25 +105,10 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
-    public void appendData(Context context, PostList postList) {
-
-        int oldLength = ((null == mPostList) ? 0 : mPostList.posts.size());
-        if (mPostList != null) {
-            mPostList.append(postList);
-        } else {
-            mPostList = new PostList();
-            mPostList.posts = new ArrayList<>();
-        }
-        notifyItemRangeInserted(oldLength, postList.posts.size());
-//        if (mTask == null || mTask.getStatus() == AsyncTask.Status.FINISHED) {
-//            mTask = new ImageSearchTask(context);
-//            mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mPostList);
-//        }
-    }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == mPostList.posts.size() + (mHasHeader ? 1 : 0))
+        if (position == mComments.size() + (mHasHeader ? 1 : 0))
             return TYPE_FOOTER;
         if (position == 0 && mHasHeader)
             return TYPE_HEADER;
@@ -130,10 +121,10 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return new FooterHolder(v);
     }
 
-    public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup viewGroup) {
-        return new RecyclerView.ViewHolder(viewGroup) {
-
-        };
+    public RecyclerView.ViewHolder onCreateHeaderViewHolder(final ViewGroup viewGroup) {
+        final View v = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.thread_header, viewGroup, false);
+        return new HeaderViewHolder(v);
     }
 
     public RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup viewGroup) {
@@ -195,20 +186,216 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public void onBindFooterViewHolder(RecyclerView.ViewHolder holder) {
         FooterHolder footerHolder = (FooterHolder) holder;
-        if (mPostList.has_next) {
-            footerHolder.progressWheel.setVisibility(View.VISIBLE);
-            if (mOnLoadMoreRequestListener != null) {
-                if (!mOnLoadMoreRequestListener.onLoadMoreRequested()) {
-                    footerHolder.progressWheel.setVisibility(View.GONE);
-                }
-            }
-        } else {
-            footerHolder.progressWheel.setVisibility(View.GONE);
-        }
+
     }
 
     public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder) {
-        HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
+        final HeaderViewHolder headerHolder = (HeaderViewHolder) holder;
+        final LayoutInflater li = (LayoutInflater) headerHolder.itemView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        //Change it to my layout
+        //holder.imageList.setImageUrls(post.post.text.images, post.post.files);
+        headerHolder.llPostContent.removeAllViews();
+        View tv = li.inflate(R.layout.text_view, null);
+        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        headerHolder.llPostContent.addView(tv);
+        TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
+        tView.setText(mPost.postText);
+
+        OnLinksDetectedListener linksDetectedListener = new OnLinksDetectedListener() {
+            @Override
+            public void onLinksDetected(ArrayList<Map<String,String>> postContents) {
+                headerHolder.llPostContent.removeAllViews();
+                for(Map<String, String> m : postContents) {
+                    String mime = m.get("mime");
+                    if(mime.equals("image")){
+                        View iv = li.inflate(R.layout.post_image_view, null);
+                        iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        headerHolder.llPostContent.addView(iv);
+                        ImageView ivPostImageView = (ImageView)iv.findViewById(R.id.post_image_view);
+                        ImageLoader.getInstance().displayImage(m.get("text"), ivPostImageView);
+
+                        final String url = m.get("text");
+                        ivPostImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (!url.contains(".gif")) {
+                                    Intent intent = new Intent(mContext, ImageViewFullscreenActivity.class);
+                                    intent.putExtra("url", url);
+                                    mOnErrorShowInSnackbarListener.onIntentStart(intent);
+
+                                }
+                                else {
+                                    mOnErrorShowInSnackbarListener.onErrorShow("Поддержка GIF еще не запилена.");
+                                }
+                            }
+                        });
+                        Log.d("DP", "Created imageview");
+                    }
+                    if(mime.equals("text") && !m.get("text").trim().equals("")) {
+                        View tv = li.inflate(R.layout.text_view, null);
+                        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        headerHolder.llPostContent.addView(tv);
+                        TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
+                        tView.setText(m.get("text").trim());
+                        Log.d("DP", "Created textview with text: \n " + m.get("text"));
+                    }
+                    if(mime.equals("webpage")){
+                        View tv = li.inflate(R.layout.webpage_link, null);
+                        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        headerHolder.llPostContent.addView(tv);
+                        TextView tView = (TextView) tv.findViewById(R.id.tv_webpage_title);
+                        tView.setText(m.get("text"));
+                        Log.d("DP", "Created webpage view with text: \n " + m.get("text"));
+                        Button btnLink = (Button) tv.findViewById(R.id.webpage_button);
+                        final String url = m.get("url");
+                        btnLink.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                mOnErrorShowInSnackbarListener.onIntentStart(intent);
+                            }
+                        });
+                    }
+
+                }
+            }
+        };
+        mPost.searchAndDetectLinks(linksDetectedListener);
+
+        headerHolder.author.setText("@" + mPost.authorLogin);
+
+        headerHolder.itemView.setTag(R.id.post_id, mPost.postId);
+        Log.d("DP", "Invading viewholder with post \n" + mPost);
+        ImageLoader.getInstance().displayImage("http://i.point.im/a/40/" + mPost.authorAvatar, headerHolder.avatar);
+
+        headerHolder.date.setText(mPost.postCreatedString);
+
+        headerHolder.post_id.setTag(mPost.postId);
+//        holder.webLink.setTag(post.messageLink);
+//        holder.favourite.setChecked(post.bookmarked);
+//        holder.favourite.setTag(post.post.id);
+
+
+        headerHolder.btnShowAll.setText("Show all (" + String.valueOf(mPost.commentsCount) + ")");
+        // holder.comments.setVisibility(View.GONE);
+
+        headerHolder.tags.removeAllViews();
+        if (!mPost.commentId.equals("null") || mPost.tags == null || mPost.tags.length == 0) {
+           headerHolder.tags.setVisibility(View.GONE);
+        } else {
+            headerHolder.tags.setVisibility(View.VISIBLE);
+
+            int n = 0;
+            for (String tag : mPost.tags) {
+                final TextView v = (TextView) li.inflate(R.layout.tag, headerHolder.tags, false);
+                v.setText(tag);
+                headerHolder.tags.addView(v, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+                v.setOnClickListener(mOnTagClickListener);
+            }
+        }
+        ;
+
+//add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
+
+        qRecSectionVisible = false;
+        final ImageButton qCommentButton = (ImageButton) headerHolder.qCommentSection.findViewById(R.id.qcomment_button);
+        final ImageButton qRecommendButton = (ImageButton) headerHolder.qCommentSection.findViewById(R.id.qrecommend_button);
+        final EditText etQCommentText = (EditText) headerHolder.qCommentSection.findViewById(R.id.qcomment_text);
+        final Button btnQcommentToggle = (Button) headerHolder.qCommentSection.findViewById(R.id.qcomment_toggle);
+        headerHolder.qCommentSection.setVisibility(View.GONE);
+        btnQcommentToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                headerHolder.qCommentSection.setVisibility(qRecSectionVisible? View.GONE: View.VISIBLE);
+                qRecSectionVisible = qRecSectionVisible? false: true;
+                if(qRecSectionVisible){
+                    qCommentButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (etQCommentText.getText().toString().equals("")) {
+                                mOnErrorShowInSnackbarListener.onErrorShow("Не надо пустоты");
+                                return;
+                            }
+
+
+                            mOnErrorShowInSnackbarListener.onErrorShow("Posting...");
+                            qCommentButton.setEnabled(false);
+                            qRecommendButton.setEnabled(false);
+                            Log.d("DP", "Commenting (comment_id=" + mPost.commentId);
+                            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
+                            etQCommentText.setEnabled(false);
+                            CommonRequestCallback callback = new CommonRequestCallback() {
+                                @Override
+                                public void onSuccess(String info) {
+                                    etQCommentText.setText("");
+                                    qCommentButton.setEnabled(true);
+                                    qRecommendButton.setEnabled(true);
+                                    etQCommentText.setEnabled(true);
+                                    mOnErrorShowInSnackbarListener.onErrorShow(info);
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    qCommentButton.setEnabled(true);
+                                    qRecommendButton.setEnabled(true);
+                                    etQCommentText.setEnabled(true);
+                                    mOnErrorShowInSnackbarListener.onErrorShow(error);
+                                }
+                            };
+                            new Commentator(mPost.postId, etQCommentText.getText().toString(), callback).postComment();
+
+
+                        }
+                    });
+
+                    qRecommendButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+
+                            mOnErrorShowInSnackbarListener.onErrorShow("Recommending...");
+                            qCommentButton.setEnabled(false);
+                            qRecommendButton.setEnabled(false);
+
+                            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
+                            etQCommentText.setEnabled(false);
+                            CommonRequestCallback callback = new CommonRequestCallback() {
+                                @Override
+                                public void onSuccess(String info) {
+                                    etQCommentText.setText("");
+                                    qCommentButton.setEnabled(true);
+                                    qRecommendButton.setEnabled(true);
+                                    etQCommentText.setEnabled(true);
+                                    mOnErrorShowInSnackbarListener.onErrorShow(info);
+                                }
+
+                                @Override
+                                public void onError(String error) {
+                                    qCommentButton.setEnabled(true);
+                                    qRecommendButton.setEnabled(true);
+                                    etQCommentText.setEnabled(true);
+                                    mOnErrorShowInSnackbarListener.onErrorShow(error);
+                                }
+                            };
+                            new Recommender(mPost.postId, etQCommentText.getText().toString(), callback).postComment();
+
+
+                        }
+                    });
+                }
+            }
+        });
+
+
+
+
+
+
+
 
     }
 
@@ -226,7 +413,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public void onBindItemViewHolder(final CommentViewHolder holder, int i) {
         final LayoutInflater li = (LayoutInflater) holder.itemView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        Comment comment = mThread.comments.get(i);
+        Comment comment = mComments.get(i);
         //Change it to my layout
         //holder.imageList.setImageUrls(thread.thread.text.images, thread.thread.files);
         holder.llCommentContent.removeAllViews();
@@ -423,7 +610,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void setOnPostListUpdateListener(OnPostListUpdateListener onPostListUpdateListener) {
-        this.mOnPostListUpdateListener = onPostListUpdateListener;
     }
 
     public interface OnLoadMoreRequestListener {
