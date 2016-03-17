@@ -310,7 +310,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
                     android:layout_alignParentRight="true"
-                    android:layout_below="@+id/bottom_section_divider"
+
                     android:drawableLeft="@drawable/thumb_up"
                     android:drawableRight="@drawable/comment"
                     android:minHeight="48dp"
