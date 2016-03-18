@@ -11,4 +11,6 @@ public interface OnErrorShowInSnackbarListener {
     void onIntentStart(Intent intent);
 
     void onTheadOpen(String postId);
+
+    void hideFAB();
 }

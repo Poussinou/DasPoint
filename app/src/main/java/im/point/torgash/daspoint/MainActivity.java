@@ -144,6 +144,11 @@ public class MainActivity extends AppCompatActivity
                         .addToBackStack("thread")
                         .commit();
             }
+
+            @Override
+            public void hideFAB() {
+                fab.hide();
+            }
         };
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -253,6 +258,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if(!getFragmentManager().popBackStackImmediate()){
+            fab.show();
             super.onBackPressed();
         }
 
