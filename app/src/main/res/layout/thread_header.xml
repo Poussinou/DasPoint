@@ -1,263 +1,267 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/card_view"
+    <!--<android.support.v7.widget.CardView-->
+    <!--xmlns:card_view="http://schemas.android.com/apk/res-auto"-->
+    <!--android:id="@+id/card_view"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center"-->
+    <!--android:layout_margin="4dp"-->
+    <!--card_view:cardCornerRadius="4dp">-->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:background="@color/cardview_light_background">
+
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+        android:id="@+id/postListItem"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_margin="4dp"
-        card_view:cardCornerRadius="4dp">
+        android:animateLayoutChanges="true"
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
-
-            android:id="@+id/postListItem"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="4dp"
-            android:animateLayoutChanges="true"
-
-            android:padding="4dp">
+        android:padding="4dp">
 
 
-            <!-- Bottom View Start-->
-            <LinearLayout
-                android:id="@+id/swipeLL"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+        <!-- Bottom View Start-->
+        <LinearLayout
+            android:id="@+id/swipeLL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-                <!-- Bottom View End-->
+            <!-- Bottom View End-->
 
-                <!-- Surface View Start -->
-
-
-                <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:id="@+id/postListItemSurface"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            <!-- Surface View Start -->
 
 
-
-                    <RelativeLayout
-                        android:id="@+id/post_details"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true">
-
-                        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                            android:id="@+id/avatar"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_alignParentTop="true"
-                            android:src="@drawable/account_box" />
-
-
-                        <TextView
-                            android:id="@+id/author"
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:layout_alignTop="@+id/avatar"
-                            android:layout_toEndOf="@+id/avatar"
-                            android:layout_toRightOf="@+id/avatar"
-                            android:paddingLeft="@dimen/activity_horizontal_margin"
-                            android:paddingStart="@dimen/activity_horizontal_margin"
-                            android:text="\@user"
-                            android:textColor="@color/colorPrimaryDark"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/date"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_below="@+id/post_id"
-                            android:text="2016/02/07 в 12:05"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:id="@+id/post_id"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignTop="@+id/avatar"
-                            android:text="#aaaaa"
-
-                            android:textColor="@android:color/black"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
-
-
-                        <im.point.torgash.daspoint.widgets.FlowLayout
-                            android:id="@+id/tags"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/avatar"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginTop="4dp">
-
-
-                            <include layout="@layout/tag" />
-                        </im.point.torgash.daspoint.widgets.FlowLayout>
-
-                    </RelativeLayout>
-                </RelativeLayout>
-
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:id="@+id/main_content"
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/postListItemSurface"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/swipeLL"
-                android:orientation="vertical">
+                android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:id="@+id/post_text"
+
+                <RelativeLayout
+                    android:id="@+id/post_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_alignParentTop="true">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/avatar"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_alignParentTop="true"
+                        android:src="@drawable/account_box" />
+
 
                     <TextView
-                        android:id="@+id/text"
-                        android:layout_width="match_parent"
+                        android:id="@+id/author"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_alignTop="@+id/avatar"
+                        android:layout_toEndOf="@+id/avatar"
+                        android:layout_toRightOf="@+id/avatar"
+                        android:paddingLeft="@dimen/activity_horizontal_margin"
+                        android:paddingStart="@dimen/activity_horizontal_margin"
+                        android:text="\@user"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:autoLink="web"
-                        android:linksClickable="true"
-                        android:paddingBottom="5dp"
-                        android:paddingTop="5dp"
-                        android:scrollbars="none"
-                        android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
-                        android:textColor="@android:color/black"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/post_id"
+                        android:text="2016/02/07 в 12:05"
                         android:textSize="14sp" />
 
+                    <TextView
+                        android:id="@+id/post_id"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignTop="@+id/avatar"
+                        android:text="#aaaaa"
 
-                </LinearLayout>
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-                <RelativeLayout
-                    android:id="@+id/qrec_section"
+
+                    <im.point.torgash.daspoint.widgets.FlowLayout
+                        android:id="@+id/tags"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/avatar"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginTop="4dp">
+
+
+                        <include layout="@layout/tag" />
+                    </im.point.torgash.daspoint.widgets.FlowLayout>
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/swipeLL"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/post_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginTop="5dp"
-                    android:animateLayoutChanges="true"
-                    android:minHeight="0dp"
+                    android:autoLink="web"
+                    android:linksClickable="true"
                     android:paddingBottom="5dp"
-                    android:weightSum="1"
-                    android:visibility="visible">
-                    <!--What you want to show-->
+                    android:paddingTop="5dp"
+                    android:scrollbars="none"
+                    android:text="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp" />
 
-                    <EditText
-                        android:id="@+id/qcomment_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_alignBottom="@+id/qcomment_button"
-                        android:layout_alignTop="@+id/qrecommend_button"
-                        android:layout_toLeftOf="@+id/qcomment_button"
-                        android:layout_toStartOf="@+id/qcomment_button"
-                        android:background="@android:drawable/editbox_background"
-                        android:focusable="true"
-                        android:gravity="top"
-                        android:hint="Enter a quick comment" />
-
-
-                    <ImageButton
-                        android:id="@+id/qrecommend_button"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-
-                        android:background="@drawable/circle"
-                        android:src="@drawable/thumb_up_white"
-
-                        />
-
-                    <View
-                        android:id="@+id/qrec_button_divider"
-                        android:layout_width="40dp"
-                        android:layout_height="5dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_below="@+id/qrecommend_button" />
-
-                    <ImageButton
-                        android:id="@+id/qcomment_button"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_below="@+id/qrec_button_divider"
-                        android:background="@drawable/circle"
-                        android:src="@drawable/comment_white" />
-
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-
-
-                    <android.support.v7.widget.AppCompatButton
-                        android:id="@+id/btnComments"
-                        android:layout_width="wrap_content"
-                        android:layout_height="48dp"
-                        android:layout_alignParentLeft="true"
-
-                        android:drawableLeft="@drawable/comment"
-                        android:minHeight="48dp"
-                        android:text="72"
-                        android:textColor="@android:color/black"
-                        android:textSize="18sp"
-                        android:visibility="gone"
-                        android:textStyle="bold" />
-
-                    <android.support.v7.widget.AppCompatButton
-                        android:id="@+id/qcomment_toggle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="48dp"
-                        android:layout_alignParentRight="true"
-                        
-                        android:drawableLeft="@drawable/thumb_up"
-                        android:drawableRight="@drawable/comment"
-                        android:minHeight="48dp"
-                        android:text="/"
-                        android:textColor="@android:color/black"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
 
             </LinearLayout>
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
+
+            <RelativeLayout
+                android:id="@+id/qrec_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:animateLayoutChanges="true"
+                android:minHeight="0dp"
+                android:paddingBottom="5dp"
+                android:visibility="visible"
+                android:weightSum="1">
+                <!--What you want to show-->
+
+                <EditText
+                    android:id="@+id/qcomment_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignBottom="@+id/qcomment_button"
+                    android:layout_alignTop="@+id/qrecommend_button"
+                    android:layout_toLeftOf="@+id/qcomment_button"
+                    android:layout_toStartOf="@+id/qcomment_button"
+                    android:background="@android:drawable/editbox_background"
+                    android:focusable="true"
+                    android:gravity="top"
+                    android:hint="Enter a quick comment" />
+
+
+                <ImageButton
+                    android:id="@+id/qrecommend_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+
+                    android:background="@drawable/circle"
+                    android:src="@drawable/thumb_up_white"
+
+                    />
+
+                <View
+                    android:id="@+id/qrec_button_divider"
+                    android:layout_width="40dp"
+                    android:layout_height="5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/qrecommend_button" />
+
+                <ImageButton
+                    android:id="@+id/qcomment_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/qrec_button_divider"
+                    android:background="@drawable/circle"
+                    android:src="@drawable/comment_white" />
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btnComments"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_alignParentLeft="true"
+
+                    android:drawableLeft="@drawable/comment"
+                    android:minHeight="48dp"
+                    android:text="72"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/qcomment_toggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_alignParentRight="true"
+
+                    android:drawableLeft="@drawable/thumb_up"
+                    android:drawableRight="@drawable/comment"
+                    android:minHeight="48dp"
+                    android:text="/"
+                    android:textColor="@android:color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </LinearLayout>
+    </RelativeLayout>
+    </FrameLayout>
+    <!--</android.support.v7.widget.CardView>-->
     <Button
         android:id="@+id/btn_show_all"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Show all (73)"
         android:drawableLeft="@drawable/chevron_double_down"
-        android:drawableRight="@drawable/chevron_double_down"/>
+        android:drawableRight="@drawable/chevron_double_down"
+        android:text="Show all (73)" />
+
     <Button
         android:id="@+id/btn_show_10_more"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Show 10 more"
         android:drawableLeft="@drawable/chevron_double_down"
-        android:drawableRight="@drawable/chevron_double_down"/>
+        android:drawableRight="@drawable/chevron_double_down"
+        android:text="Show 10 more" />
 </LinearLayout>
 
 
