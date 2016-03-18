@@ -13,4 +13,6 @@ public interface OnErrorShowInSnackbarListener {
     void onTheadOpen(String postId);
 
     void hideFAB();
+
+    void showFAB();
 }

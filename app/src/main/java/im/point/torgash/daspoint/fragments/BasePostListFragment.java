@@ -142,6 +142,12 @@ public abstract class BasePostListFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        mOnErrorShowInSnackbarListener.showFAB();
+        super.onResume();
+    }
+
     abstract void loadPosts();
 
     abstract void loadMore(long before);

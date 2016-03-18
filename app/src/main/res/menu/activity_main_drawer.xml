@@ -18,6 +18,10 @@
             android:id="@+id/nav_all"
             android:icon="@drawable/notification_clear_all"
             android:title="All" />
+        <item
+            android:id="@+id/nav_vhbne"
+            android:icon="@drawable/owl"
+            android:title="Вахабня" />
     </group>
 
     <item android:title="Communicate">

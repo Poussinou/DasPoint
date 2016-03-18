@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import im.point.torgash.daspoint.listeners.OnThreadUpdateListener;
 import im.point.torgash.daspoint.point.Authorization;
@@ -78,7 +79,10 @@ public class ThreadLoader {
         //this thread tries to download post list
         Thread getThread = new Thread(new Runnable() {
 
-            final OkHttpClient client = new OkHttpClient();
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(20, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build();    // socket timeout
 
             @Override
             public void run() {
