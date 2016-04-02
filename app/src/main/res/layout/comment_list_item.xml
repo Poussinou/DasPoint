@@ -136,8 +136,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/comment_avatar"
-                android:layout_toEndOf="@+id/comment_avatar" />
+                 />
         </RelativeLayout>
 
     </LinearLayout>
