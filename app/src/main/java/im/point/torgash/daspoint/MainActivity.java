@@ -1,7 +1,5 @@
 package im.point.torgash.daspoint;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +8,6 @@ import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -146,17 +143,6 @@ public class MainActivity extends AppCompatActivity
                         .add(R.id.post_list_fragment, fragment)
                         .addToBackStack("thread")
                         .commit();
-                fab.hide();
-            }
-
-            @Override
-            public void hideFAB() {
-                fab.hide();
-            }
-
-            @Override
-            public void showFAB() {
-                fab.show();
             }
         };
         setContentView(R.layout.activity_main);
@@ -190,7 +176,6 @@ public class MainActivity extends AppCompatActivity
         TextView tvUserNick = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserNick);
         tvUserNick.setText(username);
         tvUserName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tvNavUserName);
-        getFragmentManager().addOnBackStackChangedListener(getListener());
         if (!prefs.contains("user_avatar")) {
             h = new Handler() {
                 public void handleMessage(android.os.Message msg) {
@@ -259,32 +244,15 @@ public class MainActivity extends AppCompatActivity
             ImageLoader.getInstance().displayImage("http://i.point.im/a/280/" + prefs.getString("user_avatar", ""), ivUserAvatar);
             tvUserName.setText(prefs.getString("user_name", ""));
         }
-
 //
     }
-    private FragmentManager.OnBackStackChangedListener getListener()
-    {
-        FragmentManager.OnBackStackChangedListener result = new FragmentManager.OnBackStackChangedListener()
-        {
-            public void onBackStackChanged()
-            {
-                Fragment currentFragment = getFragmentManager().findFragmentById(R.id.post_list_fragment);
-                if (currentFragment instanceof BasePostListFragment) {
-                    currentFragment.onResume();
-                }
-            }
-        };
 
-        return result;
-    }
     @Override
     public void onBackPressed() {
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if(!getFragmentManager().popBackStackImmediate()){
-
             super.onBackPressed();
         }
 
@@ -342,20 +310,6 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
 
-        } else if (id == R.id.nav_vhbne) {
-            ThreadFragment fragment = new ThreadFragment();
-            Bundle args = new Bundle();
-            args.putString("postId", "vhbne");
-            fragment.setArguments(args);
-            fragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
-            getFragmentManager().beginTransaction()
-//                        .setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left,
-//                                R.animator.slide_in_left, R.animator.slide_out_right)
-
-                    .add(R.id.post_list_fragment, fragment)
-                    .addToBackStack("thread")
-                    .commit();
-            fab.hide();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

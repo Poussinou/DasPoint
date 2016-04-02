@@ -108,7 +108,6 @@ public class ThreadFragment extends Fragment {
         rvThreadList.setAdapter(adapter);
         rvThreadList.setEmptyView(emptyView);
         loadComments();
-
         return rootView;
     }
 

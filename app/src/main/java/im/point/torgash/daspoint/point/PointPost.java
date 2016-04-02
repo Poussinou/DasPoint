@@ -217,7 +217,6 @@ public class PointPost {
                 while (matcher.find()) {
                     Map<String, String> tempContentMap = new HashMap<>();
                     String url = matcher.group();
-
                     boolean urlStartsWithHttp = url.startsWith("http");
                     int index = matcher.start();
                     String start;
