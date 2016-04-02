@@ -1,6 +1,6 @@
 package im.point.torgash.daspoint.fragments;
 
-import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
+import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.network.PostsLoader;
 import im.point.torgash.daspoint.utils.Constants;
 
@@ -12,7 +12,7 @@ public class BlogPostListFragment extends BasePostListFragment {
     public BlogPostListFragment(){
 
     }
-    public static BlogPostListFragment getInstance(OnErrorShowInSnackbarListener listener){
+    public static BlogPostListFragment getInstance(OnActivityInteractListener listener){
         mOnErrorShowInSnackbarListener  = listener;
         if(null == instance){
             return new BlogPostListFragment();

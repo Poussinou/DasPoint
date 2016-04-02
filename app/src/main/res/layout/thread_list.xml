@@ -28,6 +28,9 @@
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:scrollbars="vertical"
                 />
+
+            <include layout="@layout/comment_zone"
+                android:id="@+id/commentZone"/>
         </LinearLayout>
 
     </android.support.v4.widget.SwipeRefreshLayout>

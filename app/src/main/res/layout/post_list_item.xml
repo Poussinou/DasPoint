@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="4dp"
+    android:layout_marginTop="4dp"
+    android:laytou_marginBottom="4dp"
     card_view:cardCornerRadius="4dp">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -45,70 +46,43 @@
                     android:paddingBottom="4dp"
                     android:paddingTop="4dp">
 
-                    <View
-                        android:id="@+id/rec_divider"
-                        android:layout_width="2dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignBottom="@+id/recommend_avatar"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginRight="2dp"
-                        android:background="@color/colorAccent"
-                        android:paddingEnd="5dp"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        android:paddingStart="5dp" />
-
                     <ImageView
                         android:id="@+id/postRecThumbUp"
                         android:layout_width="24dp"
                         android:layout_height="32dp"
-                        android:layout_toEndOf="@+id/rec_divider"
-                        android:layout_toRightOf="@+id/rec_divider"
                         android:layout_weight="1"
                         android:background="#00FFFFFF"
                         android:src="@drawable/thumb_up" />
-
-                    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/recommend_avatar"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:layout_toRightOf="@+id/postRecThumbUp"
-                        android:src="@drawable/account_box" />
 
                     <TextView
                         android:id="@+id/recommend_author"
                         android:layout_width="wrap_content"
                         android:layout_height="32dp"
                         android:layout_alignParentTop="true"
-                        android:layout_toEndOf="@+id/recommend_avatar"
-                        android:layout_toRightOf="@+id/recommend_avatar"
                         android:gravity="center_vertical"
                         android:paddingLeft="@dimen/activity_horizontal_margin"
                         android:paddingStart="@dimen/activity_horizontal_margin"
                         android:text="\@user"
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:layout_toRightOf="@+id/postRecThumbUp" />
 
                     <TextView
                         android:id="@+id/recommend_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/recommend_avatar"
                         android:layout_centerVertical="true"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
-                        android:layout_toRightOf="@+id/rec_divider"
                         android:paddingLeft="@dimen/activity_horizontal_margin"
                         android:paddingStart="@dimen/activity_horizontal_margin"
                         android:text="Recommendation text"
-                        android:background="@drawable/gradient_quote"
+
                         android:textColor="#222"
                         android:textSize="12sp"
-                        android:textStyle="italic" />
+                        android:textStyle="italic"
+                        android:layout_below="@+id/recommend_author" />
 
                     <TextView
                         android:id="@+id/recommend_id"
@@ -226,66 +200,6 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:id="@+id/bottom_wrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:animateLayoutChanges="true"
-                android:minHeight="0dp"
-                android:paddingBottom="5dp"
-                android:weightSum="1">
-                <!--What you want to show-->
-
-                <EditText
-                    android:id="@+id/qcomment_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignBottom="@+id/qcomment_button"
-                    android:layout_alignTop="@+id/qrecommend_button"
-                    android:layout_toLeftOf="@+id/qcomment_button"
-                    android:layout_toStartOf="@+id/qcomment_button"
-                    android:background="@android:drawable/editbox_background"
-                    android:focusable="true"
-                    android:gravity="top"
-                    android:hint="Enter a quick comment" />
-
-
-                <ImageButton
-                    android:id="@+id/qrecommend_button"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-
-                    android:background="@drawable/circle"
-                    android:src="@drawable/thumb_up_white"
-
-                    />
-
-                <View
-                    android:id="@+id/qrec_button_divider"
-                    android:layout_width="40dp"
-                    android:layout_height="5dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/qrecommend_button" />
-
-                <ImageButton
-                    android:id="@+id/qcomment_button"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/qrec_button_divider"
-                    android:background="@drawable/circle"
-                    android:src="@drawable/comment_white" />
-
-
-            </RelativeLayout>
-
-            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -305,19 +219,6 @@
 
                     android:textStyle="bold" />
 
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/qcomment_toggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_alignParentRight="true"
-
-                    android:drawableLeft="@drawable/thumb_up"
-                    android:drawableRight="@drawable/comment"
-                    android:minHeight="48dp"
-                    android:text="/"
-                    android:textColor="@android:color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
             </RelativeLayout>
 
         </LinearLayout>

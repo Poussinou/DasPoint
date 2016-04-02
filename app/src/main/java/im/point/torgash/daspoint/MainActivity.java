@@ -40,7 +40,7 @@ import im.point.torgash.daspoint.fragments.BlogPostListFragment;
 import im.point.torgash.daspoint.fragments.CommentsListFragment;
 import im.point.torgash.daspoint.fragments.RecentPostListFragment;
 import im.point.torgash.daspoint.fragments.ThreadFragment;
-import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
+import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.point.Authorization;
 import im.point.torgash.daspoint.utils.Constants;
 import okhttp3.Headers;
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     static boolean isInFront;
     TextView tvUserName;
-    private OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
+    private OnActivityInteractListener mOnErrorShowInSnackbarListener;
     @Override
     public void onResume() {
         super.onResume();
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity
             Authorization.setCSRFToken(csrf_token);
         }
 
-        mOnErrorShowInSnackbarListener = new OnErrorShowInSnackbarListener() {
+        mOnErrorShowInSnackbarListener = new OnActivityInteractListener() {
             @Override
             public void onErrorShow(String error) {
                 if(isInFront)Snackbar.make(toolbar, error, Snackbar.LENGTH_LONG)

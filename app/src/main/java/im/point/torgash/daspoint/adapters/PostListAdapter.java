@@ -1,8 +1,5 @@
 package im.point.torgash.daspoint.adapters;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,14 +12,10 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 
@@ -32,17 +25,15 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import im.point.torgash.daspoint.ImageViewFullscreenActivity;
-import im.point.torgash.daspoint.MainActivity;
 import im.point.torgash.daspoint.R;
 import im.point.torgash.daspoint.listeners.CommonRequestCallback;
-import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
+import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
 import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
 import im.point.torgash.daspoint.network.Commentator;
 import im.point.torgash.daspoint.network.Recommender;
 import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PostList;
-import im.point.torgash.daspoint.utils.Constants;
 
 
 public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -56,7 +47,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private OnLoadMoreRequestListener mOnLoadMoreRequestListener = null;
     private OnPostListUpdateListener mOnPostListUpdateListener = null;
     private OnPostClickListener mOnPostClickListener = null;
-    OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
+    OnActivityInteractListener mOnErrorShowInSnackbarListener;
 
     private View.OnClickListener mOnTagClickListener = new View.OnClickListener() {
         @Override
@@ -379,91 +370,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 holder.swipeLayout.setVisibility(qRecSectionVisible? View.GONE: View.VISIBLE);
                 qRecSectionVisible = qRecSectionVisible? false: true;
-                if(qRecSectionVisible){
-                    qCommentButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (etQCommentText.getText().toString().equals("")) {
-                                mOnErrorShowInSnackbarListener.onErrorShow("Не надо пустоты");
-                                return;
-                            }
 
-
-                            mOnErrorShowInSnackbarListener.onErrorShow("Posting...");
-                            qCommentButton.setEnabled(false);
-                            qRecommendButton.setEnabled(false);
-                            Log.d("DP", "Commenting (comment_id=" + post.commentId);
-                            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
-                            etQCommentText.setEnabled(false);
-                            CommonRequestCallback callback = new CommonRequestCallback() {
-                                @Override
-                                public void onSuccess(String info) {
-                                    etQCommentText.setText("");
-                                    qCommentButton.setEnabled(true);
-                                    qRecommendButton.setEnabled(true);
-                                    etQCommentText.setEnabled(true);
-                                    mOnErrorShowInSnackbarListener.onErrorShow(info);
-                                }
-
-                                @Override
-                                public void onError(String error) {
-                                    qCommentButton.setEnabled(true);
-                                    qRecommendButton.setEnabled(true);
-                                    etQCommentText.setEnabled(true);
-                                    mOnErrorShowInSnackbarListener.onErrorShow(error);
-                                }
-                            };
-                            if (post.commentId.equals("null")) {
-
-                                new Commentator(post.postId, etQCommentText.getText().toString(), callback).postComment();
-                            } else {
-                                new Commentator(post.postId, post.commentId, etQCommentText.getText().toString(), callback).postComment();
-                            }
-
-                        }
-                    });
-
-                    qRecommendButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-
-                            mOnErrorShowInSnackbarListener.onErrorShow("Recommending...");
-                            qCommentButton.setEnabled(false);
-                            qRecommendButton.setEnabled(false);
-                            Log.d("DP", "Recommending (comment_id=" + post.commentId);
-                            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
-                            etQCommentText.setEnabled(false);
-                            CommonRequestCallback callback = new CommonRequestCallback() {
-                                @Override
-                                public void onSuccess(String info) {
-                                    etQCommentText.setText("");
-                                    qCommentButton.setEnabled(true);
-                                    qRecommendButton.setEnabled(true);
-                                    etQCommentText.setEnabled(true);
-                                    mOnErrorShowInSnackbarListener.onErrorShow(info);
-                                }
-
-                                @Override
-                                public void onError(String error) {
-                                    qCommentButton.setEnabled(true);
-                                    qRecommendButton.setEnabled(true);
-                                    etQCommentText.setEnabled(true);
-                                    mOnErrorShowInSnackbarListener.onErrorShow(error);
-                                }
-                            };
-                            if (post.commentId.equals("null")) {
-
-                                new Recommender(post.postId, etQCommentText.getText().toString(), callback).postComment();
-                            } else {
-                                new Recommender(post.postId, post.commentId, etQCommentText.getText().toString(), callback).postComment();
-                            }
-
-                        }
-                    });
-                }
             }
         });
         holder.comments.setOnClickListener(new View.OnClickListener() {
@@ -599,7 +506,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //            super.onProgressUpdate(values);
 //        }
 //    }
-    public void setOnErrorShowInSnackbarListener(OnErrorShowInSnackbarListener listener) {
+    public void setOnErrorShowInSnackbarListener(OnActivityInteractListener listener) {
         mOnErrorShowInSnackbarListener = listener;
 
     }
