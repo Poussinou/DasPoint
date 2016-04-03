@@ -20,14 +20,11 @@ import java.util.Map;
 import im.point.torgash.daspoint.MainActivity;
 import im.point.torgash.daspoint.R;
 import im.point.torgash.daspoint.adapters.ThreadAdapter;
-import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
-import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
+import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.listeners.OnThreadUpdateListener;
-import im.point.torgash.daspoint.network.PostsLoader;
 import im.point.torgash.daspoint.network.ThreadLoader;
 import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PointThread;
-import im.point.torgash.daspoint.point.PostList;
 import im.point.torgash.daspoint.utils.Constants;
 import im.point.torgash.daspoint.widgets.EmptyRecyclerView;
 
@@ -40,7 +37,7 @@ public class ThreadFragment extends Fragment {
 
     protected OnThreadUpdateListener mOnThreadUpdateListener;
 
-    static OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
+    static OnActivityInteractListener mOnErrorShowInSnackbarListener;
 
     ThreadAdapter adapter;
 
@@ -123,7 +120,7 @@ public class ThreadFragment extends Fragment {
         return new ThreadAdapter(getActivity());
     }
 
-    public void setOnErrorShowInSnackbarListener(OnErrorShowInSnackbarListener listener) {
+    public void setOnErrorShowInSnackbarListener(OnActivityInteractListener listener) {
         mOnErrorShowInSnackbarListener = listener;
 
     }

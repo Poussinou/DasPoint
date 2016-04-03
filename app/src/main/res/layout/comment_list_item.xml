@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_margin="4dp"
-    card_view:cardCornerRadius="4dp">
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    card_view:cardCornerRadius="0dp">
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
@@ -114,91 +115,14 @@
 
 
         </LinearLayout>
-        <RelativeLayout
-            android:id="@+id/qcomment_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:weightSum="1"
-            android:minHeight="0dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:paddingBottom="5dp"
-            android:animateLayoutChanges="true">
-            <!--What you want to show-->
 
-            <EditText
-                android:id="@+id/qcomment_text"
-                android:background="@android:drawable/editbox_background"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignTop="@+id/qrecommend_button"
-                android:layout_alignBottom="@+id/qcomment_button"
-                android:hint="Enter a quick comment"
-                android:layout_toLeftOf="@+id/qcomment_button"
-                android:layout_toStartOf="@+id/qcomment_button"
-                android:gravity="top"
-                android:focusable="true"
-                />
-
-
-            <ImageButton
-                android:id="@+id/qrecommend_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-
-                android:background="@drawable/circle"
-                android:src="@drawable/thumb_up_white"
-
-                />
-            <View
-                android:id="@+id/qrec_button_divider"
-                android:layout_width="40dp"
-                android:layout_height="5dp"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/qrecommend_button"/>
-            <ImageButton
-                android:id="@+id/qcomment_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_below = "@+id/qrec_button_divider"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/circle"
-                android:src="@drawable/comment_white"
-                />
-
-
-        </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
 
-            <android.support.v7.widget.AppCompatButton
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:minHeight="48dp"
-                android:text="/"
-                android:id="@+id/qcomment_toggle"
-                android:layout_alignParentRight="true"
-                android:textColor="@android:color/black"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:drawableLeft="@drawable/thumb_up"
-                android:drawableRight="@drawable/comment"/>
 
-            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/comment_avatar"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/account_box"
-                android:layout_centerVertical="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+
 
             <TextView
                 android:id="@+id/comment_author"
@@ -212,8 +136,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/comment_avatar"
-                android:layout_toEndOf="@+id/comment_avatar" />
+                 />
         </RelativeLayout>
 
     </LinearLayout>

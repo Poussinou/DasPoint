@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ import java.util.Map;
 import im.point.torgash.daspoint.ImageViewFullscreenActivity;
 import im.point.torgash.daspoint.R;
 import im.point.torgash.daspoint.listeners.CommonRequestCallback;
-import im.point.torgash.daspoint.listeners.OnErrorShowInSnackbarListener;
+import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
 import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
 import im.point.torgash.daspoint.network.Commentator;
@@ -51,7 +50,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private OnPostClickListener mOnPostClickListener = null;
 
-    OnErrorShowInSnackbarListener mOnErrorShowInSnackbarListener;
+    OnActivityInteractListener mOnErrorShowInSnackbarListener;
 
     private View.OnClickListener mOnTagClickListener = new View.OnClickListener() {
         @Override
@@ -697,7 +696,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
 
-    public void setOnErrorShowInSnackbarListener(OnErrorShowInSnackbarListener listener) {
+    public void setOnErrorShowInSnackbarListener(OnActivityInteractListener listener) {
         mOnErrorShowInSnackbarListener = listener;
 
     }
