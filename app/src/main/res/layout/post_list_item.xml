@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginTop="4dp"
-    android:laytou_marginBottom="4dp"
-    card_view:cardCornerRadius="4dp">
+
+    >
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 

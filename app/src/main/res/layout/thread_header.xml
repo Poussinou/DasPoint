@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <ImageView
                         android:id="@+id/avatar"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
@@ -150,39 +150,7 @@
 
 
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
 
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/btnComments"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_alignParentLeft="true"
-
-                    android:drawableLeft="@drawable/comment"
-                    android:minHeight="48dp"
-                    android:text="72"
-                    android:textColor="@android:color/black"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/qcomment_toggle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="48dp"
-                    android:layout_alignParentRight="true"
-
-                    android:drawableLeft="@drawable/thumb_up"
-                    android:drawableRight="@drawable/comment"
-                    android:minHeight="48dp"
-                    android:text="/"
-                    android:textColor="@android:color/black"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
 
         </LinearLayout>
     </RelativeLayout>

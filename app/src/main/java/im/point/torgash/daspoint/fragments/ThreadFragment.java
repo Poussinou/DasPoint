@@ -6,13 +6,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import com.reginald.swiperefresh.CustomSwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -27,6 +28,7 @@ import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PointThread;
 import im.point.torgash.daspoint.utils.Constants;
 import im.point.torgash.daspoint.widgets.EmptyRecyclerView;
+import im.point.torgash.daspoint.widgets.FastScroller;
 
 /**
  * Created by Boss on 15.02.2016.
@@ -37,13 +39,13 @@ public class ThreadFragment extends Fragment {
 
     protected OnThreadUpdateListener mOnThreadUpdateListener;
 
-    static OnActivityInteractListener mOnErrorShowInSnackbarListener;
+    static OnActivityInteractListener mOnActivityInteractListener;
 
     ThreadAdapter adapter;
 
     Handler h;
     private ArrayList<PointPost> postArrayList;
-    private SwipeRefreshLayout mSwipeRefresh;
+    private CustomSwipeRefreshLayout mSwipeRefreshLayout;
 
 
 
@@ -57,15 +59,15 @@ public class ThreadFragment extends Fragment {
 
         View rootView = null;
         ArrayList<Map<String, String>> postList = new ArrayList<>();
-        rootView = inflater.inflate(R.layout.post_list, null);
+        rootView = inflater.inflate(R.layout.thread_list, null);
 
-        mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeRefreshLayout = (CustomSwipeRefreshLayout) rootView.findViewById(R.id.swipelayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                // do something here when it starts to refresh
+                // e.g. to request data from server
                 loadComments();
-
             }
         });
 
@@ -73,30 +75,31 @@ public class ThreadFragment extends Fragment {
         final EmptyRecyclerView rvThreadList = (EmptyRecyclerView) rootView.findViewById(R.id.postList);
         rvThreadList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayout.VERTICAL, false));
         adapter = createAdapter();
-
+        FastScroller fastScroller=(FastScroller)rootView.findViewById(R.id.fastscroller);
+        fastScroller.setRecyclerView(rvThreadList);
         mOnThreadUpdateListener = new OnThreadUpdateListener() {
             @Override
             public void onThreadUpdated(PointThread thread) {
                 adapter.setData(getActivity(), thread);
-                if (mSwipeRefresh.isRefreshing()) {
-                    mSwipeRefresh.setRefreshing(false);
+                if (mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.refreshComplete();
                 }
             }
 
             @Override
             public void onError(String error) {
-                if (mSwipeRefresh.isRefreshing()) {
-                    mSwipeRefresh.setRefreshing(false);
+                if (mSwipeRefreshLayout.isRefreshing()) {
+                    mSwipeRefreshLayout.refreshComplete();
                 }
                 Log.d("DP", "Error: " + error);
-                if (mOnErrorShowInSnackbarListener != null) {
+                if (mOnActivityInteractListener != null) {
 
-                    mOnErrorShowInSnackbarListener.onErrorShow(error);
+                    mOnActivityInteractListener.onErrorShow(error);
                 }
             }
         };
 
-        adapter.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+        adapter.setOnActivityInteractListener(mOnActivityInteractListener);
 
 
         rvThreadList.setHasFixedSize(true);
@@ -121,7 +124,7 @@ public class ThreadFragment extends Fragment {
     }
 
     public void setOnErrorShowInSnackbarListener(OnActivityInteractListener listener) {
-        mOnErrorShowInSnackbarListener = listener;
+        mOnActivityInteractListener = listener;
 
     }
 }

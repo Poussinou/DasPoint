@@ -99,7 +99,7 @@ public class Commentator {
                                 + mCommentId;
 
                     }
-
+                    Log.d(Constants.LOG_TAG, "comment request postbody is:");
                     request = new Request.Builder()
                             .url(Constants.POINT_API_COMMENT + mPostId)
                             .header("Authorization", Authorization.getToken())

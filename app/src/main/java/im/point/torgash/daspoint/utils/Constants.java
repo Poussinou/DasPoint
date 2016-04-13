@@ -20,4 +20,6 @@ public class Constants {
     public static float DISPLAY_DP_HEIGHT;
     public static float DISPLAY_PX_WIDTH;
     public static float DISPLAY_PX_HEIGHT;
+
+    public static String LOG_TAG = "DP";
 }

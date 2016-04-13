@@ -8,12 +8,14 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
+
+import com.reginald.swiperefresh.CustomSwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +24,13 @@ import java.util.Map;
 import im.point.torgash.daspoint.MainActivity;
 import im.point.torgash.daspoint.R;
 import im.point.torgash.daspoint.adapters.PostListAdapter;
-import im.point.torgash.daspoint.listeners.CommonRequestCallback;
 import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.listeners.OnFragmentInteractListener;
 import im.point.torgash.daspoint.listeners.OnPostListLoadMoreListener;
 import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
-import im.point.torgash.daspoint.network.Commentator;
-import im.point.torgash.daspoint.network.Recommender;
 import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PostList;
+import im.point.torgash.daspoint.widgets.CommentSection;
 import im.point.torgash.daspoint.widgets.EmptyRecyclerView;
 
 /**
@@ -44,15 +44,16 @@ public abstract class BasePostListFragment extends Fragment {
     boolean mIsLoadingMore;
     protected OnPostListUpdateListener mOnPostListUpdateListener;
     protected OnPostListLoadMoreListener mOnPostListLoadMoreListener;
-    static OnActivityInteractListener mOnErrorShowInSnackbarListener;
+    static OnActivityInteractListener mOnActivityInteractListener;
     protected OnFragmentInteractListener mOnFragmentInteractListener;
     boolean isCommentZoneShown = false;
     PostListAdapter adapter;
 
     Handler h;
     private ArrayList<PointPost> postArrayList;
-    private SwipeRefreshLayout mSwipeRefresh;
-    private View commentZone;
+    private CustomSwipeRefreshLayout mSwipeRefreshLayout;
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,116 +71,19 @@ public abstract class BasePostListFragment extends Fragment {
         ArrayList<Map<String, String>> postList = new ArrayList<>();
         rootView = inflater.inflate(R.layout.post_list, null);
 
-        mSwipeRefresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh);
-        mSwipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeRefreshLayout = (CustomSwipeRefreshLayout) rootView.findViewById(R.id.swipelayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new CustomSwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                // do something here when it starts to refresh
+                // e.g. to request data from server
                 loadPosts();
-
             }
         });
-        mOnFragmentInteractListener = new OnFragmentInteractListener() {
-            @Override
-            public void toggleCommentZone(String tag) {
 
-                if (isCommentZoneShown) {
-                    isCommentZoneShown = false;
-                    commentZone.setVisibility(View.GONE);
-                    commentZone.setTag(null);
-                } else {
-                    isCommentZoneShown = true;
-                    commentZone.setVisibility(View.VISIBLE);
-                    commentZone.setTag(tag);
-                }
-            }
-        };
 
-        commentZone = rootView.findViewById(R.id.commentZone);
+
         //now let's implement comment zone functions
-        qCommentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (etQCommentText.getText().toString().equals("")) {
-                    mOnErrorShowInSnackbarListener.onErrorShow("Не надо пустоты");
-                    return;
-                }
-
-
-                mOnErrorShowInSnackbarListener.onErrorShow("Posting...");
-                qCommentButton.setEnabled(false);
-                qRecommendButton.setEnabled(false);
-                Log.d("DP", "Commenting (comment_id=" + post.commentId);
-                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
-                etQCommentText.setEnabled(false);
-                CommonRequestCallback callback = new CommonRequestCallback() {
-                    @Override
-                    public void onSuccess(String info) {
-                        etQCommentText.setText("");
-                        qCommentButton.setEnabled(true);
-                        qRecommendButton.setEnabled(true);
-                        etQCommentText.setEnabled(true);
-                        mOnErrorShowInSnackbarListener.onErrorShow(info);
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        qCommentButton.setEnabled(true);
-                        qRecommendButton.setEnabled(true);
-                        etQCommentText.setEnabled(true);
-                        mOnErrorShowInSnackbarListener.onErrorShow(error);
-                    }
-                };
-                if (post.commentId.equals("null")) {
-
-                    new Commentator(post.postId, etQCommentText.getText().toString(), callback).postComment();
-                } else {
-                    new Commentator(post.postId, post.commentId, etQCommentText.getText().toString(), callback).postComment();
-                }
-
-            }
-        });
-
-        qRecommendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                mOnErrorShowInSnackbarListener.onErrorShow("Recommending...");
-                qCommentButton.setEnabled(false);
-                qRecommendButton.setEnabled(false);
-                Log.d("DP", "Recommending (comment_id=" + post.commentId);
-                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
-                etQCommentText.setEnabled(false);
-                CommonRequestCallback callback = new CommonRequestCallback() {
-                    @Override
-                    public void onSuccess(String info) {
-                        etQCommentText.setText("");
-                        qCommentButton.setEnabled(true);
-                        qRecommendButton.setEnabled(true);
-                        etQCommentText.setEnabled(true);
-                        mOnErrorShowInSnackbarListener.onErrorShow(info);
-                    }
-
-                    @Override
-                    public void onError(String error) {
-                        qCommentButton.setEnabled(true);
-                        qRecommendButton.setEnabled(true);
-                        etQCommentText.setEnabled(true);
-                        mOnErrorShowInSnackbarListener.onErrorShow(error);
-                    }
-                };
-                if (post.commentId.equals("null")) {
-
-                    new Recommender(post.postId, etQCommentText.getText().toString(), callback).postComment();
-                } else {
-                    new Recommender(post.postId, post.commentId, etQCommentText.getText().toString(), callback).postComment();
-                }
-
-            }
-        });
 
         final EmptyRecyclerView rvPostList = (EmptyRecyclerView) rootView.findViewById(R.id.postList);
         rvPostList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayout.VERTICAL, false));
@@ -189,20 +93,16 @@ public abstract class BasePostListFragment extends Fragment {
             @Override
             public void onPostListUpdated(PostList postList) {
                 adapter.setData(getActivity(), postList);
-                if (mSwipeRefresh.isRefreshing()) {
-                    mSwipeRefresh.setRefreshing(false);
-                }
+                mSwipeRefreshLayout.refreshComplete();
             }
 
             @Override
             public void onError(String error) {
-                if (mSwipeRefresh.isRefreshing()) {
-                    mSwipeRefresh.setRefreshing(false);
-                }
+                mSwipeRefreshLayout.refreshComplete();
                 Log.d("DP", "Error: " + error);
-                if (mOnErrorShowInSnackbarListener != null) {
+                if (mOnActivityInteractListener != null) {
 
-                    mOnErrorShowInSnackbarListener.onErrorShow(error);
+                    mOnActivityInteractListener.onErrorShow(error);
                 }
             }
         };
@@ -214,10 +114,10 @@ public abstract class BasePostListFragment extends Fragment {
 
             @Override
             public void onError(String error) {
-                mOnErrorShowInSnackbarListener.onErrorShow(error);
+                mOnActivityInteractListener.onErrorShow(error);
             }
         };
-        adapter.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+        adapter.setOnActivityInteractListener(mOnActivityInteractListener);
 
         adapter.setOnLoadMoreRequestListener(new PostListAdapter.OnLoadMoreRequestListener() {
             @Override
@@ -237,6 +137,7 @@ public abstract class BasePostListFragment extends Fragment {
                 return true;
             }
         });
+
         rvPostList.setHasFixedSize(true);
         View emptyView = rootView.findViewById(R.id.emptyview);
         rvPostList.setItemViewCacheSize(8);
@@ -255,7 +156,7 @@ public abstract class BasePostListFragment extends Fragment {
     }
 
     public void setOnErrorShowInSnackbarListener(OnActivityInteractListener listener) {
-        mOnErrorShowInSnackbarListener = listener;
-        adapter.setOnErrorShowInSnackbarListener(listener);
+        mOnActivityInteractListener = listener;
+        adapter.setOnActivityInteractListener(listener);
     }
 }

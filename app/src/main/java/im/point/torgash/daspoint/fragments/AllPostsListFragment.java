@@ -13,7 +13,7 @@ public class AllPostsListFragment extends BasePostListFragment {
 
     }
     public static AllPostsListFragment getInstance(OnActivityInteractListener listener){
-        mOnErrorShowInSnackbarListener  = listener;
+        mOnActivityInteractListener = listener;
         if(null == instance){
             return new AllPostsListFragment();
         }

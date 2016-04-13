@@ -13,7 +13,7 @@ public class CommentsListFragment extends BasePostListFragment {
 
     }
     public static CommentsListFragment getInstance(OnActivityInteractListener listener){
-        mOnErrorShowInSnackbarListener  = listener;
+        mOnActivityInteractListener = listener;
         if(null == instance){
             return new CommentsListFragment();
         }

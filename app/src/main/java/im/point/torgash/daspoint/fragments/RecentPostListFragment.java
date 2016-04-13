@@ -13,7 +13,7 @@ public class RecentPostListFragment extends BasePostListFragment {
 
     }
     public static RecentPostListFragment getInstance(OnActivityInteractListener listener){
-        mOnErrorShowInSnackbarListener  = listener;
+        mOnActivityInteractListener = listener;
         if(null == instance){
             return new RecentPostListFragment();
         }

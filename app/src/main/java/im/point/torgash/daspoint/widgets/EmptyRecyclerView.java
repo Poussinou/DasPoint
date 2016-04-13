@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
 public class EmptyRecyclerView extends RecyclerView {
     private View emptyView;
@@ -62,5 +63,19 @@ public class EmptyRecyclerView extends RecyclerView {
     public void setEmptyView(View emptyView) {
         this.emptyView = emptyView;
         checkIfEmpty();
+    }
+    @Override
+    public boolean canScrollVertically(int direction) {
+        // check if scrolling up
+        if (direction < 1) {
+            boolean original = super.canScrollVertically(direction);
+            View child = getChildAt(0);
+            if (child == null)
+                return original;
+            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) child.getLayoutParams();
+            return child.getTop() < lp.topMargin || original;
+        }
+        return super.canScrollVertically(direction);
+
     }
 }

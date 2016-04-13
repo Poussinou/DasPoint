@@ -2,6 +2,7 @@ package im.point.torgash.daspoint;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,7 +33,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 import im.point.torgash.daspoint.fragments.AllPostsListFragment;
-import im.point.torgash.daspoint.fragments.BasePostListFragment;
 import im.point.torgash.daspoint.fragments.BlogPostListFragment;
 import im.point.torgash.daspoint.fragments.CommentsListFragment;
 import im.point.torgash.daspoint.fragments.RecentPostListFragment;
@@ -40,6 +40,7 @@ import im.point.torgash.daspoint.fragments.ThreadFragment;
 import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.point.Authorization;
 import im.point.torgash.daspoint.utils.Constants;
+import im.point.torgash.daspoint.widgets.CommentSection;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -47,9 +48,14 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    //TODO dark theme
+
     static boolean isInFront;
     TextView tvUserName;
-    private OnActivityInteractListener mOnErrorShowInSnackbarListener;
+    String backStackTitleSaver;
+    private CommentSection commentZone;
+    boolean isCommentZoneShown = false;
+    private OnActivityInteractListener mOnActivityInteractListener;
     @Override
     public void onResume() {
         super.onResume();
@@ -117,7 +123,7 @@ public class MainActivity extends AppCompatActivity
             Authorization.setCSRFToken(csrf_token);
         }
 
-        mOnErrorShowInSnackbarListener = new OnActivityInteractListener() {
+        mOnActivityInteractListener = new OnActivityInteractListener() {
             @Override
             public void onErrorShow(String error) {
                 if(isInFront)Snackbar.make(toolbar, error, Snackbar.LENGTH_LONG)
@@ -135,7 +141,9 @@ public class MainActivity extends AppCompatActivity
                 Bundle args = new Bundle();
                 args.putString("postId", postId);
                 fragment.setArguments(args);
-                fragment.setOnErrorShowInSnackbarListener(mOnErrorShowInSnackbarListener);
+                fragment.setOnErrorShowInSnackbarListener(mOnActivityInteractListener);
+                commentZone.setVisibility(View.GONE);
+                isCommentZoneShown = false;
                 getFragmentManager().beginTransaction()
 //                        .setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left,
 //                                R.animator.slide_in_left, R.animator.slide_out_right)
@@ -143,7 +151,22 @@ public class MainActivity extends AppCompatActivity
                         .add(R.id.post_list_fragment, fragment)
                         .addToBackStack("thread")
                         .commit();
+                backStackTitleSaver = getTitle().toString();
+                setTitle("#" + postId);
             }
+
+            @Override
+            public void showCommentZone(String postId, String commentId, String quote) {
+
+                    isCommentZoneShown = true;
+
+                    commentZone.setVisibility(View.VISIBLE);
+                    commentZone.setPostId(postId);
+                    commentZone.setCommentId(commentId);
+                commentZone.setQuote(quote);
+                    Log.d(Constants.LOG_TAG, "Comment zone shown, post ID = " + postId + ", comment ID = " + commentId);
+                }
+
         };
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -158,6 +181,10 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
+        //comment section
+        commentZone = (CommentSection)findViewById(R.id.commentSection);
+        commentZone.setOnActivityInteractListener(mOnActivityInteractListener);
+        commentZone.setBackgroundColor(Color.TRANSPARENT);
         //Let's implement our placeholder fragment here
 
 
@@ -254,6 +281,9 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else if(!getFragmentManager().popBackStackImmediate()){
             super.onBackPressed();
+        } else {
+            commentZone.setVisibility(View.GONE);
+            setTitle(backStackTitleSaver);
         }
 
 
@@ -290,20 +320,20 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_recent) {
-            RecentPostListFragment recentPostListFragment = RecentPostListFragment.getInstance(mOnErrorShowInSnackbarListener);
+            RecentPostListFragment recentPostListFragment = RecentPostListFragment.getInstance(mOnActivityInteractListener);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, recentPostListFragment).commit();
             setTitle("Recent");
 
         } else if (id == R.id.nav_blog) {
-            BlogPostListFragment blogPostListFragment = BlogPostListFragment.getInstance(mOnErrorShowInSnackbarListener);
+            BlogPostListFragment blogPostListFragment = BlogPostListFragment.getInstance(mOnActivityInteractListener);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, blogPostListFragment).commit();
             setTitle("Blog");
         } else if (id == R.id.nav_comments) {
-            CommentsListFragment commentsListFragment = CommentsListFragment.getInstance(mOnErrorShowInSnackbarListener);
+            CommentsListFragment commentsListFragment = CommentsListFragment.getInstance(mOnActivityInteractListener);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, commentsListFragment).commit();
             setTitle("Comments");
         } else if (id == R.id.nav_all) {
-            AllPostsListFragment allPostsListFragment = AllPostsListFragment.getInstance(mOnErrorShowInSnackbarListener);
+            AllPostsListFragment allPostsListFragment = AllPostsListFragment.getInstance(mOnActivityInteractListener);
             getFragmentManager().beginTransaction().replace(R.id.post_list_fragment, allPostsListFragment).commit();
             setTitle("All");
         } else if (id == R.id.nav_share) {

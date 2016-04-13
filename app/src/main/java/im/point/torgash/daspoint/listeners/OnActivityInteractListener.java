@@ -11,4 +11,6 @@ public interface OnActivityInteractListener {
     void onIntentStart(Intent intent);
 
     void onTheadOpen(String postId);
+
+    void showCommentZone(String postId, String commentId, String quote);
 }

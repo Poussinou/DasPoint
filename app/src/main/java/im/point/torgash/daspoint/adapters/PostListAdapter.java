@@ -1,5 +1,7 @@
 package im.point.torgash.daspoint.adapters;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,10 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -26,14 +25,13 @@ import java.util.Map;
 
 import im.point.torgash.daspoint.ImageViewFullscreenActivity;
 import im.point.torgash.daspoint.R;
-import im.point.torgash.daspoint.listeners.CommonRequestCallback;
 import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
+import im.point.torgash.daspoint.listeners.OnFragmentInteractListener;
 import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
 import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
-import im.point.torgash.daspoint.network.Commentator;
-import im.point.torgash.daspoint.network.Recommender;
 import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PostList;
+import im.point.torgash.daspoint.utils.Constants;
 
 
 public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -47,7 +45,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private OnLoadMoreRequestListener mOnLoadMoreRequestListener = null;
     private OnPostListUpdateListener mOnPostListUpdateListener = null;
     private OnPostClickListener mOnPostClickListener = null;
-    OnActivityInteractListener mOnErrorShowInSnackbarListener;
+    private OnActivityInteractListener mOnActivityInteractListener;
 
     private View.OnClickListener mOnTagClickListener = new View.OnClickListener() {
         @Override
@@ -58,6 +56,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     };
 
     private boolean mHasHeader = false;
+    private OnFragmentInteractListener mOnFragmentInteractListener;
 
     @Override
     public long getItemId(int position) {
@@ -139,6 +138,32 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.post_list_item, viewGroup, false);
         final ViewHolder holder = new ViewHolder(v);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(holder.post_id.getTag().equals("post")){
+
+                    mOnActivityInteractListener.showCommentZone(holder.post_id.getText().toString(), null, holder.shortenedText);
+                }else{
+                    String[] data = holder.post_id.getText().toString().split("/");
+                    for (String s : data) {
+                        Log.d(Constants.LOG_TAG, "data split result: " + s);
+                    }
+                    mOnActivityInteractListener.showCommentZone(data[0].substring(1), data[1], holder.shortenedText);
+                }
+            }
+        });
+        v.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager)mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("primary", holder.fullText);
+
+                clipboard.setPrimaryClip(clip);
+                mOnActivityInteractListener.onErrorShow("post " + holder.post_id.getText().toString() + " copied to clipboard");
+                return true;
+            }
+        });
 //        holder.webLink.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -232,7 +257,8 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.llPostContent.addView(tv);
         TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
         tView.setText(post.postText);
-
+        holder.shortenedText = post.postText.substring(0, post.postText.length() > 80 ? 80 : post.postText.length());
+        holder.fullText = post.postText;
         OnLinksDetectedListener linksDetectedListener = new OnLinksDetectedListener() {
             @Override
             public void onLinksDetected(ArrayList<Map<String,String>> postContents) {
@@ -253,11 +279,11 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                 if (!url.contains(".gif")) {
                                     Intent intent = new Intent(mContext, ImageViewFullscreenActivity.class);
                                     intent.putExtra("url", url);
-                                    mOnErrorShowInSnackbarListener.onIntentStart(intent);
+                                    mOnActivityInteractListener.onIntentStart(intent);
 
                                 }
                                 else {
-                                    mOnErrorShowInSnackbarListener.onErrorShow("Поддержка GIF еще не запилена.");
+                                    mOnActivityInteractListener.onErrorShow("Поддержка GIF еще не запилена.");
                                 }
                             }
                         });
@@ -284,7 +310,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             @Override
                             public void onClick(View view) {
                                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                mOnErrorShowInSnackbarListener.onIntentStart(intent);
+                                mOnActivityInteractListener.onIntentStart(intent);
                             }
                         });
                     }
@@ -318,7 +344,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 holder.recommend_id.setText("/" + post.recCommentId);
             } else holder.recommend_id.setText("");
-            ImageLoader.getInstance().displayImage("http://i.point.im/a/40/" + post.recAuthorAvatar, holder.recomender_avatar);
+
         } else {
             holder.mainContent.setBackgroundColor(Color.TRANSPARENT);
             holder.recommend_info.setVisibility(View.GONE);
@@ -328,10 +354,12 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
         if (post.commentId.equals("null")) {
             holder.post_id.setText("#" + post.postId);
+            holder.post_id.setTag("post");
         } else {
             holder.post_id.setText("#" + post.postId + "/" + post.commentId);
+            holder.post_id.setTag("comment");
         }
-        holder.post_id.setTag(post.postId);
+
 //        holder.webLink.setTag(post.messageLink);
 //        holder.favourite.setChecked(post.bookmarked);
 //        holder.favourite.setTag(post.post.id);
@@ -359,24 +387,12 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
 
         qRecSectionVisible = false;
-        final ImageButton qCommentButton = (ImageButton) holder.swipeLayout.findViewById(R.id.qcomment_button);
-        final ImageButton qRecommendButton = (ImageButton) holder.swipeLayout.findViewById(R.id.qrecommend_button);
-        final EditText etQCommentText = (EditText) holder.swipeLayout.findViewById(R.id.qcomment_text);
-        final Button btnQcommentToggle = (Button) holder.mView.findViewById(R.id.qcomment_toggle);
-        holder.swipeLayout.setVisibility(View.GONE);
-        btnQcommentToggle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                holder.swipeLayout.setVisibility(qRecSectionVisible? View.GONE: View.VISIBLE);
-                qRecSectionVisible = qRecSectionVisible? false: true;
 
-            }
-        });
         holder.comments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mOnErrorShowInSnackbarListener.onTheadOpen(post.postId);
+                mOnActivityInteractListener.onTheadOpen(post.postId);
             }
         });
 
@@ -425,11 +441,13 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
+        String shortenedText;
+        String fullText;
         View mView;
         final TextView text;
         final ViewGroup tags;
         final ImageView avatar;
-        final ImageView recomender_avatar;
+
         final TextView recommend_text;
 
 
@@ -440,21 +458,21 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final TextView recommend_id;
         final Button comments;
         final TextView date;
-        View swipeLayout;
+
         LinearLayout llPostContent;
         final View mainContent;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
-            swipeLayout = itemView.findViewById(R.id.bottom_wrapper);
+
 
 //set show mode.
             llPostContent = (LinearLayout)itemView.findViewById(R.id.post_text);
             text = (TextView) itemView.findViewById(R.id.text);
             tags = (ViewGroup) itemView.findViewById(R.id.tags);
             avatar = (ImageView) itemView.findViewById(R.id.avatar);
-            recomender_avatar = (ImageView) itemView.findViewById(R.id.recommend_avatar);
+
             recommend_text = (TextView) itemView.findViewById(R.id.recommend_text);
 
 
@@ -506,8 +524,13 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //            super.onProgressUpdate(values);
 //        }
 //    }
-    public void setOnErrorShowInSnackbarListener(OnActivityInteractListener listener) {
-        mOnErrorShowInSnackbarListener = listener;
+    public void setOnActivityInteractListener (OnActivityInteractListener listener) {
+        mOnActivityInteractListener = listener;
 
+    }
+
+    public void setListeners(OnActivityInteractListener aListener, OnFragmentInteractListener fListener) {
+        mOnActivityInteractListener = aListener;
+        mOnFragmentInteractListener = fListener;
     }
 }

@@ -13,7 +13,7 @@ public class BlogPostListFragment extends BasePostListFragment {
 
     }
     public static BlogPostListFragment getInstance(OnActivityInteractListener listener){
-        mOnErrorShowInSnackbarListener  = listener;
+        mOnActivityInteractListener = listener;
         if(null == instance){
             return new BlogPostListFragment();
         }
