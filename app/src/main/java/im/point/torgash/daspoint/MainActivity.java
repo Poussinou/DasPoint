@@ -39,6 +39,7 @@ import im.point.torgash.daspoint.fragments.RecentPostListFragment;
 import im.point.torgash.daspoint.fragments.ThreadFragment;
 import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.point.Authorization;
+import im.point.torgash.daspoint.utils.ActivePreferences;
 import im.point.torgash.daspoint.utils.Constants;
 import im.point.torgash.daspoint.widgets.CommentSection;
 import okhttp3.Headers;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
         isInFront = true;
     }
+    final String MARK_DOWN_MODE = "MARKDOWN_MODE";
+    final String ECONOMY_MODE = "ECONOMY_MODE";
 
     @Override
     public void onPause() {
@@ -122,6 +125,11 @@ public class MainActivity extends AppCompatActivity
             Authorization.setToken(token);
             Authorization.setCSRFToken(csrf_token);
         }
+        // let's prepare ActivePreferences
+        ActivePreferences.setMarkDownMode(prefs.getBoolean(MARK_DOWN_MODE, true));
+        ActivePreferences.setEconomyMode(prefs.getBoolean(ECONOMY_MODE, false));
+
+
 
         mOnActivityInteractListener = new OnActivityInteractListener() {
             @Override
@@ -274,6 +282,8 @@ public class MainActivity extends AppCompatActivity
 //
     }
 
+
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -295,6 +305,8 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        menu.getItem(0).setChecked(ActivePreferences.economyMode);
+        menu.getItem(1).setChecked(ActivePreferences.markDownMode);
         return true;
     }
 
@@ -309,7 +321,22 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.toggle_econom) {
 
+            item.setChecked(!item.isChecked());
+            ActivePreferences.setEconomyMode(item.isChecked());
+            prefs.edit().putBoolean(ECONOMY_MODE, item.isChecked()).apply();
+
+
+        }
+        if (id == R.id.toggle_markdown) {
+
+            item.setChecked(!item.isChecked());
+            ActivePreferences.setMarkDownMode(item.isChecked());
+            prefs.edit().putBoolean(MARK_DOWN_MODE, item.isChecked()).apply();
+
+
+        }
         return super.onOptionsItemSelected(item);
     }
 

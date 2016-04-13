@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,10 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.markdown4j.ExtDecorator;
+import org.markdown4j.Markdown4jProcessor;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -31,6 +37,7 @@ import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
 import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
 import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PostList;
+import im.point.torgash.daspoint.utils.ActivePreferences;
 import im.point.torgash.daspoint.utils.Constants;
 
 
@@ -256,7 +263,23 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         holder.llPostContent.addView(tv);
         TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
-        tView.setText(post.postText);
+        tView.setLinksClickable(true);
+        tView.setAutoLinkMask(Linkify.ALL);
+        if (ActivePreferences.markDownMode) {
+
+            Markdown4jProcessor processor = new Markdown4jProcessor();
+
+            try {
+                String HTMLText = processor.process(post.postText);
+                tView.setText(Html.fromHtml(HTMLText));
+            } catch (IOException e) {
+                tView.setText(post.postText);
+                e.printStackTrace();
+            }
+
+        }else{
+            tView.setText(post.postText);
+        }
         holder.shortenedText = post.postText.substring(0, post.postText.length() > 80 ? 80 : post.postText.length());
         holder.fullText = post.postText;
         OnLinksDetectedListener linksDetectedListener = new OnLinksDetectedListener() {
@@ -271,7 +294,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         holder.llPostContent.addView(iv);
                         ImageView ivPostImageView = (ImageView)iv.findViewById(R.id.post_image_view);
                         ImageLoader.getInstance().displayImage(m.get("text"), ivPostImageView);
-
+                        ivPostImageView.setAdjustViewBounds(true);
                         final String url = m.get("text");
                         ivPostImageView.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -318,7 +341,10 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 }
             }
         };
-        post.searchAndDetectLinks(linksDetectedListener);
+        if (!ActivePreferences.economyMode) {
+
+            post.searchAndDetectLinks(linksDetectedListener);
+        }
 
         holder.author.setText("@" + post.authorLogin);
 

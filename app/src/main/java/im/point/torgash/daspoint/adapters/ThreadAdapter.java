@@ -3,6 +3,7 @@ package im.point.torgash.daspoint.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.preference.PreferenceActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -123,7 +124,17 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public RecyclerView.ViewHolder onCreateHeaderViewHolder(final ViewGroup viewGroup) {
         final View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.thread_header, viewGroup, false);
-        return new HeaderViewHolder(v);
+        final HeaderViewHolder holder = new HeaderViewHolder(v);
+        v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                mOnActivityInteractListener.showCommentZone("#" + mPost.postId, null, mPost.postText.substring(0, Math.min(mPost.postText.length(), 80)));
+
+            }
+        });
+        return holder;
+
     }
 
     public RecyclerView.ViewHolder onCreateItemViewHolder(ViewGroup viewGroup) {
@@ -221,7 +232,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         headerHolder.llPostContent.addView(iv);
                         ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
                         ImageLoader.getInstance().displayImage(m.get("text"), ivPostImageView);
-
+                        ivPostImageView.setAdjustViewBounds(true);
                         final String url = m.get("text");
                         ivPostImageView.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -284,7 +295,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 //        holder.favourite.setTag(post.post.id);
 
 
-        headerHolder.btnShowAll.setText("Show all (" + String.valueOf(mPost.commentsCount) + ")");
+
         // holder.comments.setVisibility(View.GONE);
 
         headerHolder.tags.removeAllViews();
@@ -459,8 +470,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         LinearLayout llPostContent;
         final View mainContent;
-        final Button btnShowAll;
-        final Button btnShow10;
+
 
         final EditText qCommentText;
         final ImageButton qCommentButton;
@@ -479,8 +489,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             author = (TextView) itemView.findViewById(R.id.author);
             post_id = (TextView) itemView.findViewById(R.id.post_id);
-            btnShow10 = (Button) itemView.findViewById(R.id.btn_show_10_more);
-            btnShowAll = (Button) itemView.findViewById(R.id.btn_show_all);
+
 
 
             date = (TextView) itemView.findViewById(R.id.date);

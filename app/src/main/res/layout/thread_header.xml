@@ -156,21 +156,21 @@
     </RelativeLayout>
     </FrameLayout>
     <!--</android.support.v7.widget.CardView>-->
-    <Button
-        android:id="@+id/btn_show_all"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/chevron_double_down"
-        android:drawableRight="@drawable/chevron_double_down"
-        android:text="Show all (73)" />
+    <!--<Button-->
+        <!--android:id="@+id/btn_show_all"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:drawableLeft="@drawable/chevron_double_down"-->
+        <!--android:drawableRight="@drawable/chevron_double_down"-->
+        <!--android:text="Show all (73)" />-->
 
-    <Button
-        android:id="@+id/btn_show_10_more"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/chevron_double_down"
-        android:drawableRight="@drawable/chevron_double_down"
-        android:text="Show 10 more" />
+    <!--<Button-->
+        <!--android:id="@+id/btn_show_10_more"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:drawableLeft="@drawable/chevron_double_down"-->
+        <!--android:drawableRight="@drawable/chevron_double_down"-->
+        <!--android:text="Show 10 more" />-->
 </LinearLayout>
 
 

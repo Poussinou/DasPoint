@@ -4,6 +4,9 @@
     <item android:id="@+id/toggle_econom"
         android:checkable="true"
         android:title="@string/toggle_econom" />
+    <item android:id="@+id/toggle_markdown"
+        android:checkable="true"
+        android:title="Markdown"/>
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
