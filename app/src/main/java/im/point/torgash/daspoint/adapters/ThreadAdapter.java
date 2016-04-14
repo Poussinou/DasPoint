@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.preference.PreferenceActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
+import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,9 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import org.markdown4j.Markdown4jProcessor;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +41,7 @@ import im.point.torgash.daspoint.network.Recommender;
 import im.point.torgash.daspoint.point.Comment;
 import im.point.torgash.daspoint.point.PointThread;
 import im.point.torgash.daspoint.point.ThreadHeaderPost;
+import im.point.torgash.daspoint.utils.ActivePreferences;
 import im.point.torgash.daspoint.utils.Constants;
 
 
@@ -336,6 +342,26 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.llCommentContent.addView(tv);
         TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
         tView.setText(comment.text);
+        tView.setLinksClickable(true);
+        tView.setAutoLinkMask(Linkify.ALL);
+        if (ActivePreferences.markDownMode) {
+
+            Markdown4jProcessor processor = new Markdown4jProcessor();
+
+            try {
+                String HTMLText = processor.process(comment.text);
+                tView.setText(Html.fromHtml(HTMLText));
+            } catch (IOException e) {
+                tView.setText(comment.text);
+                e.printStackTrace();
+            }
+
+        }else{
+            tView.setText(comment.text);
+        }
+
+
+
         holder.shortenedText = comment.text.substring(0, comment.text.length() > 80 ? 80 : comment.text.length());
         holder.comment_id_field = comment.id;
         OnLinksDetectedListener linksDetectedListener = new OnLinksDetectedListener() {
@@ -396,7 +422,11 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 }
             }
         };
-        comment.searchAndDetectLinks(linksDetectedListener);
+        if (!ActivePreferences.economyMode) {
+
+            comment.searchAndDetectLinks(linksDetectedListener);
+        }
+
 
         holder.author.setText(comment.authorName);
 
