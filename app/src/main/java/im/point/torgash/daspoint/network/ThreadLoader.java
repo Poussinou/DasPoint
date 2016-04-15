@@ -119,6 +119,7 @@ public class ThreadLoader {
                                 Log.d("DP", "Created post object: " + comment);
                                 pointThread.comments.add(comment);
                             }
+                            rearrange((ArrayList<Comment>)pointThread.comments);
                             pointThread.post = new ThreadHeaderPost(postJsonInitialList.getJSONObject("post"));
                             Message msg = networkBackgroundRequestHandler.obtainMessage(MSG_POSTLIST_READY, 0, 0, pointThread);
                             // отправляем
@@ -153,6 +154,19 @@ public class ThreadLoader {
     public void setOnThreadUpdateListener(OnThreadUpdateListener listener) {
         mOnThreadUpdateListener = listener;
     }
-
+    private ArrayList<Comment> rearrange(ArrayList<Comment> list) {
+        for (int i = 0; i < list.size(); i++) {
+            int offset = 1;
+            Comment commentToCompareWith = list.get(i);
+            for (int j = i + 1; j < list.size(); j++) {
+                Comment commentCompared = list.get(j);
+                if (!commentCompared.to_comment_id.equals("null") && commentCompared.to_comment_id.equals(commentToCompareWith.id)) {
+                    list.remove(j);
+                    list.add(i + offset++, commentCompared);
+                }
+            }
+        }
+        return list;
+    }
 
 }
