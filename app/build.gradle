@@ -41,5 +41,5 @@ dependencies {
     compile 'com.felipecsl:gifimageview:2.0.0'
     compile 'com.reginald.swiperefresh:library:1.1.1'
     compile 'com.android.support:customtabs:23.+'
-    compile 'org.sufficientlysecure:html-textview:1.5'
+
 }
