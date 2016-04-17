@@ -9,8 +9,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.vanniktech.emoji.EmojiEditText;
+import com.vanniktech.emoji.EmojiPopup;
+import com.vanniktech.emoji.EmojiTextView;
+import com.vanniktech.emoji.listeners.OnSoftKeyboardCloseListener;
 
 import im.point.torgash.daspoint.R;
 import im.point.torgash.daspoint.listeners.CommonRequestCallback;
@@ -23,9 +29,10 @@ import im.point.torgash.daspoint.network.Recommender;
  */
 public class CommentSection extends RelativeLayout {
     ImageButton qCommentButton;
-    ImageButton qRecommendButton;
-    EditText etQCommentText;
-    TextView tvPostId, tvPostText;
+    ImageButton emojiToggle;
+    EmojiEditText etQCommentText;
+    TextView tvPostId;
+    EmojiTextView tvPostText;
     ImageButton ibClose;
     private String commentId;
     private String postId;
@@ -54,22 +61,45 @@ public class CommentSection extends RelativeLayout {
     public boolean isInEditMode() {
         return true;
     }
-
+    public EmojiPopup emojiPopup;
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
+        emojiToggle = (ImageButton) this.findViewById(R.id.emoji_toggle);
         qCommentButton = (ImageButton) this.findViewById(R.id.qcomment_button);
-        qRecommendButton = (ImageButton) this.findViewById(R.id.qrecommend_button);
-        etQCommentText = (EditText) this.findViewById(R.id.qcomment_text);
+
+        etQCommentText = (EmojiEditText) this.findViewById(R.id.qcomment_text);
         tvPostId = (TextView) this.findViewById(R.id.czId);
-        tvPostText = (TextView) this.findViewById(R.id.czQuote);
+        tvPostText = (EmojiTextView) this.findViewById(R.id.czQuote);
         ibClose = (ImageButton) this.findViewById(R.id.czClose);
+
+        emojiPopup = EmojiPopup.Builder.fromRootView(this.getRootView())
+                .setOnSoftKeyboardCloseListener(new OnSoftKeyboardCloseListener() {
+                    @Override
+                    public void onKeyboardClose() {
+                        if (null != emojiPopup && emojiPopup.isShowing()) {
+                            emojiPopup.dismiss();
+                        }
+                    }
+                })
+                .build(etQCommentText);
+        emojiToggle.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                emojiPopup.toggle();
+                if (emojiPopup.isShowing()) {
+                    ((ImageButton)v).setImageResource(R.drawable.keyboard);
+                }else {
+                    ((ImageButton) v).setImageResource(R.drawable.emoticon_happy);
+                }
+
+            }
+        });
 
         qCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
 
 
                 if (etQCommentText.getText().toString().equals("")) {
@@ -80,7 +110,7 @@ public class CommentSection extends RelativeLayout {
 
                 mOnActivityInteractListener.onErrorShow("Posting...");
                 qCommentButton.setEnabled(false);
-                qRecommendButton.setEnabled(false);
+
                 Log.d("DP", "Commenting (comment_id=" + commentId);
                 InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
@@ -90,7 +120,7 @@ public class CommentSection extends RelativeLayout {
                     public void onSuccess(String info) {
                         etQCommentText.setText("");
                         qCommentButton.setEnabled(true);
-                        qRecommendButton.setEnabled(true);
+
                         etQCommentText.setEnabled(true);
                         mOnActivityInteractListener.onErrorShow(info);
                     }
@@ -98,7 +128,7 @@ public class CommentSection extends RelativeLayout {
                     @Override
                     public void onError(String error) {
                         qCommentButton.setEnabled(true);
-                        qRecommendButton.setEnabled(true);
+
                         etQCommentText.setEnabled(true);
                         mOnActivityInteractListener.onErrorShow(error);
                     }
@@ -107,24 +137,20 @@ public class CommentSection extends RelativeLayout {
 
                     if (null == commentId) {
 
-                        new Commentator(postId.startsWith("#")? postId.substring(1) : postId, etQCommentText.getText().toString(), callback).postComment();
+                        new Commentator(postId.startsWith("#") ? postId.substring(1) : postId, etQCommentText.getText().toString(), callback).postComment();
                     } else {
-                        new Commentator(postId.startsWith("#")? postId.substring(1): postId, commentId, etQCommentText.getText().toString(), callback).postComment();
+                        new Commentator(postId.startsWith("#") ? postId.substring(1) : postId, commentId, etQCommentText.getText().toString(), callback).postComment();
                     }
                 }
 
             }
         });
-
-        qRecommendButton.setOnClickListener(new View.OnClickListener() {
+        qCommentButton.setOnLongClickListener(new OnLongClickListener() {
             @Override
-            public void onClick(View v) {
-
-
-
+            public boolean onLongClick(View v) {
                 mOnActivityInteractListener.onErrorShow("Recommending...");
                 qCommentButton.setEnabled(false);
-                qRecommendButton.setEnabled(false);
+
                 Log.d("DP", "Recommending (comment_id=" + commentId);
                 InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
@@ -134,7 +160,7 @@ public class CommentSection extends RelativeLayout {
                     public void onSuccess(String info) {
                         etQCommentText.setText("");
                         qCommentButton.setEnabled(true);
-                        qRecommendButton.setEnabled(true);
+
                         etQCommentText.setEnabled(true);
                         mOnActivityInteractListener.onErrorShow(info);
                     }
@@ -142,7 +168,7 @@ public class CommentSection extends RelativeLayout {
                     @Override
                     public void onError(String error) {
                         qCommentButton.setEnabled(true);
-                        qRecommendButton.setEnabled(true);
+
                         etQCommentText.setEnabled(true);
                         mOnActivityInteractListener.onErrorShow(error);
                     }
@@ -150,16 +176,22 @@ public class CommentSection extends RelativeLayout {
                 if (null != postId) {
 
                     if (null == commentId) {
-                        new Recommender(postId.startsWith("#")? postId.substring(1) : postId, etQCommentText.getText().toString(), callback).postComment();
+                        new Recommender(postId.startsWith("#") ? postId.substring(1) : postId, etQCommentText.getText().toString(), callback).postComment();
                     } else {
-                        new Recommender(postId.startsWith("#")? postId.substring(1) : postId, commentId, etQCommentText.getText().toString(), callback).postComment();
+                        new Recommender(postId.startsWith("#") ? postId.substring(1) : postId, commentId, etQCommentText.getText().toString(), callback).postComment();
                     }
                 }
+
+                return true;
             }
         });
+
+
         ibClose.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etQCommentText.getWindowToken(), 0);
                 setVisibility(GONE);
                 setPostId(null);
                 setCommentId(null);
@@ -171,20 +203,19 @@ public class CommentSection extends RelativeLayout {
     }
 
 
-
     public void setPostId(String postId) {
         this.postId = postId;
-        if(null != this.postId){
+        if (null != this.postId) {
 
             this.tvPostId.setText(this.postId);
-        }else{
+        } else {
             this.tvPostId.setText("");
         }
     }
 
     public void setCommentId(String commentId) {
         this.commentId = commentId;
-        if(null != this.commentId){
+        if (null != this.commentId) {
 
             this.tvPostId.setText("#" + tvPostId.getText().toString() + "/" + this.commentId);
         }
@@ -196,5 +227,8 @@ public class CommentSection extends RelativeLayout {
 
     public void setQuote(String quote) {
         this.tvPostText.setText(quote);
+    }
+    public boolean isEmojiPopupVisible(){
+        return emojiPopup.isShowing();
     }
 }

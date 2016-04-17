@@ -2,12 +2,15 @@ package im.point.torgash.daspoint.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.preference.PreferenceActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.util.Linkify;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +19,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.vanniktech.emoji.EmojiTextView;
 
 import org.markdown4j.Markdown4jProcessor;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +51,7 @@ import im.point.torgash.daspoint.utils.ActivePreferences;
 import im.point.torgash.daspoint.utils.Constants;
 
 
-public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements BubbleTextGetter{
+public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements BubbleTextGetter {
     private ThreadHeaderPost mPost;
     private List<Comment> mComments;
     private Context mContext;
@@ -59,7 +65,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private OnPostClickListener mOnPostClickListener = null;
     private OnActivityInteractListener mOnActivityInteractListener;
-
+    Resources res;
 
     private View.OnClickListener mOnTagClickListener = new View.OnClickListener() {
         @Override
@@ -89,6 +95,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         super();
         setHasStableIds(true);
         mContext = context;
+        res = mContext.getResources();
     }
 
     protected void setHasHeader(boolean hasHeader) {
@@ -152,7 +159,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             @Override
             public void onClick(View view) {
 
-                    mOnActivityInteractListener.showCommentZone(mPost.postId, holder.comment_id_field, holder.shortenedText);
+                mOnActivityInteractListener.showCommentZone(mPost.postId, holder.comment_id_field, holder.shortenedText);
 
             }
         });
@@ -223,69 +230,122 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         View tv = li.inflate(R.layout.text_view, null);
         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         headerHolder.llPostContent.addView(tv);
-        TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
-        tView.setText(mPost.postText);
+        EmojiTextView tView = (EmojiTextView) tv.findViewById(R.id.post_text_view);
 
-        OnLinksDetectedListener linksDetectedListener = new OnLinksDetectedListener() {
-            @Override
-            public void onLinksDetected(ArrayList<Map<String, String>> postContents) {
-                headerHolder.llPostContent.removeAllViews();
-                for (Map<String, String> m : postContents) {
-                    String mime = m.get("mime");
-                    if (mime.equals("image")) {
-                        View iv = li.inflate(R.layout.post_image_view, null);
-                        iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                        headerHolder.llPostContent.addView(iv);
-                        ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
-                        ImageLoader.getInstance().displayImage(m.get("text"), ivPostImageView);
-                        ivPostImageView.setAdjustViewBounds(true);
-                        final String url = m.get("text");
-                        ivPostImageView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                if (!url.contains(".gif")) {
-                                    Intent intent = new Intent(mContext, ImageViewFullscreenActivity.class);
-                                    intent.putExtra("url", url);
-                                    mOnActivityInteractListener.onIntentStart(intent);
+        if (ActivePreferences.markDownMode) {
 
-                                } else {
-                                    mOnActivityInteractListener.onErrorShow("Поддержка GIF еще не запилена.");
-                                }
-                            }
-                        });
-                        Log.d("DP", "Created imageview");
-                    }
-                    if (mime.equals("text") && !m.get("text").trim().equals("")) {
-                        View tv = li.inflate(R.layout.text_view, null);
-                        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                        headerHolder.llPostContent.addView(tv);
-                        TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
-                        tView.setText(m.get("text").trim());
-                        Log.d("DP", "Created textview with text: \n " + m.get("text"));
-                    }
-                    if (mime.equals("webpage")) {
-                        View tv = li.inflate(R.layout.webpage_link, null);
-                        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                        headerHolder.llPostContent.addView(tv);
-                        TextView tView = (TextView) tv.findViewById(R.id.tv_webpage_title);
-                        tView.setText(m.get("text"));
-                        Log.d("DP", "Created webpage view with text: \n " + m.get("text"));
-                        Button btnLink = (Button) tv.findViewById(R.id.webpage_button);
-                        final String url = m.get("url");
-                        btnLink.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                                mOnActivityInteractListener.onIntentStart(intent);
-                            }
-                        });
-                    }
+            Markdown4jProcessor processor = new Markdown4jProcessor();
 
-                }
+            try {
+                String HTMLText = processor.process(mPost.postText);
+                tView.setText(Html.fromHtml(HTMLText));
+            } catch (IOException e) {
+                tView.setText(mPost.postText);
+                e.printStackTrace();
             }
-        };
-        mPost.searchAndDetectLinks(linksDetectedListener);
 
+        } else {
+            tView.setText(mPost.postText);
+        }
+        if (!ActivePreferences.economyMode) {
+            OnLinksDetectedListener linksDetectedListener = new OnLinksDetectedListener() {
+                @Override
+                public void onLinksDetected(ArrayList<Map<String, String>> postContents) {
+                    headerHolder.llPostContent.removeAllViews();
+                    for (Map<String, String> m : postContents) {
+                        String mime = m.get("mime");
+                        if (mime.equals("gif")) {
+                            View iv = li.inflate(R.layout.post_image_view, null);
+                            iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                            headerHolder.llPostContent.addView(iv);
+                            ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
+                            ivPostImageView.setImageResource(R.mipmap.gif_placeholder);
+
+                            ivPostImageView.setAdjustViewBounds(true);
+                            final String url = m.get("text");
+                            ivPostImageView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if (!url.contains(".gif")) {
+                                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                                        intent.putExtra("url", url);
+                                        mOnActivityInteractListener.onIntentStart(intent);
+
+                                    } else {
+                                        mOnActivityInteractListener.onErrorShow("Поддержка GIF еще не запилена.");
+                                    }
+                                }
+                            });
+                            Log.d("DP", "Created gif imageview");
+                        }
+                        if (mime.equals("image")) {
+                            View iv = li.inflate(R.layout.post_image_view, null);
+                            iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                            headerHolder.llPostContent.addView(iv);
+                            ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
+                            ImageLoader.getInstance().displayImage(m.get("text"), ivPostImageView);
+                            ivPostImageView.setAdjustViewBounds(true);
+                            final String url = m.get("text");
+                            ivPostImageView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                    mOnActivityInteractListener.onIntentStart(intent);
+                                }
+                            });
+                            Log.d("DP", "Created imageview");
+                        }
+                        if (mime.equals("text") && !m.get("text").trim().equals("")) {
+                            View tv = li.inflate(R.layout.text_view, null);
+                            tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                            headerHolder.llPostContent.addView(tv);
+                            EmojiTextView tView = (EmojiTextView) tv.findViewById(R.id.post_text_view);
+                            String text = m.get("text").trim();
+                            tView.setLinksClickable(true);
+                            tView.setAutoLinkMask(Linkify.ALL);
+                            if (ActivePreferences.markDownMode) {
+
+                                Markdown4jProcessor processor = new Markdown4jProcessor();
+
+                                try {
+                                    String HTMLText = processor.process(text);
+                                    tView.setText(Html.fromHtml(HTMLText));
+                                } catch (IOException e) {
+                                    tView.setText(text);
+                                    e.printStackTrace();
+                                }
+
+                            } else {
+                                tView.setText(text);
+                            }
+                            Log.d("DP", "Created textview with text: \n " + text);
+                        }
+                        if (mime.equals("webpage")) {
+                            View tv = li.inflate(R.layout.webpage_link, null);
+                            tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                            headerHolder.llPostContent.addView(tv);
+                            TextView tView = (TextView) tv.findViewById(R.id.tv_webpage_title);
+                            tView.setText(m.get("text"));
+                            Log.d("DP", "Created webpage view with text: \n " + m.get("text"));
+                            Button btnLink = (Button) tv.findViewById(R.id.webpage_button);
+                            final String url = m.get("url");
+                            btnLink.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                    mOnActivityInteractListener.onIntentStart(intent);
+                                }
+                            });
+                        }
+
+                    }
+                }
+            };
+            if (!ActivePreferences.economyMode) {
+                mPost.searchAndDetectLinks(linksDetectedListener);
+            }
+        }
         headerHolder.author.setText(mPost.authorLogin);
 
         headerHolder.itemView.setTag(R.id.post_id, mPost.postId);
@@ -299,7 +359,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 //        holder.webLink.setTag(post.messageLink);
 //        holder.favourite.setChecked(post.bookmarked);
 //        holder.favourite.setTag(post.post.id);
-
 
 
         // holder.comments.setVisibility(View.GONE);
@@ -337,6 +396,17 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         //Change it to my layout
         //holder.imageList.setImageUrls(thread.thread.text.images, thread.thread.files);
         holder.llCommentContent.removeAllViews();
+
+
+        if (null != comment.quote) {
+            View vQuote = li.inflate(R.layout.text_view, null);
+            EmojiTextView tvQuote = (EmojiTextView) vQuote.findViewById(R.id.post_text_view);
+            tvQuote.setPadding(10, 5, 5, 5);
+            tvQuote.setBackgroundColor(res.getColor(R.color.quote_background));
+            tvQuote.setText(comment.quote);
+            holder.llCommentContent.addView(vQuote);
+            Log.d(Constants.LOG_TAG, "Comment quote set to textview: " + holder.commentQuote.getText().toString());
+        }
         View tv = li.inflate(R.layout.text_view, null);
         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         holder.llCommentContent.addView(tv);
@@ -344,6 +414,11 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         tView.setText(comment.text);
         tView.setLinksClickable(true);
         tView.setAutoLinkMask(Linkify.ALL);
+
+
+        android.support.v7.widget.RecyclerView.LayoutParams params = (android.support.v7.widget.RecyclerView.LayoutParams) holder.mView.getLayoutParams();
+        params.setMargins(Math.min(pxFromDp(36), pxFromDp(comment.offset * 6)), 0, 0, 0);
+        holder.card.setLayoutParams(params);
         if (ActivePreferences.markDownMode) {
 
             Markdown4jProcessor processor = new Markdown4jProcessor();
@@ -356,10 +431,9 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 e.printStackTrace();
             }
 
-        }else{
+        } else {
             tView.setText(comment.text);
         }
-
 
 
         holder.shortenedText = comment.text.substring(0, comment.text.length() > 80 ? 80 : comment.text.length());
@@ -368,6 +442,15 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             @Override
             public void onLinksDetected(ArrayList<Map<String, String>> commentContents) {
                 holder.llCommentContent.removeAllViews();
+                if (null != comment.quote) {
+                    View vQuote = li.inflate(R.layout.text_view, null);
+                    EmojiTextView tvQuote = (EmojiTextView) vQuote.findViewById(R.id.post_text_view);
+                    tvQuote.setPadding(10, 5, 5, 5);
+                    tvQuote.setBackgroundColor(res.getColor(R.color.quote_background));
+                    tvQuote.setText(comment.quote);
+                    holder.llCommentContent.addView(vQuote);
+                    Log.d(Constants.LOG_TAG, "Comment quote set to textview: " + holder.commentQuote.getText().toString());
+                }
                 for (Map<String, String> m : commentContents) {
                     String mime = m.get("mime");
                     if (mime.equals("image")) {
@@ -392,6 +475,25 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             }
                         });
                         Log.d("DP", "Created imageview");
+                    }
+                    if (mime.equals("gif")) {
+                        View iv = li.inflate(R.layout.post_image_view, null);
+                        iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        holder.llCommentContent.addView(iv);
+                        ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
+                        ivPostImageView.setImageResource(R.mipmap.gif_placeholder);
+
+                        ivPostImageView.setAdjustViewBounds(true);
+                        final String url = m.get("text");
+                        ivPostImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                mOnActivityInteractListener.onIntentStart(intent);
+
+                            }
+                        });
+                        Log.d("DP", "Created gif imageview");
                     }
                     if (mime.equals("text") && !m.get("text").trim().equals("")) {
                         View tv = li.inflate(R.layout.text_view, null);
@@ -440,7 +542,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (!comment.to_comment_id.equals("null")) {
             holder.comment_id.setText("/" + comment.id + "\u2192" + "/" + comment.to_comment_id);
 
-        }else{
+        } else {
             holder.comment_id.setText("/" + comment.id);
         }
 
@@ -452,7 +554,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (mComments == null) return 0;
         else return mComments.size() + 1;
     }
-
 
 
     public void setOnPostClickListener(OnPostClickListener onPostClickListener) {
@@ -502,10 +603,6 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final View mainContent;
 
 
-        final EditText qCommentText;
-        final ImageButton qCommentButton;
-        final ImageButton qRecommendButton;
-
         public HeaderViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
@@ -521,11 +618,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             post_id = (TextView) itemView.findViewById(R.id.post_id);
 
 
-
             date = (TextView) itemView.findViewById(R.id.date);
-            qCommentText = (EditText) itemView.findViewById(R.id.qcomment_text);
-            qCommentButton = (ImageButton) itemView.findViewById(R.id.qcomment_button);
-            qRecommendButton = (ImageButton) itemView.findViewById(R.id.qrecommend_button);
 
             mainContent = itemView.findViewById(R.id.main_content);
 
@@ -537,10 +630,10 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         String shortenedText;
         View mView;
         final TextView text;
-
+        final CardView card;
         final TextView author;
         final TextView comment_id;
-
+        final TextView commentQuote;
         final TextView date;
 
         LinearLayout llCommentContent;
@@ -556,7 +649,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             llCommentContent = (LinearLayout) itemView.findViewById(R.id.comment_text);
             text = (TextView) itemView.findViewById(R.id.text);
-
+            commentQuote = (TextView) itemView.findViewById(R.id.comment_quote);
 
             author = (TextView) itemView.findViewById(R.id.comment_author);
             comment_id = (TextView) itemView.findViewById(R.id.comment_id);
@@ -564,12 +657,17 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             mainContent = itemView.findViewById(R.id.main_content);
 
+            card = (CardView) itemView.findViewById(R.id.card_view);
         }
     }
 
 
-    public void setOnActivityInteractListener (OnActivityInteractListener listener) {
+    public void setOnActivityInteractListener(OnActivityInteractListener listener) {
         mOnActivityInteractListener = listener;
 
+    }
+
+    public int pxFromDp(final int dp) {
+        return Math.round(dp * res.getDisplayMetrics().density);
     }
 }

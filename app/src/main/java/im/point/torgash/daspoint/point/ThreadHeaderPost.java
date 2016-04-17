@@ -258,11 +258,14 @@ public class ThreadHeaderPost {
                             tempContentMapURL.put("text", title);
                             tempContentMapURL.put("url", url);
 
-                        } else if (mime.contains("image")) {
+                        } else if (mime.contains("image") && !mime.contains("gif")) {
                             //make an Image view
                             tempContentMapURL.put("mime", "image");
                             tempContentMapURL.put("text", url);
 
+                        } else if (mime.contains("gif")) {
+                            tempContentMapURL.put("mime", "gif");
+                            tempContentMapURL.put("text", url);
                         } else {
                             tempContentMapURL.put("mime", "webpage");
                             tempContentMapURL.put("text", url);

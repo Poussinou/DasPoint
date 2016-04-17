@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.vanniktech.emoji.EmojiTextView;
 
 import org.markdown4j.ExtDecorator;
 import org.markdown4j.Markdown4jProcessor;
@@ -262,7 +263,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         View tv = li.inflate(R.layout.text_view, null);
         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         holder.llPostContent.addView(tv);
-        TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
+        EmojiTextView tView = (EmojiTextView) tv.findViewById(R.id.post_text_view);
         tView.setLinksClickable(true);
         tView.setAutoLinkMask(Linkify.ALL);
         if (ActivePreferences.markDownMode) {
@@ -312,13 +313,49 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         });
                         Log.d("DP", "Created imageview");
                     }
+                    if(mime.equals("gif")){
+                        View iv = li.inflate(R.layout.post_image_view, null);
+                        iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        holder.llPostContent.addView(iv);
+                        ImageView ivPostImageView = (ImageView)iv.findViewById(R.id.post_image_view);
+                        ivPostImageView.setImageResource(R.mipmap.gif_placeholder);
+
+                        ivPostImageView.setAdjustViewBounds(true);
+                        final String url = m.get("text");
+                        ivPostImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                mOnActivityInteractListener.onIntentStart(intent);
+                            }
+                        });
+                        Log.d("DP", "Created gif imageview");
+                    }
                     if(mime.equals("text") && !m.get("text").trim().equals("")) {
                         View tv = li.inflate(R.layout.text_view, null);
                         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         holder.llPostContent.addView(tv);
-                        TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
-                        tView.setText(m.get("text").trim());
-                        Log.d("DP", "Created textview with text: \n " + m.get("text"));
+                        EmojiTextView tView = (EmojiTextView) tv.findViewById(R.id.post_text_view);
+                        String text = m.get("text").trim();
+                        tView.setLinksClickable(true);
+                        tView.setAutoLinkMask(Linkify.ALL);
+                        if (ActivePreferences.markDownMode) {
+
+                            Markdown4jProcessor processor = new Markdown4jProcessor();
+
+                            try {
+                                String HTMLText = processor.process(text);
+                                tView.setText(Html.fromHtml(HTMLText));
+                            } catch (IOException e) {
+                                tView.setText(text);
+                                e.printStackTrace();
+                            }
+
+                        }else{
+                            tView.setText(text);
+                        }
+                        Log.d("DP", "Created textview with text: \n " + text);
                     }
                     if(mime.equals("webpage")){
                         View tv = li.inflate(R.layout.webpage_link, null);

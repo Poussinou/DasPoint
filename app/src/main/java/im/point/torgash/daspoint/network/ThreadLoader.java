@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import im.point.torgash.daspoint.listeners.OnThreadUpdateListener;
 import im.point.torgash.daspoint.point.Authorization;
@@ -20,6 +21,7 @@ import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PointThread;
 import im.point.torgash.daspoint.point.PostList;
 import im.point.torgash.daspoint.point.ThreadHeaderPost;
+import im.point.torgash.daspoint.utils.Constants;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -77,8 +79,9 @@ public class ThreadLoader {
 
         //this thread tries to download post list
         Thread getThread = new Thread(new Runnable() {
-
-            final OkHttpClient client = new OkHttpClient();
+            final OkHttpClient client = new OkHttpClient.Builder().readTimeout(30 * 1000, TimeUnit.MILLISECONDS)
+                    .connectTimeout(30 * 1000, TimeUnit.MILLISECONDS).writeTimeout(30 * 1000, TimeUnit.MILLISECONDS)
+                    .build();
 
             @Override
             public void run() {
@@ -162,6 +165,9 @@ public class ThreadLoader {
                 Comment commentCompared = list.get(j);
                 if (!commentCompared.to_comment_id.equals("null") && commentCompared.to_comment_id.equals(commentToCompareWith.id)) {
                     list.remove(j);
+                    commentCompared.quote = commentToCompareWith.authorName + ":\n" + commentToCompareWith.text.substring(0, Math.min(80, commentToCompareWith.text.length())) + "...";
+                    Log.d(Constants.LOG_TAG, "Comment's quote assigned: " + commentCompared.quote);
+                    commentCompared.offset = commentToCompareWith.offset + 1;
                     list.add(i + offset++, commentCompared);
                 }
             }

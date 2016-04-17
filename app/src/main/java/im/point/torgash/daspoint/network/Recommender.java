@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import im.point.torgash.daspoint.listeners.CommonRequestCallback;
 import im.point.torgash.daspoint.point.Authorization;
@@ -70,8 +71,9 @@ public class Recommender {
         //this thread tries to download post list
         Thread postRecommend = new Thread(new Runnable() {
 
-            final OkHttpClient client = new OkHttpClient();
-
+            final OkHttpClient client = new OkHttpClient.Builder().readTimeout(30 * 1000, TimeUnit.MILLISECONDS)
+                    .connectTimeout(30 * 1000, TimeUnit.MILLISECONDS).writeTimeout(30 * 1000, TimeUnit.MILLISECONDS)
+                    .build();
             @Override
             public void run() {
                 final MediaType MEDIA_TYPE_APP

@@ -33,9 +33,10 @@ public class Comment {
     public String post_id;
     public String to_comment_id;
     public String[] files;
+    public String quote;
     ArrayList<Map<String, String>> commentContents;
     public boolean is_rec;
-
+    public int offset = 0; //offset in stairway thread mode
     public Comment(JSONObject jsonComment) {
         try {
             String time = jsonComment.get("created").toString();
@@ -149,11 +150,14 @@ public class Comment {
                             tempContentMapURL.put("text", title);
                             tempContentMapURL.put("url", url);
 
-                        } else if (mime.contains("image")) {
+                        } else if (mime.contains("image") && !mime.contains("gif")) {
                             //make an Image view
                             tempContentMapURL.put("mime", "image");
                             tempContentMapURL.put("text", url);
 
+                        } else if (mime.contains("gif")) {
+                            tempContentMapURL.put("mime", "gif");
+                            tempContentMapURL.put("text", url);
                         } else {
                             tempContentMapURL.put("mime", "webpage");
                             tempContentMapURL.put("text", url);
