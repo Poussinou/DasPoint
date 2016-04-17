@@ -3,9 +3,11 @@ package im.point.torgash.daspoint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -14,6 +16,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -31,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+
 
 import im.point.torgash.daspoint.fragments.AllPostsListFragment;
 import im.point.torgash.daspoint.fragments.BlogPostListFragment;
@@ -107,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
 
                 .defaultDisplayImageOptions(defaultOptions)
-                .diskCacheSize(100 * 1024 * 1024)
+                .diskCacheSize(300 * 1024 * 1024)
                 .memoryCacheSize(16 * 1024 * 1024)
                 .threadPriority(Thread.MIN_PRIORITY)
                 .build();
@@ -174,6 +178,14 @@ public class MainActivity extends AppCompatActivity
                 commentZone.setQuote(quote);
                     Log.d(Constants.LOG_TAG, "Comment zone shown, post ID = " + postId + ", comment ID = " + commentId);
                 }
+
+            @Override
+            public void onCustomTabOpen(String url) {
+//TODO: implement custom tabs
+//                CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+//                CustomTabActivityHelper.openCustomTab(
+//                        this, customTabsIntent, Uri.parse(url), new WebviewFallback());
+            }
 
         };
         setContentView(R.layout.activity_main);
@@ -311,8 +323,9 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        menu.getItem(0).setChecked(ActivePreferences.economyMode);
-        menu.getItem(1).setChecked(ActivePreferences.markDownMode);
+        menu.getItem(1).setChecked(ActivePreferences.economyMode);
+
+        menu.getItem(2).setChecked(ActivePreferences.markDownMode);
         return true;
     }
 
@@ -341,6 +354,9 @@ public class MainActivity extends AppCompatActivity
             ActivePreferences.setMarkDownMode(item.isChecked());
             prefs.edit().putBoolean(MARK_DOWN_MODE, item.isChecked()).apply();
 
+
+        }
+        if (id == R.id.action_new) {
 
         }
         return super.onOptionsItemSelected(item);

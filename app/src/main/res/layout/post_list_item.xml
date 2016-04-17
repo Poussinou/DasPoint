@@ -216,7 +216,21 @@
                     android:text="72"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
+                    android:background="@drawable/button_white"
+                    android:textStyle="bold" />
+                <ImageButton
+                    android:id="@+id/btnWeb"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
 
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/web"
+
+
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    android:background="@drawable/button_white"
                     android:textStyle="bold" />
 
             </RelativeLayout>

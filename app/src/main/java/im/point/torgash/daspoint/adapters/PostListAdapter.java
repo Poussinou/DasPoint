@@ -1,11 +1,14 @@
 package im.point.torgash.daspoint.adapters;
 
+import android.annotation.TargetApi;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.util.Linkify;
@@ -14,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -47,6 +51,8 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private static final int TYPE_FOOTER = 1;
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_HEADER = -1;
+    private static final String EXTRA_CUSTOM_TABS_SESSION = "android.support.customtabs.extra.SESSION";
+    private static final String EXTRA_CUSTOM_TABS_TOOLBAR_COLOR = "android.support.customtabs.extra.TOOLBAR_COLOR";
     boolean qRecSectionVisible = false;
     private PostList mPostList = null;
     //    private ImageSearchTask mTask;
@@ -170,6 +176,23 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 clipboard.setPrimaryClip(clip);
                 mOnActivityInteractListener.onErrorShow("post " + holder.post_id.getText().toString() + " copied to clipboard");
                 return true;
+            }
+        });
+        holder.btnWeb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://point.im/" + holder.post_id.getText().toString().substring(1)));
+                Bundle extras = new Bundle();
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2){
+
+                    extras.putBinder(EXTRA_CUSTOM_TABS_SESSION,
+                            null /* Set to null for no session */);
+                }
+
+                intent.putExtra(EXTRA_CUSTOM_TABS_TOOLBAR_COLOR, R.color.colorPrimary);
+
+                intent.putExtras(extras);
+                mOnActivityInteractListener.onIntentStart(intent);
             }
         });
 //        holder.webLink.setOnClickListener(new View.OnClickListener() {
@@ -510,7 +533,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final TextView text;
         final ViewGroup tags;
         final ImageView avatar;
-
+        final ImageButton btnWeb;
         final TextView recommend_text;
 
 
@@ -535,7 +558,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             text = (TextView) itemView.findViewById(R.id.text);
             tags = (ViewGroup) itemView.findViewById(R.id.tags);
             avatar = (ImageView) itemView.findViewById(R.id.avatar);
-
+            btnWeb = (ImageButton) itemView.findViewById(R.id.btnWeb);
             recommend_text = (TextView) itemView.findViewById(R.id.recommend_text);
 
 

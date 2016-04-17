@@ -13,4 +13,6 @@ public interface OnActivityInteractListener {
     void onTheadOpen(String postId);
 
     void showCommentZone(String postId, String commentId, String quote);
+
+    void onCustomTabOpen(String url);
 }
