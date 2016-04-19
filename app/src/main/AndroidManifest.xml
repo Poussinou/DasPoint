@@ -42,7 +42,8 @@
         <activity
             android:name=".UserInfoActivity"
             android:label="@string/title_activity_user_info"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|keyboardHidden|screenSize"></activity>
     </application>
 
 </manifest>

@@ -11,4 +11,5 @@
     android:autoLink="all"
         android:textColor="@android:color/black"
         android:id="@+id/post_text_view"
+    android:padding="4dp"
         />

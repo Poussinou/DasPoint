@@ -20,7 +20,9 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+
+            >
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -28,7 +30,47 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
+            <ImageView
+                android:id="@+id/userInfoIvAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
 
+                android:scaleType="centerCrop"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:layout_gravity="bottom"
+                android:background="#9000"/>
+            <im.point.torgash.daspoint.widgets.FlowLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp">
+                <ImageButton
+                    android:id="@+id/userInfoBtnSubscribe"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/circle_grey"
+                    android:src="@drawable/btn_sub"
+                    android:textStyle="bold"
+
+                    />
+                <ImageButton
+                    android:id="@+id/userInfoBtnBlackList"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/circle_grey"
+                    android:src="@drawable/btn_bl"
+                    android:textStyle="bold"
+                    />
+                <ImageButton
+                    android:id="@+id/userInfoBtnWhiteList"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/circle_grey"
+                    android:src="@drawable/btn_wl"
+                    android:textStyle="bold"
+                    />
+            </im.point.torgash.daspoint.widgets.FlowLayout>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 

@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onIntentStart(Intent intent) {
+
                 startActivity(intent);
             }
 
