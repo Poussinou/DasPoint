@@ -10,17 +10,17 @@
     tools:showIn="@layout/activity_user_info">
 
     <LinearLayout
+        android:id="@+id/userInfoTextGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="24dp"/>
+        android:orientation="vertical"
+        android:layout_marginTop="24dp">
+
         <TextView
             android:id="@+id/userInfoTvAbout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Нетерпим, некорректен, нетолерантен"/>
+            android:text="Загрузка..."/>
     </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

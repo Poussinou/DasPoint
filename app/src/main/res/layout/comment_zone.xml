@@ -15,7 +15,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/ic_menu_send_black"
-            android:layout_below="@+id/czClose"
+            android:layout_alignBottom="@+id/qcomment_text"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
@@ -32,12 +32,15 @@
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/qcomment_text"
 
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:maxHeight="96dp"
             android:hint="Enter a quick comment"
             android:gravity="top"
             android:layout_width="match_parent"
             android:focusable="true"
-            android:layout_alignBottom="@+id/qcomment_button"
+            android:layout_below="@+id/czClose"
+
             android:layout_toLeftOf="@+id/qcomment_button"
             android:layout_toStartOf="@+id/qcomment_button"
             android:layout_toEndOf="@+id/emoji_toggle"
