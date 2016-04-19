@@ -99,7 +99,7 @@ public class PointPost {
                 recCommentId = postRecommendationSection.get("comment_id").toString();
                 JSONObject recAuthor = postRecommendationSection.getJSONObject("author");
                 recAuthorLogin = recAuthor.get("login").toString();
-                recAuthorLogin = "@" + recAuthorLogin;
+                recAuthorLogin = recAuthorLogin;
                 recAuthorAvatar = recAuthor.get("avatar").toString();
                 recAuthorName = recAuthor.get("name").toString();
             } else {

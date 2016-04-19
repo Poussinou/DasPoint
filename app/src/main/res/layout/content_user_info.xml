@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="im.point.torgash.daspoint.UserInfoActivity"
+    tools:showIn="@layout/activity_user_info">
+
+    <im.point.torgash.daspoint.widgets.FlowLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/userInfoBtnSubscribe"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/button_white"
+            android:src="@drawable/sub"
+            android:textStyle="bold"
+            android:padding="12dp"/>
+        <ImageButton
+            android:id="@+id/userInfoBtnBlackList"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/button_white"
+            android:src="@drawable/bl"
+            android:textStyle="bold"
+            android:padding="12dp"/>
+        <ImageButton
+            android:id="@+id/userInfoBtnWhiteList"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/button_white"
+            android:src="@drawable/wl"
+            android:textStyle="bold"
+            android:padding="12dp"/>
+    </im.point.torgash.daspoint.widgets.FlowLayout>
+
+</android.support.v4.widget.NestedScrollView>

@@ -36,6 +36,7 @@ import java.util.Map;
 
 import im.point.torgash.daspoint.ImageViewFullscreenActivity;
 import im.point.torgash.daspoint.R;
+import im.point.torgash.daspoint.UserInfoActivity;
 import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.listeners.OnFragmentInteractListener;
 import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
@@ -195,6 +196,19 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 mOnActivityInteractListener.onIntentStart(intent);
             }
         });
+
+        View.OnClickListener userClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent userInfoActivityIntent = new Intent(mContext, UserInfoActivity.class);
+
+                userInfoActivityIntent.putExtra("login", holder.author.getText().toString());
+                mOnActivityInteractListener.onIntentStart(userInfoActivityIntent);
+
+        }};
+        holder.avatar.setOnClickListener(userClickListener);
+        holder.author.setOnClickListener(userClickListener);
+
 //        holder.webLink.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View view) {
@@ -406,7 +420,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             post.searchAndDetectLinks(linksDetectedListener);
         }
 
-        holder.author.setText("@" + post.authorLogin);
+        holder.author.setText(post.authorLogin);
 
         holder.itemView.setTag(R.id.post_id, post.postId);
         Log.d("DP", "Invading viewholder with post \n" + post);

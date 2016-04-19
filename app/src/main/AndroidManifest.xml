@@ -20,7 +20,7 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize"></activity>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login" />
@@ -38,7 +38,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewPostActivity"></activity>
+        <activity android:name=".NewPostActivity" />
+        <activity
+            android:name=".UserInfoActivity"
+            android:label="@string/title_activity_user_info"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
