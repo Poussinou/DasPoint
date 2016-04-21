@@ -21,7 +21,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.reginald.swiperefresh.CustomSwipeRefreshLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +31,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import im.point.torgash.daspoint.listeners.CommonRequestCallback;
+import im.point.torgash.daspoint.network.Subscriber;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -52,6 +53,10 @@ public class UserInfoActivity extends AppCompatActivity {
     ImageButton userInfoWhiteListed;
     Toolbar toolbar;
 
+    //some booleans as indicators of user S/BL/WL status
+    boolean isSubscribed = false;
+    boolean isBlacklisted = false;
+    boolean isWhitelisted = false;
 
     LayoutInflater li;
     static boolean isInFront; //just to ensure that the activity is not suspended
@@ -79,7 +84,7 @@ public class UserInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_info);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        String title = getIntent().getStringExtra("login");
+        final String title = getIntent().getStringExtra("login");
         if(null != title) setTitle(title);
 
         token = prefs.getString("token", "");
@@ -103,6 +108,31 @@ public class UserInfoActivity extends AppCompatActivity {
         userInfoWhiteListed = (ImageButton) findViewById(R.id.userInfoBtnWhiteList);
         findUserInfo(title);
 
+        userInfoSubscribed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(toolbar, "Changing subscription status...", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                CommonRequestCallback callback = new CommonRequestCallback() {
+                    @Override
+                    public void onSuccess(String info) {
+                        isSubscribed = !isSubscribed;
+
+                        Snackbar.make(toolbar, info, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                        findUserInfo(title);
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        Snackbar.make(toolbar, error, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                };
+                new Subscriber(title, callback, !isSubscribed).toggleSubscription();
+            }
+        });
+
     }
     public void findUserInfo(final String login){
         final int MSG_ERROR = 0;
@@ -114,15 +144,21 @@ public class UserInfoActivity extends AppCompatActivity {
                             JSONObject jsonUserInfo = (JSONObject) msg.obj;
                             try {
                                 ImageLoader.getInstance().displayImage("http://i.point.im/a/280/" + jsonUserInfo.getString("avatar"), ivUserAvatar);
+                                isSubscribed = jsonUserInfo.getBoolean("subscribed");
+                                if (jsonUserInfo.has("bl")) {
+                                    isBlacklisted = jsonUserInfo.getBoolean("bl");
 
-                                if (jsonUserInfo.getBoolean("subscribed")) {
+                                }else{
+                                    isBlacklisted = false;
+                                }
+                                if (jsonUserInfo.has("wl")) {
+                                    isWhitelisted = jsonUserInfo.getBoolean("wl");
 
-                                    userInfoSubscribed.setBackgroundResource(R.drawable.circle_green);
-                                } else {
-                                    userInfoSubscribed.setBackgroundResource(R.drawable.circle_grey);
+                                }else{
+                                    isWhitelisted = false;
                                 }
 
-
+                                toggleUserStatusIndicators();
                                 userInfoTextGroup.removeAllViews();
                                 if (!jsonUserInfo.getString("name").equals("")) {
 
@@ -252,5 +288,25 @@ public class UserInfoActivity extends AppCompatActivity {
         tv.setAutoLinkMask(Linkify.ALL);
 
         return v;
+    }
+    private void toggleUserStatusIndicators() {
+        if (isSubscribed) {
+
+            userInfoSubscribed.setBackgroundResource(R.drawable.circle_green);
+        } else {
+            userInfoSubscribed.setBackgroundResource(R.drawable.circle_grey);
+        }
+        if (isBlacklisted) {
+
+            userInfoBlackListed.setBackgroundResource(R.drawable.circle_green);
+        } else {
+            userInfoBlackListed.setBackgroundResource(R.drawable.circle_grey);
+        }
+        if (isWhitelisted) {
+
+            userInfoWhiteListed.setBackgroundResource(R.drawable.circle_green);
+        } else {
+            userInfoWhiteListed.setBackgroundResource(R.drawable.circle_grey);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package im.point.torgash.daspoint;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -45,6 +46,7 @@ import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.point.Authorization;
 import im.point.torgash.daspoint.utils.ActivePreferences;
 import im.point.torgash.daspoint.utils.Constants;
+import im.point.torgash.daspoint.utils.Utils;
 import im.point.torgash.daspoint.widgets.CommentSection;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -99,23 +101,7 @@ public class MainActivity extends AppCompatActivity
         Constants.DISPLAY_PX_HEIGHT = outMetrics.heightPixels;
         Constants.DISPLAY_PX_WIDTH = outMetrics.widthPixels;
         //UIL initialization
-        DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
-
-                .cacheInMemory(true)
-                .cacheOnDisk(true)
-                .showImageOnFail(R.mipmap.image_load_failed)
-                .showImageOnLoading(R.drawable.timer_sand)
-
-                .build();
-
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-
-                .defaultDisplayImageOptions(defaultOptions)
-                .diskCacheSize(300 * 1024 * 1024)
-                .memoryCacheSize(16 * 1024 * 1024)
-                .threadPriority(Thread.MIN_PRIORITY)
-                .build();
-        ImageLoader.getInstance().init(config);
+        Utils.initImageLoader(getApplicationContext());
 
 
         prefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE);
@@ -294,6 +280,7 @@ public class MainActivity extends AppCompatActivity
         }
 //
     }
+
 
 
 

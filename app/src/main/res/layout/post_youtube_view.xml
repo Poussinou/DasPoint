@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/post_image_view"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:minHeight="144dp"
+        android:maxHeight="480dp"
+        android:scaleType="fitCenter"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#8000"
+        android:layout_gravity="bottom|right"
+        android:gravity="right"
+        android:padding="10dp"
+        android:text="youtube"
+        android:textColor="#FFF"
+        android:textSize="32dp"
+        android:textStyle="bold" />
+
+</FrameLayout>

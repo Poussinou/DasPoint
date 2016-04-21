@@ -11,6 +11,9 @@ import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import im.point.torgash.daspoint.utils.Utils;
+import okhttp3.internal.Util;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
@@ -89,7 +92,7 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Utils.initImageLoader(getApplicationContext());
         setContentView(R.layout.activity_image_view_fullscreen);
 
 //        mVisible = true;
@@ -112,6 +115,21 @@ public class ImageViewFullscreenActivity extends AppCompatActivity {
         ImageView ivPhoto = (ImageView) findViewById(R.id.iv_photo);
         String url = getIntent().getExtras().getString("url");
         ImageLoader.getInstance().displayImage(url, ivPhoto);
+
+    }
+
+    /**
+     * Dispatch onResume() to fragments.  Note that for better inter-operation
+     * with older versions of the platform, at the point of this call the
+     * fragments attached to the activity are <em>not</em> resumed.  This means
+     * that in some cases the previous state may still be saved, not allowing
+     * fragment transactions that modify the state.  To correctly interact
+     * with fragments in their proper state, you should instead override
+     * {@link #onResumeFragments()}.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 

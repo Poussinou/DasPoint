@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,19 +11,19 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
+import im.point.torgash.daspoint.utils.Constants;
 import im.point.torgash.daspoint.utils.ImageSearchHelper;
 
 public class PointPost {
@@ -74,6 +73,7 @@ public class PointPost {
     public String messageLink;
     public String commentId;
     public String[] files;
+
     public PointPost(JSONObject postObject) {
         try {
             JSONObject postDetails = postObject.getJSONObject("post");
@@ -217,42 +217,56 @@ public class PointPost {
                 while (matcher.find()) {
                     Map<String, String> tempContentMap = new HashMap<>();
                     String url = matcher.group();
+
                     boolean urlStartsWithHttp = url.startsWith("http");
                     int index = matcher.start();
                     String start;
-                    try{
+                    try {
                         start = begin.substring(previousIndex, index);
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         Log.d("DP", "Error while parsing string: \n" + begin);
                         e.printStackTrace();
 
                         break;
                     }
+
+
+                    if (!urlStartsWithHttp) start = start + url;
+                    if (urlStartsWithHttp) {
+
+
+                        tempContentMap.put("text", start);
+                        tempContentMap.put("mime", "text");
+                        postContents.add(tempContentMap);
+
+
+                    }
                     Log.d("DP", "PostContents start: " + start);
                     Log.d("DP", "URL in between: " + url);
-
-
-                    if(!urlStartsWithHttp) start = start + url;
-                    if(urlStartsWithHttp) {
-                        try {
-                            tempContentMap.put("text", start);
-                            tempContentMap.put("mime", "text");
-                            postContents.add(tempContentMap);
-
-
-                        } catch (Exception e) {
-
-                        }
-                    }
                     Map<String, String> tempContentMapURL = new HashMap<>();
 
-                    if(urlStartsWithHttp) previousIndex = matcher.end();
+                    if (urlStartsWithHttp) previousIndex = matcher.end();
                     finish = begin.substring(previousIndex);
 
+                    String mime;
+                    try {
+                        URL mUrl = new URL(url);
+                        if (mUrl.getHost().contains("youtube") || mUrl.getHost().contains("youtu.be")) {
 
 
-                    String mime = ImageSearchHelper.checkImageLink(url);
-                    Log.d("DP", "Found mime: " + mime);
+                            mime = "youtube";
+
+                            Log.d(Constants.LOG_TAG, "Found a youtube link");
+                        } else {
+
+                            mime = ImageSearchHelper.checkImageLink(url);
+                            Log.d("DP", "Found mime: " + mime);
+                        }
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                        mime = "text";
+                    }
+
                     if (mime != null) {
                         if (mime.contains("text")) {
                             //make a Webpage view
@@ -266,6 +280,9 @@ public class PointPost {
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 title = url;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                title = url;
                             }
 
                             tempContentMapURL.put("text", title);
@@ -275,6 +292,12 @@ public class PointPost {
                             //make an Image view
                             tempContentMapURL.put("mime", "image");
                             tempContentMapURL.put("text", url);
+
+                        } else if (mime.equals("youtube")) {
+                            //make an Image view
+                            tempContentMapURL.put("mime", "youtube");
+                            tempContentMapURL.put("text", url);
+                            Log.d(Constants.LOG_TAG, "putting map with youtube url into the array");
 
                         } else if (mime.contains("gif")) {
                             tempContentMapURL.put("mime", "gif");
@@ -290,7 +313,7 @@ public class PointPost {
                         tempContentMapURL.put("text", url);
                         tempContentMapURL.put("url", url);
                     }
-                    if(url.startsWith("http")) postContents.add(tempContentMapURL);
+                    if (url.startsWith("http")) postContents.add(tempContentMapURL);
 
                     if (begin == null || begin.equals("")) {
                         break;
@@ -301,6 +324,7 @@ public class PointPost {
                     tempContentMap.put("text", finish);
                     tempContentMap.put("mime", "text");
                     postContents.add(tempContentMap);
+                    Log.d(Constants.LOG_TAG, "putting finish into array: " + finish);
                 }
                 Message msg = h.obtainMessage(1, postContents);
                 h.sendMessage(msg);

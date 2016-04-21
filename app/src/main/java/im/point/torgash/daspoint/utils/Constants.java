@@ -22,4 +22,7 @@ public class Constants {
     public static float DISPLAY_PX_HEIGHT;
 
     public static String LOG_TAG = "DP";
+
+    //user operations constants
+    public static String USER_SUBSCRIBE = "http://point.im/api/user/s/";
 }
