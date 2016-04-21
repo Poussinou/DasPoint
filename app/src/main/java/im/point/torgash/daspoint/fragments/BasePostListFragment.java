@@ -83,7 +83,7 @@ public abstract class BasePostListFragment extends Fragment {
 
 
 
-        //now let's implement comment zone functions
+        //now let's implement comment_black zone functions
 
         final EmptyRecyclerView rvPostList = (EmptyRecyclerView) rootView.findViewById(R.id.postList);
         rvPostList.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayout.VERTICAL, false));

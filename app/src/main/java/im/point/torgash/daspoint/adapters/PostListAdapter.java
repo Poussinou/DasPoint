@@ -499,7 +499,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.post_id.setTag("post");
         } else {
             holder.post_id.setText("#" + post.postId + "/" + post.commentId);
-            holder.post_id.setTag("comment");
+            holder.post_id.setTag("comment_black");
         }
 
 //        holder.webLink.setTag(post.messageLink);

@@ -26,7 +26,7 @@
             android:layout_height="48dp"
             android:layout_alignBottom="@+id/qcomment_text"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/emoticon_happy"
+            android:src="@drawable/emoticon_happy_black"
             android:background="@drawable/button_white"
             android:id="@+id/emoji_toggle" />
         <com.vanniktech.emoji.EmojiEditText

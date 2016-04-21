@@ -36,7 +36,7 @@ public class LinksDetector {
             commentContents = commentCache.get(commentText);
             if (null != commentContents) {
 
-                Log.d("DP", "Sendng back an existing comment content");
+                Log.d("DP", "Sendng back an existing comment_black content");
                 onLinksDetectedListener.onLinksDetected(commentContents);
                 return;
             }

@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity
                     commentZone.setPostId(postId);
                     commentZone.setCommentId(commentId);
                 commentZone.setQuote(quote);
-                    Log.d(Constants.LOG_TAG, "Comment zone shown, post ID = " + postId + ", comment ID = " + commentId);
+                    Log.d(Constants.LOG_TAG, "Comment zone shown, post ID = " + postId + ", comment_black ID = " + commentId);
                 }
 
             @Override
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-        //comment section
+        //comment_black section
         commentZone = (CommentSection)findViewById(R.id.commentSection);
         commentZone.setOnActivityInteractListener(mOnActivityInteractListener);
         commentZone.setBackgroundColor(Color.TRANSPARENT);

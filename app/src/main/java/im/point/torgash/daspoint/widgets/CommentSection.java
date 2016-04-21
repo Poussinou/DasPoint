@@ -6,10 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -91,7 +88,7 @@ public class CommentSection extends RelativeLayout {
                 if (emojiPopup.isShowing()) {
                     ((ImageButton)v).setImageResource(R.drawable.keyboard);
                 }else {
-                    ((ImageButton) v).setImageResource(R.drawable.emoticon_happy);
+                    ((ImageButton) v).setImageResource(R.drawable.emoticon_happy_black);
                 }
 
             }

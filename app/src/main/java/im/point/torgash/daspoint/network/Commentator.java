@@ -92,7 +92,7 @@ public class Commentator {
                                 + mCommentText;
 
                     } else {
-                        Log.d("DP", "commenting comment "
+                        Log.d("DP", "commenting comment_black "
                                 + mPostId + "/" + mCommentId);
                         postBody = ""
                                 + "text="
@@ -101,7 +101,7 @@ public class Commentator {
                                 + mCommentId;
 
                     }
-                    Log.d(Constants.LOG_TAG, "comment request postbody is:");
+                    Log.d(Constants.LOG_TAG, "comment_black request postbody is:");
                     request = new Request.Builder()
                             .url(Constants.POINT_API_COMMENT + mPostId)
                             .header("Authorization", Authorization.getToken())

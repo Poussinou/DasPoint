@@ -89,7 +89,7 @@ public class Recommender {
                         apiURL = Constants.POINT_API_COMMON + "post/" + mPostId + "/r";
 
                     } else {
-                        Log.d("DP", "recommending comment "
+                        Log.d("DP", "recommending comment_black "
                                 + mPostId + "/" + mCommentId);
 
                         apiURL = Constants.POINT_API_COMMON + "post/" + mPostId
@@ -129,7 +129,7 @@ public class Recommender {
                             Message msg = networkBackgroundRequestHandler.obtainMessage(MSG_ERROR, "Error: " + postJsonResult.getString("error"));
                             networkBackgroundRequestHandler.sendMessage(msg);
                         } else {
-                            Message msg = networkBackgroundRequestHandler.obtainMessage(MSG_RECOMMEND_POSTED, 0, 0, "Recommended with comment " + mPostId
+                            Message msg = networkBackgroundRequestHandler.obtainMessage(MSG_RECOMMEND_POSTED, 0, 0, "Recommended with comment_black " + mPostId
                                     + "/" + postJsonResult.get("comment_id").toString());
                             // отправляем
                             networkBackgroundRequestHandler.sendMessage(msg);

@@ -213,7 +213,7 @@
                     android:layout_height="48dp"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
-                    android:drawableLeft="@drawable/comment"
+                    android:drawableLeft="@drawable/comment_black"
                     android:minHeight="48dp"
                     android:text="72"
                     android:textColor="@android:color/black"
