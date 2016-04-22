@@ -33,6 +33,46 @@
 
     <style name="drawable_xml_light" >
 
-        <item name="android:color">@color/xml_drawable_fillcolor_light_theme</item>
+        <item name="android:color">@color/xml_drawable_fillcolor_theme_light</item>
+    </style>
+    <!--Here the light theme styles are defined-->
+    <style name="CardViewStyleLight" parent="CardView.Light">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="cardCornerRadius">0dp</item>
+        <item name="cardPreventCornerOverlap">false</item>
+    </style>
+    <style name="GeneralTextViewStyleLight" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:autoLink">web</item>
+        <item name="android:linksClickable">true</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:scrollbars">none</item>
+        <item name="android:textColor">@color/text_color_theme_light</item>
+        <item name="android:textSize">14dp</item>
+    </style>
+    <!--Here the dark theme styles are defined-->
+    <style name="CardViewStyleDark" parent="CardView.Dark">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="cardCornerRadius">0dp</item>
+        <item name="cardPreventCornerOverlap">false</item>
+    </style>
+    <style name="GeneralTextViewStyleDark" parent="TextAppearance.AppCompat">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:autoLink">web</item>
+        <item name="android:linksClickable">true</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:scrollbars">none</item>
+        <item name="android:textColor">@color/text_color_theme_dark</item>
+        <item name="android:textSize">14dp</item>
     </style>
 </resources>

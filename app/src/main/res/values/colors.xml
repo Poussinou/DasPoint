@@ -5,13 +5,23 @@
     <color name="colorAccent">#303F9F</color>
     <color name="quote_background">#FDDD</color>
     <color name="black_overlay">#66000000</color>
-
+    <color name="selector_green_focused_false">#7d0b8900</color>
+    <color name="selector_green_focused_true">#7d2f5300</color>
 
     <!-- colors for light theme-->
     <color name="base_background_theme_light">#eee</color>
     <color name="cardview_background_theme_light">#fff</color>
-    <color name="text_color_light_theme">#000</color>
-    <color name="username_color_light_theme">#303F9F</color>
-    <color name="xml_drawable_fillcolor_light_theme">#000</color>
-    <color name="quote_background_light">#FDDD</color>
+    <color name="text_color_theme_light">#000</color>
+    <color name="username_color_theme_light">#303F9F</color>
+    <color name="xml_drawable_fillcolor_theme_light">#000</color>
+    <color name="quote_background_theme_light">#FDDD</color>
+
+    <!-- colors for dark theme-->
+    <color name="base_background_theme_dark">#000</color>
+    <color name="cardview_background_theme_dark">#111</color>
+    <color name="text_color_theme_dark">#CBB</color>
+    <color name="username_color_theme_dark">#034C6C</color>
+    <color name="xml_drawable_fillcolor_theme_dark">#FFF</color>
+    <color name="quote_background_theme_dark">#000</color>
+
 </resources>

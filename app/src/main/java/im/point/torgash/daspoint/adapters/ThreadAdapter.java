@@ -417,7 +417,7 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
         android.support.v7.widget.RecyclerView.LayoutParams params = (android.support.v7.widget.RecyclerView.LayoutParams) holder.mView.getLayoutParams();
-        params.setMargins(Math.min(pxFromDp(36), pxFromDp(comment.offset * 6)), 0, 0, 0);
+        params.setMargins(Math.min(pxFromDp(36), pxFromDp(comment.offset * 6)), pxFromDp(2), 0, 0);
         holder.card.setLayoutParams(params);
         if (ActivePreferences.markDownMode) {
 

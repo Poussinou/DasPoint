@@ -8,5 +8,6 @@
         <attr name="metaButtonBarStyle" format="reference" />
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
-    <attr name="drawable_xml_light" format="reference" />
+    <attr name="CardViewStyle" format="reference" />
+    <attr name="GeneralTextViewStyle" format="reference" />
 </resources>

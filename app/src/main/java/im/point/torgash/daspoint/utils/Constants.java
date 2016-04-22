@@ -25,4 +25,5 @@ public class Constants {
 
     //user operations constants
     public static String USER_SUBSCRIBE = "http://point.im/api/user/s/";
+    public static String POST_OPERATIONS = "http://point.im/api/post/";
 }

@@ -38,15 +38,18 @@ import java.util.Map;
 import im.point.torgash.daspoint.ImageViewFullscreenActivity;
 import im.point.torgash.daspoint.R;
 import im.point.torgash.daspoint.UserInfoActivity;
+import im.point.torgash.daspoint.listeners.CommonRequestCallback;
 import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.listeners.OnFragmentInteractListener;
 import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
 import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
+import im.point.torgash.daspoint.network.PostSubscriber;
 import im.point.torgash.daspoint.point.PointPost;
 import im.point.torgash.daspoint.point.PostList;
 import im.point.torgash.daspoint.utils.ActivePreferences;
 import im.point.torgash.daspoint.utils.Constants;
 import im.point.torgash.daspoint.utils.Utils;
+import im.point.torgash.daspoint.widgets.PostListCommentButton;
 
 
 public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -499,15 +502,19 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             holder.post_id.setTag("post");
         } else {
             holder.post_id.setText("#" + post.postId + "/" + post.commentId);
-            holder.post_id.setTag("comment_black");
+            holder.post_id.setTag("comment");
         }
 
 //        holder.webLink.setTag(post.messageLink);
 //        holder.favourite.setChecked(post.bookmarked);
 //        holder.favourite.setTag(post.post.id);
+        if (post.subscribed) {
+            holder.comments.setBackgroundResource(R.drawable.button_green);
+        }else{
+            holder.comments.setBackgroundResource(R.drawable.button_white);
+        }
 
-
-        holder.comments.setText(String.valueOf(post.commentsCount));
+        holder.comments.setCommentCount(post.commentsCount);
         // holder.comments.setVisibility(View.GONE);
 
         holder.tags.removeAllViews();
@@ -529,7 +536,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //add drag edge.(If the BottomView has 'layout_gravity' attribute, this line is unnecessary)
 
         qRecSectionVisible = false;
-
+        holder.comments.setTag(post.postId);
 
         holder.comments.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -537,7 +544,30 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 mOnActivityInteractListener.onTheadOpen(post.postId);
             }
         });
+        holder.comments.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                CommonRequestCallback callback = new CommonRequestCallback() {
+                    @Override
+                    public void onSuccess(String info) {
+                        post.subscribed = !post.subscribed;
+                        if (post.subscribed) {
+                            holder.comments.setBackgroundResource(R.drawable.button_green);
+                        }else{
+                            holder.comments.setBackgroundResource(R.drawable.button_white);
+                        }
+                        mOnActivityInteractListener.onErrorShow(info);
+                    }
 
+                    @Override
+                    public void onError(String error) {
+                        mOnActivityInteractListener.onErrorShow(error);
+                    }
+                };
+                new PostSubscriber(post.postId, callback, !post.subscribed).toggleSubscription();
+                return true;
+            }
+        });
 
 
 
@@ -598,7 +628,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         final TextView post_id;
         final View recommend_info;
         final TextView recommend_id;
-        final Button comments;
+        final PostListCommentButton comments;
         final TextView date;
 
         LinearLayout llPostContent;
@@ -623,7 +653,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             post_id = (TextView) itemView.findViewById(R.id.post_id);
             recommend_info = itemView.findViewById(R.id.recommend_info);
             recommend_id = (TextView) itemView.findViewById(R.id.recommend_id);
-            comments = (Button) itemView.findViewById(R.id.btnComments);
+            comments = (PostListCommentButton) itemView.findViewById(R.id.btnComments);
 
             date = (TextView) itemView.findViewById(R.id.date);
 
