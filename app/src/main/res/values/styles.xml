@@ -45,15 +45,24 @@
         <item name="cardPreventCornerOverlap">false</item>
     </style>
     <style name="GeneralTextViewStyleLight" parent="TextAppearance.AppCompat">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+
         <item name="android:autoLink">web</item>
         <item name="android:linksClickable">true</item>
-        <item name="android:paddingBottom">5dp</item>
-        <item name="android:paddingTop">5dp</item>
         <item name="android:scrollbars">none</item>
         <item name="android:textColor">@color/text_color_theme_light</item>
-        <item name="android:textSize">14dp</item>
+
+    </style>
+    <style name="CommentIconDrawableLight">
+        <item name="android:src">@drawable/comment_black</item>
+    </style>
+    <style name="CommentIconTextLight">
+        <item name="android:textColor">@color/text_color_theme_light</item>
+    </style>
+    <style name="CommentButtonBackgroundDrawableSubFalseLight">
+        <item name="android:background">@drawable/button_white</item>
+    </style>
+    <style name="CommentButtonBackgroundDrawableSubTrueLight">
+        <item name="android:background">@drawable/button_green</item>
     </style>
     <!--Here the dark theme styles are defined-->
     <style name="CardViewStyleDark" parent="CardView.Dark">
@@ -65,14 +74,24 @@
         <item name="cardPreventCornerOverlap">false</item>
     </style>
     <style name="GeneralTextViewStyleDark" parent="TextAppearance.AppCompat">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+
         <item name="android:autoLink">web</item>
         <item name="android:linksClickable">true</item>
-        <item name="android:paddingBottom">5dp</item>
-        <item name="android:paddingTop">5dp</item>
+
         <item name="android:scrollbars">none</item>
         <item name="android:textColor">@color/text_color_theme_dark</item>
-        <item name="android:textSize">14dp</item>
+
+    </style>
+    <style name="CommentIconDrawableDark">
+        <item name="android:src">@drawable/comment_white</item>
+    </style>
+    <style name="CommentIconTextDark">
+        <item name="android:textColor">@color/text_color_theme_dark</item>
+    </style>
+    <style name="CommentButtonBackgroundDrawableSubFalseDark">
+        <item name="android:background">@drawable/button_dark</item>
+    </style>
+    <style name="CommentButtonBackgroundDrawableSubTrueDark">
+        <item name="android:background">@drawable/button_green_dark</item>
     </style>
 </resources>

@@ -8,6 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="CardViewStyle">@style/CardViewStyleLight</item>
         <item name="GeneralTextViewStyle">@style/GeneralTextViewStyleLight</item>
+        <item name="CommentIconDrawable">@style/CommentIconDrawableLight</item>
+        <item name="CommentIconText">@style/CommentIconTextLight</item>
+        <item name="CommentButtonBackgroundDrawableSubFalse">@style/CommentButtonBackgroundDrawableSubFalseLight</item>
+        <item name="CommentButtonBackgroundDrawableSubTrue">@style/CommentButtonBackgroundDrawableSubTrueLight</item>
+
     </style>
     <!--This is the dark theme-->
     <style name="AppThemeDark" parent="Theme.AppCompat.DayNight.DarkActionBar">
@@ -17,5 +22,10 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="CardViewStyle">@style/CardViewStyleDark</item>
         <item name="GeneralTextViewStyle">@style/GeneralTextViewStyleDark</item>
+        <item name="CommentIconDrawable">@style/CommentIconDrawableDark</item>
+        <item name="CommentIconText">@style/CommentIconTextDark</item>
+        <item name="CommentButtonBackgroundDrawableSubFalse">@style/CommentButtonBackgroundDrawableSubFalseDark</item>
+        <item name="CommentButtonBackgroundDrawableSubTrue">@style/CommentButtonBackgroundDrawableSubTrueDark</item>
+
     </style>
 </resources>

@@ -552,6 +552,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     public void onSuccess(String info) {
                         post.subscribed = !post.subscribed;
                         if (post.subscribed) {
+
                             holder.comments.setBackgroundResource(R.drawable.button_green);
                         }else{
                             holder.comments.setBackgroundResource(R.drawable.button_white);

@@ -4,13 +4,13 @@
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
     android:layout_height="48dp"
-    android:background="@drawable/button_white"
+    style="?CommentButtonBackgroundDrawableSubFalse"
     android:gravity="center_horizontal|center_vertical">
     <ImageView
         android:id="@+id/commentButtonIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/comment_black"
+        style="?CommentIconDrawable"
         />
     <TextView
         android:id="@+id/commentButtonText"
@@ -19,7 +19,7 @@
         android:text="48"
         android:layout_toRightOf="@+id/commentButtonIcon"
         android:textSize="18dp"
-        android:textColor="#000"
+        style="?CommentIconText"
         android:textStyle="bold"
         android:layout_marginLeft="5dp"/>
 </RelativeLayout>

@@ -10,4 +10,8 @@
     </declare-styleable>
     <attr name="CardViewStyle" format="reference" />
     <attr name="GeneralTextViewStyle" format="reference" />
+    <attr name="CommentIconDrawable" format="reference" />
+    <attr name="CommentIconText" format="reference" />
+    <attr name="CommentButtonBackgroundDrawableSubFalse" format="reference" />
+    <attr name="CommentButtonBackgroundDrawableSubTrue" format="reference" />
 </resources>
