@@ -2,6 +2,7 @@ package im.point.torgash.daspoint.point;
 
 import android.os.Handler;
 import android.os.Message;
+import android.text.Html;
 import android.util.Log;
 import android.util.Patterns;
 
@@ -9,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.markdown4j.Markdown4jProcessor;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
+import im.point.torgash.daspoint.utils.ActivePreferences;
 import im.point.torgash.daspoint.utils.Constants;
 import im.point.torgash.daspoint.utils.ImageSearchHelper;
 
@@ -326,6 +329,121 @@ public class PointPost {
                     postContents.add(tempContentMap);
                     Log.d(Constants.LOG_TAG, "putting finish into array: " + finish);
                 }
+                Message msg = h.obtainMessage(1, postContents);
+                h.sendMessage(msg);
+            }
+        });
+        t.start();
+
+    }
+    public void searchAndDetectLinks(final OnLinksDetectedListener onLinksDetectedListener, boolean positionAtBottom) {
+        if (null != postContents) {
+            Log.d("DP", "Sendng back an existing post content");
+            onLinksDetectedListener.onLinksDetected(postContents, positionAtBottom);
+            return;
+        }
+
+        final Handler h = new Handler() {
+            public void handleMessage(android.os.Message msg) {
+                switch (msg.what) {
+                    case 1:
+                        Log.d("DP", "sending message from searcher");
+                        if (null != onLinksDetectedListener) {
+                            onLinksDetectedListener.onLinksDetected((ArrayList<Map<String, String>>) msg.obj, true);
+                        }
+                        break;
+
+                }
+            }
+        };
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                postContents = new ArrayList<>();
+                Pattern pattern = Patterns.WEB_URL;
+                Matcher matcher = pattern.matcher(postText);
+
+                int previousIndex = 0;
+                while (matcher.find()) {
+                    Map<String, String> tempContentMap = new HashMap<>();
+                    String url = matcher.group();
+
+                    boolean urlStartsWithHttp = url.startsWith("http");
+                    int index = matcher.start();
+
+                    Map<String, String> tempContentMapURL = new HashMap<>();
+
+
+                    String mime;
+                    try {
+                        URL mUrl = new URL(url);
+                        if (mUrl.getHost().contains("youtube") || mUrl.getHost().contains("youtu.be")) {
+
+
+                            mime = "youtube";
+
+                            Log.d(Constants.LOG_TAG, "Found a youtube link");
+                        } else {
+
+                            mime = ImageSearchHelper.checkImageLink(url);
+                            Log.d("DP", "Found mime: " + mime);
+                        }
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                        mime = "text";
+                    }
+
+                    if (mime != null) {
+                        if (mime.contains("text")) {
+                            //make a Webpage view
+                            tempContentMapURL.put("mime", "webpage");
+                            String title;
+                            try {
+                                Document doc = Jsoup.connect(url).get();
+                                title = doc.title().trim();
+                                Log.d("DP", "Webpage title parsed: \n" + title);
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                title = url;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                title = url;
+                            }
+
+                            tempContentMapURL.put("text", title);
+                            tempContentMapURL.put("url", url);
+
+                        } else if (mime.contains("image") && !mime.contains("gif")) {
+                            //make an Image view
+                            tempContentMapURL.put("mime", "image");
+                            tempContentMapURL.put("text", url);
+
+                        } else if (mime.equals("youtube")) {
+                            //make an Image view
+                            tempContentMapURL.put("mime", "youtube");
+                            tempContentMapURL.put("text", url);
+                            Log.d(Constants.LOG_TAG, "putting map with youtube url into the array");
+
+                        } else if (mime.contains("gif")) {
+                            tempContentMapURL.put("mime", "gif");
+                            tempContentMapURL.put("text", url);
+                        } else {
+                            tempContentMapURL.put("mime", "webpage");
+                            tempContentMapURL.put("text", url);
+                            tempContentMapURL.put("url", url);
+                        }
+
+                    } else {
+                        tempContentMapURL.put("mime", "webpage");
+                        tempContentMapURL.put("text", url);
+                        tempContentMapURL.put("url", url);
+                    }
+                    if (url.startsWith("http")) postContents.add(tempContentMapURL);
+
+
+                }
+
                 Message msg = h.obtainMessage(1, postContents);
                 h.sendMessage(msg);
             }

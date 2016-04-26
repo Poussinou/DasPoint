@@ -8,6 +8,9 @@
         <attr name="metaButtonBarStyle" format="reference" />
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
+    <declare-styleable name="StyleableCommentsButton">
+        <attr name="CommentButtonBackgroundDrawable" format="reference" />
+    </declare-styleable>
     <attr name="CardViewStyle" format="reference" />
     <attr name="GeneralTextViewStyle" format="reference" />
     <attr name="CommentIconDrawable" format="reference" />

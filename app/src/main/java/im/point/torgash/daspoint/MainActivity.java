@@ -295,11 +295,13 @@ public class MainActivity extends AppCompatActivity
             }
         }else if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if(!getFragmentManager().popBackStackImmediate()){
-            super.onBackPressed();
-        } else {
-            commentZone.setVisibility(View.GONE);
+        } else if(getFragmentManager().getBackStackEntryCount() > 0){
+            getFragmentManager().popBackStackImmediate();
             setTitle(backStackTitleSaver);
+
+        } else {
+            super.onBackPressed();
+
         }
 
 
@@ -355,6 +357,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        getFragmentManager().popBackStackImmediate();
 
         if (id == R.id.nav_recent) {
             RecentPostListFragment recentPostListFragment = RecentPostListFragment.getInstance(mOnActivityInteractListener);

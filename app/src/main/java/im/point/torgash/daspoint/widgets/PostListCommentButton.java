@@ -1,6 +1,9 @@
 package im.point.torgash.daspoint.widgets;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.support.annotation.NonNull;
+import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +24,7 @@ import im.point.torgash.daspoint.listeners.CommonRequestCallback;
 import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.network.Commentator;
 import im.point.torgash.daspoint.network.Recommender;
+import im.point.torgash.daspoint.utils.StyleLoader;
 
 /**
  * Created by Boss on 02.04.2016.
@@ -28,6 +32,7 @@ import im.point.torgash.daspoint.network.Recommender;
 public class PostListCommentButton extends RelativeLayout {
     ImageView ivCommentIcon;
     TextView tvCommentCount;
+    private final StyleLoader styleLoader = new StyleLoader();
 
     Context mContext;
 
@@ -65,4 +70,13 @@ public class PostListCommentButton extends RelativeLayout {
     public void setCommentCount(int count) {
         tvCommentCount.setText(String.valueOf(count));
     }
+    protected void apply(StyleLoader.StyleAttrs styleAttrs) {
+        setBackground(styleAttrs.backGroundDrawable);
+
+    }
+
+    public void setStyle(@StyleRes int style) {
+        apply(styleLoader.load(getContext(), style));
+    }
+
 }

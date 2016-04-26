@@ -7,88 +7,86 @@
         android:layout_marginBottom="4dp">
 
 
-
-
-
         <ImageButton
             android:id="@+id/qcomment_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/ic_menu_send_black"
             android:layout_alignBottom="@+id/qcomment_text"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="8dp"
+            android:layout_alignParentRight="true"
             android:layout_marginRight="4dp"
-            android:background="@drawable/button_white" />
+            android:layout_marginTop="8dp"
+            android:background="@drawable/button_white"
+            android:src="@drawable/ic_menu_send_black" />
+
         <ImageButton
+            android:id="@+id/emoji_toggle"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignBottom="@+id/qcomment_text"
             android:layout_alignParentLeft="true"
-            android:src="@drawable/emoticon_happy_black"
             android:background="@drawable/button_white"
-            android:id="@+id/emoji_toggle" />
+            android:src="@drawable/emoticon_happy_black" />
+
         <com.vanniktech.emoji.EmojiEditText
             android:id="@+id/qcomment_text"
 
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:maxHeight="96dp"
-            android:hint="Enter a quick comment"
-            android:gravity="top"
             android:layout_width="match_parent"
-            android:focusable="true"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/czClose"
-
-            android:layout_toLeftOf="@+id/qcomment_button"
-            android:layout_toStartOf="@+id/qcomment_button"
             android:layout_toEndOf="@+id/emoji_toggle"
-            android:layout_toRightOf="@+id/emoji_toggle"/>
+            android:layout_toLeftOf="@+id/qcomment_button"
+            android:layout_toRightOf="@+id/emoji_toggle"
+            android:layout_toStartOf="@+id/qcomment_button"
+            android:focusable="true"
+            android:gravity="top"
+            android:hint="Enter a quick comment"
+            android:inputType="textCapSentences|textMultiLine|textLongMessage|textAutoComplete|textAutoCorrect"
+            android:maxHeight="96dp"
+            android:minHeight="48dp" />
 
         <View
             android:id="@+id/commentZoneDivider"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_alignParentTop="true"
-            android:background="@drawable/gradient_line"/>
+            android:background="@drawable/gradient_line" />
+
         <ImageButton
+            android:id="@+id/czClose"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:id="@+id/czClose"
-            android:background="@drawable/button_white"
-            android:layout_below="@+id/commentZoneDivider"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/commentZoneDivider"
+            android:background="@drawable/button_white"
             android:src="@drawable/close" />
 
         <TextView
+            android:id="@+id/czId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="#postid"
-            android:id="@+id/czId"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignTop="@+id/czClose"
+            android:text="#postid"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:textStyle="bold" />
 
         <com.vanniktech.emoji.EmojiTextView
+            android:id="@+id/czQuote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="This is a post text, shortened to one line"
-            android:id="@+id/czQuote"
-            android:layout_below="@+id/czId"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_below="@+id/czId"
             android:layout_toLeftOf="@+id/czClose"
+            android:ellipsize="start"
             android:maxLines="2"
-            android:ellipsize="start" />
+            android:text="This is a post text, shortened to one line"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
     </RelativeLayout>
-
-
 
 
 </merge>

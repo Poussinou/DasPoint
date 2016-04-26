@@ -331,6 +331,11 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
                     }
                 }
+
+                @Override
+                public void onLinksDetected(ArrayList<Map<String, String>> postContents, boolean positionAtBottom) {
+
+                }
             };
             if (!ActivePreferences.economyMode) {
                 mPost.searchAndDetectLinks(linksDetectedListener);
@@ -512,6 +517,11 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
 
                 }
+            }
+
+            @Override
+            public void onLinksDetected(ArrayList<Map<String, String>> postContents, boolean positionAtBottom) {
+
             }
         };
         if (!ActivePreferences.economyMode) {

@@ -10,4 +10,6 @@ import java.util.Map;
  */
 public interface OnLinksDetectedListener {
     void onLinksDetected(ArrayList<Map<String,String>> postContents);
+
+    void onLinksDetected(ArrayList<Map<String, String>> postContents, boolean positionAtBottom);
 }

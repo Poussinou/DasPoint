@@ -49,6 +49,7 @@ import im.point.torgash.daspoint.point.PostList;
 import im.point.torgash.daspoint.utils.ActivePreferences;
 import im.point.torgash.daspoint.utils.Constants;
 import im.point.torgash.daspoint.utils.Utils;
+import im.point.torgash.daspoint.widgets.FlowLayout;
 import im.point.torgash.daspoint.widgets.PostListCommentButton;
 
 
@@ -323,6 +324,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
             try {
                 String HTMLText = processor.process(post.postText);
+
                 tView.setText(Html.fromHtml(HTMLText));
             } catch (IOException e) {
                 tView.setText(post.postText);
@@ -336,26 +338,26 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.fullText = post.postText;
         OnLinksDetectedListener linksDetectedListener = new OnLinksDetectedListener() {
             @Override
-            public void onLinksDetected(ArrayList<Map<String,String>> postContents) {
+            public void onLinksDetected(ArrayList<Map<String, String>> postContents) {
                 holder.llPostContent.removeAllViews();
-                for(Map<String, String> m : postContents) {
+                for (Map<String, String> m : postContents) {
                     String mime = m.get("mime");
                     Log.d(Constants.LOG_TAG, "Creating a view with mime: " + mime);
-                    if(mime.equals("youtube")){
+                    if (mime.equals("youtube")) {
                         final String url = m.get("text");
                         String previewUrl = url;
 
-                            try {
-                                previewUrl = "http://img.youtube.com/vi/" + Utils.extractYoutubeId(url) + "/0.jpg";
-                                Log.d(Constants.LOG_TAG, "Converted Youtube link to preview");
-                            } catch (MalformedURLException e) {
-                                e.printStackTrace();
-                            }
+                        try {
+                            previewUrl = "http://img.youtube.com/vi/" + Utils.extractYoutubeId(url) + "/0.jpg";
+                            Log.d(Constants.LOG_TAG, "Converted Youtube link to preview");
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        }
 
                         View iv = li.inflate(R.layout.post_youtube_view, null);
                         iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         holder.llPostContent.addView(iv);
-                        ImageView ivPostImageView = (ImageView)iv.findViewById(R.id.post_image_view);
+                        ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
                         ImageLoader.getInstance().displayImage(previewUrl, ivPostImageView);
                         ivPostImageView.setAdjustViewBounds(true);
                         ivPostImageView.setOnClickListener(new View.OnClickListener() {
@@ -371,11 +373,11 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         });
                         Log.d("DP", "Created youtube view");
                     }
-                    if(mime.equals("image")){
+                    if (mime.equals("image")) {
                         View iv = li.inflate(R.layout.post_image_view, null);
                         iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         holder.llPostContent.addView(iv);
-                        ImageView ivPostImageView = (ImageView)iv.findViewById(R.id.post_image_view);
+                        ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
                         ImageLoader.getInstance().displayImage(m.get("text"), ivPostImageView);
                         ivPostImageView.setAdjustViewBounds(true);
                         final String url = m.get("text");
@@ -387,19 +389,18 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                                     intent.putExtra("url", url);
                                     mOnActivityInteractListener.onIntentStart(intent);
 
-                                }
-                                else {
+                                } else {
                                     mOnActivityInteractListener.onErrorShow("Поддержка GIF еще не запилена.");
                                 }
                             }
                         });
                         Log.d("DP", "Created imageview");
                     }
-                    if(mime.equals("gif")){
+                    if (mime.equals("gif")) {
                         View iv = li.inflate(R.layout.post_image_view, null);
                         iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         holder.llPostContent.addView(iv);
-                        ImageView ivPostImageView = (ImageView)iv.findViewById(R.id.post_image_view);
+                        ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
                         ivPostImageView.setImageResource(R.mipmap.gif_placeholder);
 
                         ivPostImageView.setAdjustViewBounds(true);
@@ -414,7 +415,7 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         });
                         Log.d("DP", "Created gif imageview");
                     }
-                    if(mime.equals("text") && !m.get("text").trim().equals("")) {
+                    if (mime.equals("text") && !m.get("text").trim().equals("")) {
                         View tv = li.inflate(R.layout.text_view, null);
                         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         holder.llPostContent.addView(tv);
@@ -429,17 +430,17 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                             try {
                                 String HTMLText = processor.process(text);
                                 tView.setText(Html.fromHtml(HTMLText));
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 tView.setText(text);
                                 e.printStackTrace();
                             }
 
-                        }else{
+                        } else {
                             tView.setText(text);
                             Log.d("DP", "Created textview with text: \n " + text);
                         }
                     }
-                    if(mime.equals("webpage")){
+                    if (mime.equals("webpage")) {
                         View tv = li.inflate(R.layout.webpage_link, null);
                         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                         holder.llPostContent.addView(tv);
@@ -459,10 +460,135 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
                 }
             }
+
+            @Override
+            public void onLinksDetected(ArrayList<Map<String, String>> postContents, boolean positionAtBottom) {
+                FlowLayout linksLayout = (FlowLayout)li.inflate(R.layout.links_layout, null);
+                for (Map<String, String> m : postContents) {
+                    String mime = m.get("mime");
+                    Log.d(Constants.LOG_TAG, "Creating a view with mime: " + mime);
+                    if (mime.equals("youtube")) {
+                        final String url = m.get("text");
+                        String previewUrl = url;
+
+                        try {
+                            previewUrl = "http://img.youtube.com/vi/" + Utils.extractYoutubeId(url) + "/0.jpg";
+                            Log.d(Constants.LOG_TAG, "Converted Youtube link to preview");
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        }
+
+                        View iv = li.inflate(R.layout.post_youtube_view, null);
+                        iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        linksLayout.addView(iv);
+                        ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
+                        ImageLoader.getInstance().displayImage(previewUrl, ivPostImageView);
+                        ivPostImageView.setAdjustViewBounds(true);
+                        ivPostImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                mOnActivityInteractListener.onIntentStart(intent);
+
+
+                            }
+                        });
+                        Log.d("DP", "Created youtube view");
+                    }
+                    if (mime.equals("image")) {
+                        View iv = li.inflate(R.layout.post_image_view_flow, null);
+                        iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        linksLayout.addView(iv);
+                        ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
+
+                        ImageLoader.getInstance().displayImage(m.get("text"), ivPostImageView);
+                        ivPostImageView.setAdjustViewBounds(true);
+                        final String url = m.get("text");
+                        ivPostImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (!url.contains(".gif")) {
+                                    Intent intent = new Intent(mContext, ImageViewFullscreenActivity.class);
+                                    intent.putExtra("url", url);
+                                    mOnActivityInteractListener.onIntentStart(intent);
+
+                                } else {
+                                    mOnActivityInteractListener.onErrorShow("Поддержка GIF еще не запилена.");
+                                }
+                            }
+                        });
+                        Log.d("DP", "Created imageview");
+                    }
+                    if (mime.equals("gif")) {
+                        View iv = li.inflate(R.layout.post_image_view_flow, null);
+                        iv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        linksLayout.addView(iv);
+                        ImageView ivPostImageView = (ImageView) iv.findViewById(R.id.post_image_view);
+                        ivPostImageView.setImageResource(R.mipmap.gif_placeholder);
+
+                        ivPostImageView.setAdjustViewBounds(true);
+                        final String url = m.get("text");
+                        ivPostImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                mOnActivityInteractListener.onIntentStart(intent);
+                            }
+                        });
+                        Log.d("DP", "Created gif imageview");
+                    }
+                    if (mime.equals("text") && !m.get("text").trim().equals("")) {
+                        View tv = li.inflate(R.layout.text_view, null);
+                        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        linksLayout.addView(tv);
+                        EmojiTextView tView = (EmojiTextView) tv.findViewById(R.id.post_text_view);
+                        String text = m.get("text").trim();
+                        tView.setLinksClickable(true);
+                        tView.setAutoLinkMask(Linkify.ALL);
+                        if (ActivePreferences.markDownMode) {
+
+                            Markdown4jProcessor processor = new Markdown4jProcessor();
+
+                            try {
+                                String HTMLText = processor.process(text);
+                                tView.setText(Html.fromHtml(HTMLText));
+                            } catch (Exception e) {
+                                tView.setText(text);
+                                e.printStackTrace();
+                            }
+
+                        } else {
+                            tView.setText(text);
+                            Log.d("DP", "Created textview with text: \n " + text);
+                        }
+                    }
+                    if (mime.equals("webpage")) {
+                        View tv = li.inflate(R.layout.webpage_link, null);
+                        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        linksLayout.addView(tv);
+                        TextView tView = (TextView) tv.findViewById(R.id.tv_webpage_title);
+                        tView.setText(m.get("text"));
+                        Log.d("DP", "Created webpage view with text: \n " + m.get("text"));
+                        Button btnLink = (Button) tv.findViewById(R.id.webpage_button);
+                        final String url = m.get("url");
+                        btnLink.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                                mOnActivityInteractListener.onIntentStart(intent);
+                            }
+                        });
+                    }
+                }
+                holder.llPostContent.addView(linksLayout);
+            }
         };
         if (!ActivePreferences.economyMode) {
 
-            post.searchAndDetectLinks(linksDetectedListener);
+            post.searchAndDetectLinks(linksDetectedListener, true);
         }
 
         holder.author.setText(post.authorLogin);

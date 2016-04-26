@@ -12,7 +12,7 @@
         <item name="CommentIconText">@style/CommentIconTextLight</item>
         <item name="CommentButtonBackgroundDrawableSubFalse">@style/CommentButtonBackgroundDrawableSubFalseLight</item>
         <item name="CommentButtonBackgroundDrawableSubTrue">@style/CommentButtonBackgroundDrawableSubTrueLight</item>
-
+        <item name="CommentButtonBackgroundDrawable">@drawable/button_white</item>
     </style>
     <!--This is the dark theme-->
     <style name="AppThemeDark" parent="Theme.AppCompat.DayNight.DarkActionBar">
@@ -26,6 +26,6 @@
         <item name="CommentIconText">@style/CommentIconTextDark</item>
         <item name="CommentButtonBackgroundDrawableSubFalse">@style/CommentButtonBackgroundDrawableSubFalseDark</item>
         <item name="CommentButtonBackgroundDrawableSubTrue">@style/CommentButtonBackgroundDrawableSubTrueDark</item>
-
+        <item name="CommentButtonBackgroundDrawable">@drawable/button_dark</item>
     </style>
 </resources>
