@@ -6,11 +6,15 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,8 +31,11 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vanniktech.emoji.EmojiTextView;
 
+import net.nightwhistler.htmlspanner.HtmlSpanner;
+
 import org.markdown4j.ExtDecorator;
 import org.markdown4j.Markdown4jProcessor;
+import org.xml.sax.XMLReader;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -39,6 +46,7 @@ import im.point.torgash.daspoint.ImageViewFullscreenActivity;
 import im.point.torgash.daspoint.R;
 import im.point.torgash.daspoint.UserInfoActivity;
 import im.point.torgash.daspoint.listeners.CommonRequestCallback;
+import im.point.torgash.daspoint.listeners.HtmlSpannerRequestCallback;
 import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.listeners.OnFragmentInteractListener;
 import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
@@ -315,9 +323,21 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         View tv = li.inflate(R.layout.text_view, null);
         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         holder.llPostContent.addView(tv);
-        EmojiTextView tView = (EmojiTextView) tv.findViewById(R.id.post_text_view);
-        tView.setLinksClickable(true);
-        tView.setAutoLinkMask(Linkify.ALL);
+        final EmojiTextView tView = (EmojiTextView) tv.findViewById(R.id.post_text_view);
+        tView.setMovementMethod(LinkMovementMethod.getInstance());
+        HtmlSpannerRequestCallback callback = new HtmlSpannerRequestCallback() {
+            @Override
+            public void onSuccess(Spannable html) {
+                tView.setText(html);
+                tView.setMovementMethod(LinkMovementMethod.getInstance());
+                LinkMovementMethod.getInstance().initialize(tView, html);
+            }
+
+            @Override
+            public void onError(String error) {
+                tView.setText(post.postText);
+            }
+        };
         if (ActivePreferences.markDownMode) {
 
             Markdown4jProcessor processor = new Markdown4jProcessor();
@@ -325,14 +345,15 @@ public class PostListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             try {
                 String HTMLText = processor.process(post.postText);
 
-                tView.setText(Html.fromHtml(HTMLText));
+
+                Utils.processHtml(HTMLText, callback);
             } catch (IOException e) {
                 tView.setText(post.postText);
                 e.printStackTrace();
             }
 
         }else{
-            tView.setText(post.postText);
+            Utils.processHtml(post.postText, callback);
         }
         holder.shortenedText = post.postText.substring(0, post.postText.length() > 80 ? 80 : post.postText.length());
         holder.fullText = post.postText;

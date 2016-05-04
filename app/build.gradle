@@ -42,4 +42,5 @@ dependencies {
     compile 'com.reginald.swiperefresh:library:1.1.1'
     compile 'com.android.support:customtabs:23.+'
 
+    compile project(path: ':HtmlSpanner')
 }

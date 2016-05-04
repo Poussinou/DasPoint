@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.Spannable;
+import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +23,8 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.vanniktech.emoji.EmojiTextView;
 
+import net.nightwhistler.htmlspanner.HtmlSpanner;
+
 import org.markdown4j.Markdown4jProcessor;
 
 import java.io.IOException;
@@ -31,6 +35,8 @@ import java.util.Map;
 import im.point.torgash.daspoint.ImageViewFullscreenActivity;
 import im.point.torgash.daspoint.R;
 import im.point.torgash.daspoint.listeners.BubbleTextGetter;
+import im.point.torgash.daspoint.listeners.CommonRequestCallback;
+import im.point.torgash.daspoint.listeners.HtmlSpannerRequestCallback;
 import im.point.torgash.daspoint.listeners.OnActivityInteractListener;
 import im.point.torgash.daspoint.listeners.OnLinksDetectedListener;
 import im.point.torgash.daspoint.listeners.OnPostListUpdateListener;
@@ -39,6 +45,7 @@ import im.point.torgash.daspoint.point.PointThread;
 import im.point.torgash.daspoint.point.ThreadHeaderPost;
 import im.point.torgash.daspoint.utils.ActivePreferences;
 import im.point.torgash.daspoint.utils.Constants;
+import im.point.torgash.daspoint.utils.Utils;
 
 
 public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements BubbleTextGetter {
@@ -405,10 +412,9 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         View tv = li.inflate(R.layout.text_view, null);
         tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         holder.llCommentContent.addView(tv);
-        TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
+        final TextView tView = (TextView) tv.findViewById(R.id.post_text_view);
         tView.setText(comment.text);
-        tView.setLinksClickable(true);
-        tView.setAutoLinkMask(Linkify.ALL);
+        tView.setMovementMethod(LinkMovementMethod.getInstance());
 
 
         android.support.v7.widget.RecyclerView.LayoutParams params = (android.support.v7.widget.RecyclerView.LayoutParams) holder.mView.getLayoutParams();
@@ -419,8 +425,20 @@ public class ThreadAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             Markdown4jProcessor processor = new Markdown4jProcessor();
 
             try {
-                String HTMLText = processor.process(comment.text);
-                tView.setText(Html.fromHtml(HTMLText));
+                final String HTMLText = processor.process(comment.text);
+                HtmlSpannerRequestCallback callback = new HtmlSpannerRequestCallback() {
+                    @Override
+                    public void onSuccess(Spannable html) {
+                        tView.setText(html);
+
+                    }
+
+                    @Override
+                    public void onError(String error) {
+                        tView.setText(comment.text);
+                    }
+                };
+                Utils.processHtml(HTMLText, callback);
             } catch (IOException e) {
                 tView.setText(comment.text);
                 e.printStackTrace();

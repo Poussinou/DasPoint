@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/DasPoint.iml" filepath="$PROJECT_DIR$/DasPoint.iml" />
+      <module fileurl="file://$PROJECT_DIR$/HtmlSpanner/HtmlSpanner.iml" filepath="$PROJECT_DIR$/HtmlSpanner/HtmlSpanner.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

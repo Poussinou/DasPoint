@@ -31,6 +31,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import net.nightwhistler.htmlspanner.handlers.ImageHandler;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -98,6 +100,7 @@ public class MainActivity extends AppCompatActivity
         float density  = getResources().getDisplayMetrics().density;
         float dpHeight = outMetrics.heightPixels / density;
         float dpWidth  = outMetrics.widthPixels / density;
+        ImageHandler.setDisplayData(outMetrics.widthPixels, outMetrics.heightPixels);
         Constants.DISPLAY_PX_HEIGHT = outMetrics.heightPixels;
         Constants.DISPLAY_PX_WIDTH = outMetrics.widthPixels;
         //UIL initialization

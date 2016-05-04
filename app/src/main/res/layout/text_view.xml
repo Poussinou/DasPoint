@@ -7,8 +7,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Small Text"
-    android:linksClickable="true"
-    android:autoLink="all"
+
         android:textColor="@android:color/black"
         android:id="@+id/post_text_view"
     android:padding="4dp"
